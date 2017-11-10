@@ -41,7 +41,7 @@
             </form>
         </div>
         <div class="templatemo-content-widget templatemo-login-widget templatemo-register-widget white-bg">
-            <p>Powered by <strong><a href="http://www.m-finder.com" class="blue-text">layim</a></strong></p>
+            <p>Powered by <strong><a href="http://layim.layui.com/" class="blue-text">layim</a></strong></p>
         </div>
         <script>
             $(function () {

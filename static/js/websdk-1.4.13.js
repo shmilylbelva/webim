@@ -11687,7 +11687,6 @@
 	        jid: jid,
 	        subscription: 'remove'
 	    });
-
 	    var suc = options.success || _utils.emptyfn;
 	    var error = options.error || _utils.emptyfn;
 	    this.context.stropheConn.sendIQ(iq, suc, error);

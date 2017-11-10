@@ -17,7 +17,6 @@ switch ($act) {
 
     #user login
     case 'login':
-    // print_r(md5('911117easemob'));
         $param['name'] = $_POST['name'];
         $param['pwd'] = $_POST['pwd'];
         $tables = 'tb_person';
@@ -63,6 +62,7 @@ switch ($act) {
 //获取好友
         $uid = $_SESSION['info']['id'];
         $url_friend = $BASEURL.'users/'.$uid.'/contacts/users';
+
         $data_info = json_decode(Get($headers,$url_friend),true);
 //获取群组
         $url_group = $BASEURL.'users/'.$uid.'/joined_chatgroups';
@@ -91,7 +91,7 @@ switch ($act) {
         $res['data']['mine'] = $_SESSION['info'];
         $res['data']['friend'] = $get_my_group;
         $res['data']['group'] = $group;
-        $res['data']['mine']['skin'] = $get_skin['isUserUpload'] == 1? "http://localhost:888/uploads/skin/".$get_skin['url']:"http://localhost:888/static/layui/css/modules/layim/skin/".$get_skin['url'];
+        $res['data']['mine']['skin'] = $get_skin['isUserUpload'] == 1? "/uploads/skin/".$get_skin['url']:"/static/layui/css/modules/layim/skin/".$get_skin['url'];
         echo  json_encode($res);         
         break;
     case 'uploadImage':
@@ -120,7 +120,7 @@ switch ($act) {
         break;  
     case 'groupMembers':
         $id = $_GET['id'];
-        $url = $BASEURL.'/chatgroups/'.$id;
+        $url = $BASEURL.'chatgroups/'.$id;
         $headers = array('Authorization:Bearer '.$_SESSION['info']['access_token']);
         $data_group = json_decode(Get($headers,$url),true);
         foreach ($data_group['data'][0]['affiliations'] as $key => $value) {

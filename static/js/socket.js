@@ -20,7 +20,7 @@
         apiUrl: WebIM.config.apiURL,
         isAutoLogin: true
     }); 
-
+    var cachedata = layui.layim.cache();  
     var socket = {
         config: function (options) {
             conf = $.extend(conf, options); //把layim继承出去，方便在register中使用
@@ -30,7 +30,6 @@
         },
         register: function () {
             var layim = conf.layim;
-            console.log(layui.layim.cache());
             if (layim) {
                 //监听在线状态的切换事件
                 layim.on('online', function (data) {
@@ -111,12 +110,11 @@
                         icon: "static/img/del.png",
                         callback: function(ele) {
                             var friend_id = ele[0].dataset.id.replace(/^layim-friend/g, '');   
-                            var cachedata = layui.layim.cache();  
+                            
                             for (i in cachedata.friend[0].list)
                             {
                                 if (cachedata.friend[0].list[i].id === friend_id) {var username = cachedata.friend[0].list[i].username;var sign = cachedata.friend[0].list[i].sign;}
                             }
-                            // console.log(cachedata);              
                             layer.confirm('删除后对方将从你的好友列表消失，且以后不会再接收此人的会话消息。<div class="layui-layim-list"><li layim-event="chat" data-type="friend" data-index="0"><img src="http://api.guoshanchina.com/uploads/person/'+friend_id+'.jpg"><span>'+username+'</span><p>'+sign+'</p></li></div>', {
                                 btn: ['确定','取消'], //按钮
                                 title:['删除好友','background:#b4bdb8'],
@@ -162,12 +160,10 @@
                         icon: "static/img/del.png",
                         callback: function(ele) {
                             var group_id = ele[0].dataset.id.replace(/^layim-group/g, '');   
-                            var cachedata = layui.layim.cache();  
                             for (i in cachedata.group)
                             {
                                 if (cachedata.group[i].id === group_id) {var groupname = cachedata.group[i].groupname;var avatar = cachedata.group[i].avatar;}
                             }
-                            // console.log(cachedata);              
                             layer.confirm('您真的要退出该群吗？退出后你将不会再接收此群的会话消息。<div class="layui-layim-list"><li layim-event="chat" data-type="friend" data-index="0"><img src="'+avatar+'"><span>'+groupname+'</span></li></div>', {
                                 btn: ['确定','取消'], //按钮
                                 title:['提示','background:#b4bdb8'],
@@ -251,13 +247,12 @@
                     WebIM.utils.download.call(conn, options);
                 },   //收到视频消息
                 onPresence: function ( message ) {//监听对方的添加或者删除好友请求，并做相应的处理。
-                    // console.log(message);
                     if (message.type == 'unsubscribe') {
-                        conf.layim.removeList({//从我的列表删除
+                        conf.layim.removeList({//从对方的列表删除
                           type: 'friend' //或者group
                           ,id: message.from //好友或者群组ID
                         }); 
-                        im.removeHistory({//从我的列表删除
+                        im.removeHistory({//从对方的历史列表删除
                           type: 'friend' //或者group
                           ,id: username //好友或者群组ID
                         })                        
@@ -305,7 +300,6 @@
                 case 'Video': msg = 'video['+message.video+']';break;
             };
             
-            var cachedata = layui.layim.cache();
             for (i in cachedata.friend[0].list)
             {
                 if (cachedata.friend[0].list[i].id === message.from) {var username = cachedata.friend[0].list[i].username}
@@ -318,13 +312,10 @@
                 var id = message.to;
             }          
             var data = {mine: false,cid: 0,username:username,avatar:"http://api.guoshanchina.com/uploads/person/"+message.from+".jpg",content:msg,id:id,fromid: message.from,timestamp:timestamp,type:type}
-            console.log(data);
             conf.layim.getMessage(data);
 
         }, 
         sendMsg: function (data) {  //根据layim提供的data数据，进行解析
-            console.log(data);
-            console.log('发送消息');
             var id = conn.getUniqueId();
             var content = data.mine.content;
             var msg = new WebIM.message('txt', id);      // 创建文本消息
@@ -368,7 +359,8 @@
                     im.removeHistory({//从我的历史列表删除
                         type: 'friend' //或者group
                         ,id: username //好友或者群组ID
-                    })
+                    });
+                    
                 },
                 error: function () { 
                     console.log('removeFriends faild');
@@ -400,7 +392,6 @@
             conn.leaveGroupBySelf(option);
         }, 
         removeHistory: function(data){//删除好友或退出群后清除历史记录
-            var cachedata = layui.layim.cache();            
             var history = cachedata.local.history;
             delete history[data.type+data.id];
             cachedata.local.history = history;
