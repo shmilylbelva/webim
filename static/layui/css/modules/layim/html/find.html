@@ -1,0 +1,196 @@
+ 
+ 
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>发现</title>
+<link rel="stylesheet" href="../../../layui.2.1.7.css">
+<link rel="stylesheet" href="../../../layui.demo.css">
+<style type="text/css">
+.layui-find-list li img {
+    position: absolute;
+    left: 15px;
+    top: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 100%;
+}
+.layui-find-list li {
+    position: relative;
+    height: 90px;;
+    padding: 5px 15px 5px 60px;
+    font-size: 0;
+    cursor: pointer;
+}
+.layui-find-list li * {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 14px;
+	overflow: hidden; 
+	text-overflow:ellipsis; 
+	white-space: nowrap;
+}
+.layui-find-list li span {
+    margin-top: 4px;
+    max-width: 155px;
+}
+
+.layui-find-list li p {
+    display: block;
+    line-height: 18px;
+    font-size: 12px;
+    color: #999;
+	overflow: hidden; 
+	text-overflow:ellipsis; 
+	white-space: nowrap;
+}
+</style>
+<script src="../../../../layui.2.1.7.js"></script>
+<script>
+layui.use(['layim', 'laypage','form','layer','laytpl'], function(){
+  var layim = layui.layim
+  ,layer = layui.layer
+  ,laytpl = layui.laytpl
+  ,form = layui.form
+  ,$ = layui.jquery
+  ,laypage = layui.laypage;
+  
+  //执行一个laypage实例
+  laypage.render({
+    elem: 'pagelist'
+    ,count: 1000
+    ,first: false
+    ,last: false
+  });
+});
+
+
+
+</script>
+</head>
+<body>	    
+<div class="layui-form"> 
+	<div class="layui-container" style="padding:0">
+		<div class="layui-row layui-col-space3">
+		    <div class="layui-col-xs7 mt15">
+		      <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入汇员号/昵称/手机号/邮箱" class="layui-input">
+		    </div>
+		    <div class="layui-col-xs1 mt15" >
+		      <button class="layui-btn btncolor">查找</button> 
+		    </div>     
+
+			<div class="layui-col-xs3 mt15">
+				<input type="radio" name="sex" value="找人" title="找人" checked="">
+				<input type="radio" name="sex" value="找群" title="找群">
+				<button class="layui-btn layui-btn-mini btncolor" >我要建群</button>		
+		    </div>
+		</div>  
+		<fieldset class="layui-elem-field layui-field-title">
+		  <legend>好友推荐</legend>
+		</fieldset>	
+		<div class="layui-row ">
+			<div class="layui-col-xs3 layui-find-list">
+				<li layim-event="add" data-type="friend" data-index="0">
+					<img src="http://api.guoshanchina.com/uploads/person/910992.jpg" >
+					<span>安卓测试一号(91111111111111111117)</span>
+					<p>我就不写签111111111111111111111111名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
+					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
+				</li>
+			</div>
+			<div class="layui-col-xs3 layui-find-list">
+				<li layim-event="add" data-type="friend" data-index="0">
+					<img src="http://api.guoshanchina.com/uploads/person/910992.jpg" >
+					<span>安卓测试一号</span>
+					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
+					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
+				</li>
+			</div>
+			<div class="layui-col-xs3 layui-find-list">
+				<li layim-event="add" data-type="friend" data-index="0">
+					<img src="http://api.guoshanchina.com/uploads/person/910992.jpg" >
+					<span>安卓测试一号</span>
+					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
+					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
+				</li>
+			</div>
+			<div class="layui-col-xs3 layui-find-list">
+				<li layim-event="add" data-type="friend" data-index="0">
+					<img src="http://api.guoshanchina.com/uploads/person/910992.jpg" >
+					<span>安卓测试一号</span>
+					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
+					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
+				</li>
+			</div>	
+			<div class="layui-col-xs3 layui-find-list">
+				<li layim-event="add" data-type="friend" data-index="0">
+					<img src="http://api.guoshanchina.com/uploads/person/910992.jpg" >
+					<span>安卓测试一号(91111111111111111117)</span>
+					<p>我就不写签111111111111111111111111名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
+					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
+				</li>
+			</div>
+			<div class="layui-col-xs3 layui-find-list">
+				<li layim-event="add" data-type="friend" data-index="0">
+					<img src="http://api.guoshanchina.com/uploads/person/910992.jpg" >
+					<span>安卓测试一号</span>
+					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
+					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
+				</li>
+			</div>
+			<div class="layui-col-xs3 layui-find-list">
+				<li layim-event="add" data-type="friend" data-index="0">
+					<img src="http://api.guoshanchina.com/uploads/person/910992.jpg" >
+					<span>安卓测试一号</span>
+					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
+					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
+				</li>
+			</div>
+			<div class="layui-col-xs3 layui-find-list">
+				<li layim-event="add" data-type="friend" data-index="0">
+					<img src="http://api.guoshanchina.com/uploads/person/910992.jpg" >
+					<span>安卓测试一号</span>
+					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
+					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
+				</li>
+			</div>								
+			<div class="layui-col-xs3 layui-find-list">
+				<li layim-event="add" data-type="friend" data-index="0">
+					<img src="http://api.guoshanchina.com/uploads/person/910992.jpg" >
+					<span>安卓测试一号(91111111111111111117)</span>
+					<p>我就不写签111111111111111111111111名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
+					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
+				</li>
+			</div>
+			<div class="layui-col-xs3 layui-find-list">
+				<li layim-event="add" data-type="friend" data-index="0">
+					<img src="http://api.guoshanchina.com/uploads/person/910992.jpg" >
+					<span>安卓测试一号</span>
+					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
+					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
+				</li>
+			</div>
+			<div class="layui-col-xs3 layui-find-list">
+				<li layim-event="add" data-type="friend" data-index="0">
+					<img src="http://api.guoshanchina.com/uploads/person/910992.jpg" >
+					<span>安卓测试一号</span>
+					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
+					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
+				</li>
+			</div>
+			<div class="layui-col-xs3 layui-find-list">
+				<li layim-event="add" data-type="friend" data-index="0">
+					<img src="http://api.guoshanchina.com/uploads/person/910992.jpg" >
+					<span>安卓测试一号</span>
+					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
+					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
+				</li>
+			</div>
+		</div>	
+		<div class="layui-row laypagecenter" id="pagelist" ></div>		  
+	</div>
+</div>
+
+</body>
+</html>

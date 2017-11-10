@@ -1,0 +1,29 @@
+{
+  "code": 0
+  ,"msg": ""
+  ,"data": {
+    "owner": {
+      "username": "Luffy"
+      ,"id": "1"
+      ,"avatar": "static/img/logo.jpg"
+      ,"sign": "我要当海贼王"
+    }
+    ,"members": 3
+    ,"list": [{
+      "username": "Luffy"
+      ,"id": "1"
+      ,"avatar": "static/img/logo.jpg"
+      ,"sign": "我要当海贼王"
+    },{
+      "username": "Shanks"
+      ,"id": "2"
+      ,"avatar": "static/img/Shanks.jpg"
+      ,"sign": "给我个面子如何？"
+    },{
+      "username": "Buggy"
+      ,"id": "3"
+      ,"avatar": "static/img/Buggy.jpg"
+      ,"sign": "我是巴基大神"
+    }]
+  }
+}
