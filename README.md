@@ -128,5 +128,5 @@
 3. socket.js
 内容比较长就不贴出来了，需要源码的朋友可以在这里[下载](https://github.com/shmilylbelva/webim),当然最好是star一下，因为我会继续完善该项目的。
 
-
+【注意】github 上传的代码已去除layim.js，所以下载代码后请在你获取到 layim.js授权后将 layim.js 拖进 static / layui / lay / modules / 文件夹内方可运行。
 
