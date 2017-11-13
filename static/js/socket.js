@@ -115,7 +115,7 @@
                             {
                                 if (cachedata.friend[0].list[i].id === friend_id) {var username = cachedata.friend[0].list[i].username;var sign = cachedata.friend[0].list[i].sign;}
                             }
-                            layer.confirm('删除后对方将从你的好友列表消失，且以后不会再接收此人的会话消息。<div class="layui-layim-list"><li layim-event="chat" data-type="friend" data-index="0"><img src="http://api.guoshanchina.com/uploads/person/'+friend_id+'.jpg"><span>'+username+'</span><p>'+sign+'</p></li></div>', {
+                            layer.confirm('删除后对方将从你的好友列表消失，且以后不会再接收此人的会话消息。<div class="layui-layim-list"><li layim-event="chat" data-type="friend" data-index="0"><img src="./uploads/person/'+friend_id+'.jpg"><span>'+username+'</span><p>'+sign+'</p></li></div>', {
                                 btn: ['确定','取消'], //按钮
                                 title:['删除好友','background:#b4bdb8'],
                                 shade: 0
@@ -311,7 +311,7 @@
                 var type = 'group';
                 var id = message.to;
             }          
-            var data = {mine: false,cid: 0,username:username,avatar:"http://api.guoshanchina.com/uploads/person/"+message.from+".jpg",content:msg,id:id,fromid: message.from,timestamp:timestamp,type:type}
+            var data = {mine: false,cid: 0,username:username,avatar:"./uploads/person/"+message.from+".jpg",content:msg,id:id,fromid: message.from,timestamp:timestamp,type:type}
             conf.layim.getMessage(data);
 
         }, 
