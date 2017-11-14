@@ -47,16 +47,24 @@
 	white-space: nowrap;
 }
 </style>
-<script src="../../../../layui.2.1.7.js"></script>
+<script type='text/javascript' src='../../../../../../static/js/webim.config.js'></script>
+<script type='text/javascript' src='../../../../../../static/js/strophe-1.2.8.min.js'></script>
+<script type='text/javascript' src='../../../../../../static/js/websdk-1.4.13.js'></script> 
+<!-- <script src="../../../../layui.2.1.7.js"></script> -->
+<script src="../../../../../layui/layui.js"></script>
 <script>
-layui.use(['layim', 'laypage','form','layer','laytpl'], function(){
+layui.config({
+    base: '../../../../../../static/js/'
+}).extend({
+    socket: 'socket'
+});
+layui.use([ 'layim','laypage','form','socket',], function(socket){
   var layim = layui.layim
-  ,layer = layui.layer
+  , layer = layui.layer
   ,laytpl = layui.laytpl
   ,form = layui.form
   ,$ = layui.jquery
   ,laypage = layui.laypage;
-  
   //执行一个laypage实例
   laypage.render({
     elem: 'pagelist'
@@ -64,10 +72,20 @@ layui.use(['layim', 'laypage','form','layer','laytpl'], function(){
     ,first: false
     ,last: false
   });
+	var cache = parent.layui.layim.cache();  
+	var url = '../../../../../../'+cache.base.getRecommend.url || {};  //获得URL参数。
+	$.post(url,{type:'post'},function(res){
+	  	var data = eval('(' + res + ')');
+		var html = laytpl(LAY_tpl.value).render({
+		    data: data.data
+		});
+		$('#LAY_view').html(html);	
+  	});
+    $('body').on('click', '.layui-btn', function () {
+        var othis = $(this), type = othis.data('type');
+        type == 'friend' ? parent.layui.im.addFriend(othis) : parent.layui.im.addGroup(othis);
+    });
 });
-
-
-
 </script>
 </head>
 <body>	    
@@ -87,110 +105,28 @@ layui.use(['layim', 'laypage','form','layer','laytpl'], function(){
 				<button class="layui-btn layui-btn-mini btncolor" >我要建群</button>		
 		    </div>
 		</div>  
-		<fieldset class="layui-elem-field layui-field-title">
-		  <legend>好友推荐</legend>
-		</fieldset>	
-		<div class="layui-row ">
-			<div class="layui-col-xs3 layui-find-list">
-				<li layim-event="add" data-type="friend" data-index="0">
-					<img src="/uploads/person/910992.jpg" >
-					<span>安卓测试一号(91111111111111111117)</span>
-					<p>我就不写签111111111111111111111111名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
-					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
-				</li>
-			</div>
-			<div class="layui-col-xs3 layui-find-list">
-				<li layim-event="add" data-type="friend" data-index="0">
-					<img src="/uploads/person/910992.jpg" >
-					<span>安卓测试一号</span>
-					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
-					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
-				</li>
-			</div>
-			<div class="layui-col-xs3 layui-find-list">
-				<li layim-event="add" data-type="friend" data-index="0">
-					<img src="/uploads/person/910992.jpg" >
-					<span>安卓测试一号</span>
-					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
-					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
-				</li>
-			</div>
-			<div class="layui-col-xs3 layui-find-list">
-				<li layim-event="add" data-type="friend" data-index="0">
-					<img src="/uploads/person/910992.jpg" >
-					<span>安卓测试一号</span>
-					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
-					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
-				</li>
+		<div id="LAY_view"></div>
+        <textarea title="消息模版" id="LAY_tpl" style="display:none;">
+			<fieldset class="layui-elem-field layui-field-title">
+			  <legend>好友推荐</legend>
+			</fieldset>	
+			<div class="layui-row ">
+				{{#  layui.each(d.data, function(index, item){ }}
+				<div class="layui-col-xs3 layui-find-list">
+					<li layim-event="add" data-type="friend" data-index="0" data-uid="{{ item.memberIdx }}" data-name="{{item.memberName}}">
+						<img src="../../../../../../uploads/person/{{item.memberIdx}}.jpg " onerror="javascript:this.src='../../../../../../uploads/empty2.jpg'" >
+						<span>{{item.memberName}}({{item.memberIdx}})</span>
+						<p>{{item.signature}}  {{#  if(item.signature == ''){ }}我很懒，懒得写签名{{#  } }} </p>
+						<button class="layui-btn layui-btn-mini btncolor" data-type="friend"><i class="layui-icon">&#xe654;</i>加好友</button>
+					</li>
+				</div>
+				{{#  }); }}
+
 			</div>	
-			<div class="layui-col-xs3 layui-find-list">
-				<li layim-event="add" data-type="friend" data-index="0">
-					<img src="/uploads/person/910992.jpg" >
-					<span>安卓测试一号(91111111111111111117)</span>
-					<p>我就不写签111111111111111111111111名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
-					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
-				</li>
-			</div>
-			<div class="layui-col-xs3 layui-find-list">
-				<li layim-event="add" data-type="friend" data-index="0">
-					<img src="/uploads/person/910992.jpg" >
-					<span>安卓测试一号</span>
-					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
-					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
-				</li>
-			</div>
-			<div class="layui-col-xs3 layui-find-list">
-				<li layim-event="add" data-type="friend" data-index="0">
-					<img src="/uploads/person/910992.jpg" >
-					<span>安卓测试一号</span>
-					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
-					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
-				</li>
-			</div>
-			<div class="layui-col-xs3 layui-find-list">
-				<li layim-event="add" data-type="friend" data-index="0">
-					<img src="/uploads/person/910992.jpg" >
-					<span>安卓测试一号</span>
-					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
-					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
-				</li>
-			</div>								
-			<div class="layui-col-xs3 layui-find-list">
-				<li layim-event="add" data-type="friend" data-index="0">
-					<img src="/uploads/person/910992.jpg" >
-					<span>安卓测试一号(91111111111111111117)</span>
-					<p>我就不写签111111111111111111111111名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
-					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
-				</li>
-			</div>
-			<div class="layui-col-xs3 layui-find-list">
-				<li layim-event="add" data-type="friend" data-index="0">
-					<img src="/uploads/person/910992.jpg" >
-					<span>安卓测试一号</span>
-					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
-					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
-				</li>
-			</div>
-			<div class="layui-col-xs3 layui-find-list">
-				<li layim-event="add" data-type="friend" data-index="0">
-					<img src="/uploads/person/910992.jpg" >
-					<span>安卓测试一号</span>
-					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
-					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
-				</li>
-			</div>
-			<div class="layui-col-xs3 layui-find-list">
-				<li layim-event="add" data-type="friend" data-index="0">
-					<img src="/uploads/person/910992.jpg" >
-					<span>安卓测试一号</span>
-					<p>我就不写签名&lt;&nbsp;(ˉ^ˉ)&gt;&nbsp;</p>
-					<button class="layui-btn layui-btn-mini btncolor" ><i class="layui-icon">&#xe654;</i>加好友</button>
-				</li>
-			</div>
-		</div>	
-		<div class="layui-row laypagecenter" id="pagelist" ></div>		  
+        </textarea>
+
+		<!-- <div class="layui-row laypagecenter" id="pagelist" ></div>		   -->
 	</div>
 </div>
-
 </body>
 </html>

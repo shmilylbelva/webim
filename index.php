@@ -60,9 +60,15 @@ require_once 'class/url.php';
                     ,uploadSkin: {
                         url: 'class/doAction.php?action=uploadSkin'
                         , type: 'post' //默认post
-                    }                    
-                    ,systemSkin: {//选择系统皮肤
+                    }           
+                    //选择系统皮肤         
+                    ,systemSkin: {
                         url: 'class/doAction.php?action=systemSkin'
+                        , type: 'post' //默认post
+                    }
+                    //获取推荐好友
+                    ,getRecommend:{
+                        url: 'class/doAction.php?action=find'
                         , type: 'post' //默认post
                     }
                     , isAudio: false //开启聊天工具栏音频
@@ -74,7 +80,7 @@ require_once 'class/url.php';
                     //         , title: '代码'
                     //         , icon: '&#xe64e;'
                     //     }]
-                    ,title: 'WebIM' 
+                    ,title: '国善' 
                     ,copyright:true
                     , initSkin: '1.jpg' //1-5 设置初始背景
                     // , initSkin: '3.jpg' //1-5 设置初始背景
@@ -84,5 +90,5 @@ require_once 'class/url.php';
                     , chatLog: layui.cache.dir + 'css/modules/layim/html/chatLog.html' //聊天记录页面地址，若不开启，剔除该项即可
                 });  
             });
-        </script>        
+        </script>  
 </html>

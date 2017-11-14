@@ -2,7 +2,7 @@
     var contextMenu = layui.contextMenu;
     var $ = layui.jquery;
     var layer = layui.layer;
-
+    var cachedata = layui.layim.cache();  
     var conf = {
         uid: 0, //
         key: '', //
@@ -20,7 +20,6 @@
         apiUrl: WebIM.config.apiURL,
         isAutoLogin: true
     }); 
-    var cachedata = layui.layim.cache();  
     var socket = {
         config: function (options) {
             conf = $.extend(conf, options); //把layim继承出去，方便在register中使用
@@ -248,17 +247,80 @@
                 },   //收到视频消息
                 onPresence: function ( message ) {//监听对方的添加或者删除好友请求，并做相应的处理。
                     if (message.type == 'unsubscribe') {
-                        conf.layim.removeList({//从对方的列表删除
+                        conf.layim.removeList({//从我的列表删除
                           type: 'friend' //或者group
                           ,id: message.from //好友或者群组ID
                         }); 
-                        im.removeHistory({//从对方的历史列表删除
+                        im.removeHistory({//从我的列表删除
                           type: 'friend' //或者group
                           ,id: username //好友或者群组ID
                         })                        
-                    };
+                    }else if(message.type =='subscribe'){//收到添加请求
+                        // if (message.to == cachedata.mine.id) {//确认添加请求的操作
+                            conf.layim.msgbox(1);
+                            
+                            var audio = document.createElement("audio");
+                            audio.src = layui.cache.dir+'css/modules/layim/voice/'+ cachedata.base.voice;
+                            audio.play(); //消息提示音
+                            $.get('class/doAction.php?action=get_one_user_data',{memberIdx:message.from},function(res){
+                                var data = eval('(' + res + ')');
+                                conf.layim.setFriendGroup({
+                                    type: 'friend'
+                                    ,username: data.data.memberName || [] //好友昵称，若申请加群，参数为：groupname
+                                    ,avatar: './uploads/person/'+message.from +'.jpg'//头像
+                                    ,group: cachedata.friend //获取好友列表数据
+                                    ,submit: function(group, index){
+                                        conn.subscribed({//同意添加后通知对方
+                                          to: message.from,
+                                          message : 'Success'
+                                        });
+                                        layer.close(index);
+                                        //同意后，将好友追加到主面板
+                                        conf.layim.addList({
+                                            type: 'friend' //列表类型，只支持friend和group两种
+                                            ,avatar: './uploads/person/'+message.from +'.jpg' //好友头像
+                                            ,username: data.data.memberName || [] //好友昵称
+                                            ,groupid: 1 //所在的分组id
+                                            ,id: data.data.memberIdx || [] //好友id
+                                            ,sign: data.data.signature || [] //好友签名
+                                        });
+                                        ext.init();//更新右键点击事件 
+                                    }
+                                }); 
+                            })                            
+                        // }
+                        
+                    }else if(message.type =='subscribed'){//对方通过了你的好友请求
+                        if (message.to == cachedata.mine.id && message.status =='Success') {
+                            conf.layim.msgbox(1);
+                            // conf.layim.voice();//消息提示音
+                            $.get('class/doAction.php?action=get_one_user_data',{memberIdx:message.from},function(res){
+                                var data = eval('(' + res + ')');
+                                layer.msg(data.data.memberName+'已同意你的好友申请');
+                                conf.layim.addList({
+                                    type: 'friend' //列表类型，只支持friend和group两种
+                                    ,avatar: './uploads/person/'+message.from +'.jpg' //好友头像
+                                    ,username: data.data.memberName || [] //好友昵称
+                                    ,groupid: 1 //所在的分组id
+                                    ,id: data.data.memberIdx || [] //好友id
+                                    ,sign: data.data.signature || [] //好友签名
+                                }); 
+                                ext.init();//更新右键点击事件
+                                 
+                            })               
+                        };
+
+                    }
                 },//处理“广播”或“发布-订阅”消息，如联系人订阅请求、处理群组、聊天室被踢解散等消息
-                onRoster: function ( message ) {},         //处理好友申请
+                onRoster: function ( message ) {
+                    if (message[0].subscription == 'to' && message[0].ask == 'subscribe') {
+                        $.get('class/doAction.php?action=get_one_user_data',{memberIdx:message[0].name},function(res){
+                            var data = eval('(' + res + ')');
+                            layer.msg('你申请添加 '+data.data.memberName+' 为好友的消息已发送。请等待对方确认');
+                            
+                        });                             
+                    }                    
+                },         //处理好友申请
                 onInviteMessage: function ( message ) {},  //处理群组邀请
                 onOnline: function () {},                  //本机网络连接成功
                 onOffline: function () {},                 //本机网络掉线
@@ -405,7 +467,56 @@
             if(hisElem.find('li').length === 0){
               hisElem.html(none);
             }        
-        },                            
+        },    
+        addFriend:function(othis){
+            var li = othis.parents('li')
+                    , uid = li.data('uid')
+                    , name = li.data('name');
+            var avatar = './uploads/person/'+uid+'.jpg';
+            var default_avatar = './uploads/empty2.jpg';
+            function IsExist(avatar){ //判断头像是否存在
+                var ImgObj=new Image();
+                ImgObj.src= avatar;
+                 if(ImgObj.fileSize > 0 || (ImgObj.width > 0 && ImgObj.height > 0))
+                 {
+                   return true;
+                 } else {
+                   return false;
+                }
+            }  
+            var isAdd = false;
+            if(cachedata.mine.id == uid){//添加的是自己
+                layer.msg('不能添加自己');
+                return false;
+            }
+            for (i in cachedata.friend[0].list)//是否已经是好友
+            {
+                if (cachedata.friend[0].list[i].id == uid) {isAdd = true;break;}
+            }
+
+            parent.layui.layim.add({//弹出添加好友对话框
+                isAdd: isAdd
+                ,username: name || []
+                ,uid:uid
+                ,avatar: IsExist(avatar)?avatar:default_avatar
+                ,group:  parent.layui.layim.cache().friend || []
+                ,type: 'friend'
+                ,submit: function(group,remark,index){//确认发送添加请求
+                    layer.msg('你申请添加'+name+'为好友的消息已发送。请等待对方确认');
+                    conn.subscribe({
+                        to: uid,
+                        message: remark  
+                    });
+                },function(){
+                    layer.close(index);
+                }
+            });            
+
+        },
+        addGroup:function(othis){
+
+        }                                   
     };
     exports('socket', socket);
+    exports('im', im);
 });

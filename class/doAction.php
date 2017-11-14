@@ -185,7 +185,23 @@ switch ($act) {
         $res['msg'] = "";
         $res['data']['src'] = $type;
         echo  json_encode($res); 
-        break;                       
+        break;    
+    case 'find'://获取默认好友推荐
+        $sql = "select memberIdx,memberName,signature,memberAge,memberSex from tb_person order by rand() limit 16 ";
+        $get_recommend = $PdoMySQL->getAll($sql);        
+        $res['code'] = 0;
+        $res['msg'] = "";
+        $res['data'] = $get_recommend;
+        echo  json_encode($res); 
+        break;     
+    case 'get_one_user_data'://获取默认好友推荐
+        $memberIdx = $_GET['memberIdx'];
+        $user = $PdoMySQL->find($tables, 'memberIdx = "' . $memberIdx . '"','memberIdx,memberName,signature,memberAge,memberSex');       
+        $res['code'] = 0;
+        $res['msg'] = "";
+        $res['data'] = $user;
+        echo  json_encode($res); 
+        break;                            
     default :
         echo '{"code":"9999","status":"n","info":"关键参数传入错误，请返回请求来源网址"}';
         break;
