@@ -8,7 +8,8 @@
 5.修改签名 至服务器
 6.可自定义上传背景皮肤 且保存至服务器
 7.搜索页面（可添加陌生人为好友，不能添加自己或已有好友，添加成功后动态将新好友添加进主面板）
-8.如果你们同时也开发的app也是基于环信的，那么app是可以和web端聊天的，需要注意的是这里只支持一个账户登录一个端，需要多端同时登录首发信息需要到环信申请`增值服务-多设备同步`功能。
+8.消息盒子展示（好友请求 加群请求等）
+9.如果你们同时也开发的app也是基于环信的，那么app是可以和web端聊天的，需要注意的是这里只支持一个账户登录一个端，需要多端同时登录首发信息需要到环信申请`增值服务-多设备同步`功能。
 ##说明 
 >1）因为考虑到需要和app之间进行通信（表情，图片等），环信的表情定义为[/:u]类似的字符而layim则为face[/:u]的字符，为了同时满足两种情况，修改了layim.js的表情相关代码，请知晓
 2） 自定义右键的删除功能借鉴的是layim的删除历史会话
@@ -28,9 +29,11 @@
 
 ![Q自定义右键](http://upload-images.jianshu.io/upload_images/2825702-b4605403545b7e71.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-![添加陌生人为好友](http://upload-images.jianshu.io/upload_images/2825702-59e52e48b042e471.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ![已经是好友不能添加](http://upload-images.jianshu.io/upload_images/2825702-2227b43c6dca4240.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![消息盒子](http://upload-images.jianshu.io/upload_images/2825702-1c403876ecaca756.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+![添加好友](http://upload-images.jianshu.io/upload_images/2825702-e37e634a7b90d123.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![删除好友](http://upload-images.jianshu.io/upload_images/2825702-453f464a0da3bb6a.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 体验地址：test.guoshanchina.com
 
@@ -131,3 +134,6 @@
 内容比较长就不贴出来了，需要源码的朋友可以在这里[下载](https://github.com/shmilylbelva/webim)https://github.com/shmilylbelva/webim,当然最好是star一下，因为我会继续完善该项目的。
 
 【注意】github 上传的代码已去除layim.js，所以下载代码后请在你获取到 layim.js授权后将 layim.js 拖进 static / layui / lay / modules / 文件夹内方可运行。
+
+
+

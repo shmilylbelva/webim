@@ -114,7 +114,7 @@ layui.use([ 'layim','laypage','form','socket',], function(socket){
 				{{#  layui.each(d.data, function(index, item){ }}
 				<div class="layui-col-xs3 layui-find-list">
 					<li layim-event="add" data-type="friend" data-index="0" data-uid="{{ item.memberIdx }}" data-name="{{item.memberName}}">
-						<img src="../../../../../../uploads/person/{{item.memberIdx}}.jpg " onerror="javascript:this.src='../../../../../../uploads/empty2.jpg'" >
+						<img src="../../../../../../uploads/person/{{item.memberIdx}}.jpg " onerror="javascript:this.src='../../../../../../uploads/person/empty2.jpg'" >
 						<span>{{item.memberName}}({{item.memberIdx}})</span>
 						<p>{{item.signature}}  {{#  if(item.signature == ''){ }}我很懒，懒得写签名{{#  } }} </p>
 						<button class="layui-btn layui-btn-mini btncolor" data-type="friend"><i class="layui-icon">&#xe654;</i>加好友</button>

@@ -71,6 +71,11 @@ require_once 'class/url.php';
                         url: 'class/doAction.php?action=find'
                         , type: 'post' //默认post
                     }
+                    //获取系统消息
+                    ,getMsgBox:{
+                        url: 'class/doAction.php?action=getMsgBox'
+                        , type: 'get' //默认post
+                    }                    
                     , isAudio: false //开启聊天工具栏音频
                     , isVideo: false //开启聊天工具栏视频
 

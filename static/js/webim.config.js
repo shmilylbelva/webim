@@ -18,7 +18,7 @@ WebIM.config = {
     /*
      * Application AppKey
      */
-    appkey: '1199170801115017#layim',
+    appkey: 'XXXXXXXXXXXX#XXXXXXX',//修改为自己的
 
     /*
      * Whether to use wss
