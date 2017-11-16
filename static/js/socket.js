@@ -255,7 +255,8 @@
                         im.removeHistory({//从我的列表删除
                           type: 'friend' //或者group
                           ,id: username //好友或者群组ID
-                        })                        
+                        });
+                        parent.location.reload();                    
                     }else if(message.type =='subscribe'){//收到添加请求
                         im.audio('新');                                               
                     }else if(message.type =='subscribed'){//对方通过了你的好友请求
@@ -278,7 +279,6 @@
                         };
 
                     }else if (message.type == 'unsubscribed') {//拒绝好友申请
-                        console.log(message);
                         if (message.to == cachedata.mine.id && message.status =='rejectAddFriend') {
                             im.audio('新');          
                         };
@@ -391,7 +391,8 @@
                     im.removeHistory({//从我的历史列表删除
                         type: 'friend' //或者group
                         ,id: username //好友或者群组ID
-                    })
+                    });
+                    parent.location.reload();
                 },
                 error: function () { 
                     console.log('removeFriends faild');
@@ -414,7 +415,7 @@
                         type: 'group' //或者group
                         ,id: roomId //好友或者群组ID
                     })                    
-                    
+                    parent.location.reload();
                 },
                 error: function () {
                     console.log('群主不能离开/Leave room faild');
@@ -479,13 +480,13 @@
                 ,group:  parent.layui.layim.cache().friend || []
                 ,type: 'friend'
                 ,submit: function(group,remark,index){//确认发送添加请求
-                    conn.subscribe({
-                        to: uid,
-                        message: remark  
-                    });
                     $.get('class/doAction.php?action=add_msg', {to: uid,msgType:1,remark:remark}, function (res) {
                         var data = eval('(' + res + ')');
                         if (data.code == 0) {
+                            conn.subscribe({
+                                to: uid,
+                                message: remark  
+                            });                            
                             layer.msg('你申请添加'+name+'为好友的消息已发送。请等待对方确认');
                         }else{
                             layer.msg('你申请添加'+name+'为好友的消息发送失败。请刷新浏览器后重试');
@@ -523,11 +524,7 @@
                     , username: username//用户名称或群组名称
                     , avatar: im['IsExist'].call(this, avatar)?avatar:default_avatar
                     , group: parent.layui.layim.cache().friend //获取好友分组数据
-                    , submit: function (group, index) {
-                        conn.subscribed({//同意添加后通知对方
-                          to: uid,
-                          message : 'Success'
-                        }); 
+                    , submit: function (group, index) { 
                         $.get('class/doAction.php?action=modify_msg', {msgIdx: msgIdx,msgType:msgType,status:status}, function (res) {
                             var data = eval('(' + res + ')');
                             if (data.code == 0) {
@@ -549,10 +546,14 @@
                                         , id: uid //群ID
                                     });
                                 }
+                                conn.subscribed({//同意添加后通知对方
+                                  to: uid,
+                                  message : 'Success'
+                                });                                
                                 parent.layer.close(index);
                                 othis.parent().html('已同意');
                                 parent.location.reload();
-                                ext.init();//更新右键点击事件                             
+                                ext.init();//更新右键点击事件                          
                             }else{
                                 console.log('添加失败');
                             }
@@ -560,14 +561,19 @@
                         layer.close(index);
                     }
                 }); 
-            }else{
-                conn.unsubscribed({
-                  to: uid,
-                  message : 'rejectAddFriend'
+            }else{              
+                $.get('class/doAction.php?action=modify_msg', {msgIdx: msgIdx,msgType:msgType,status:status}, function (res) {
+                    var data = eval('(' + res + ')');
+                    if (data.code == 0) {
+                        conn.unsubscribed({
+                          to: uid,
+                          message : 'rejectAddFriend'
+                        });  
+                        othis.parent().html('<em>已拒绝</em>');                        
+                    }
+                    layer.close(layer.index);
                 });                
-                $.get('class/doAction.php?action=modify_msg', {msgIdx: msgIdx,msgType:msgType,status:status}, function (res) {});                
-                layer.close(layer.index);
-                othis.parent().html('<em>已拒绝</em>');
+
             }
 
         }                          

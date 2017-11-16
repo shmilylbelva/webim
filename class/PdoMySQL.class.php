@@ -181,7 +181,7 @@ class PdoMySQL {
     public static function update($data, $table, $where = null, $order = null, $limit = 0) {
         $sets = '';
         foreach ($data as $key => $val) {
-            $sets.=$key . "='" . $val . "',";
+            $sets.="`".$key . "` ='" . $val . "',";
         }
         //echo $sets;
         $sets = rtrim($sets, ',');

@@ -9,7 +9,7 @@ $PdoMySQL = new PdoMySQL;
 
 #执行动作获取
 $act = empty($_GET['action']) ? null : $_GET['action'];
-$BASEURL = 'http://a1.easemob.com/XXXXXXXXXXXXXX/XXXXXX/';
+$BASEURL = 'http://a1.easemob.com/XXXXX/XXXXX/';
 $APIURL = '../uploads/';
 $tables = 'tb_person';
 $tb_skin = 'tb_skin';
@@ -229,7 +229,7 @@ switch ($act) {
         $sql_msg = "select * from tb_msg where (`to` = ".$memberIdx ." OR `from` = ".$memberIdx." ) ORDER BY  time DESC  limit ".$select_from. ','.$rows;
         $msgBox = $PdoMySQL->getAll($sql_msg); 
         foreach ($msgBox as $key => &$value) {
-            if (($value['msgType'] == ADD_USER_MSG || $value['msgType'] == ADD_GROUP_MSG || $value['msgType'] == ALLUSER_SYS ) && $value['to'] == $memberIdx) {//收到加好友消息（被添加者接收消息）收到加群消息（群主接收消息）
+            if (($value['msgType'] == ADD_USER_MSG || $value['msgType'] == ADD_USER_SYS || $value['msgType'] == ADD_GROUP_MSG || $value['msgType'] == ALLUSER_SYS ) && $value['to'] == $memberIdx) {//收到加好友消息（被添加者接收消息）收到加群消息（群主接收消息）
                 $userId = $value['from'];
             }; 
             if (($value['msgType'] == ADD_USER_MSG || $value['msgType'] == ADD_USER_SYS || $value['msgType'] == ADD_GROUP_MSG || $value['msgType'] == ADD_GROUP_SYS) && ($value['from'] == $memberIdx )) {//收到系统消息(申请是否通过) 加好友消息（添加者接收消息）加群消息（申请者接收消息）
@@ -252,14 +252,22 @@ switch ($act) {
         echo  json_encode($res); 
         break; 
     case 'add_msg'://请求添加
-        $data['msgType'] = $update['msgType'] = $_GET['msgType'];
+        $data['msgType'] = $_GET['msgType'];
         $data['from'] = $_SESSION['info']['id'];        
         $data['to'] = $_GET['to'];
-        $data['remark'] = $update['remark'] = $_GET['remark'];
-        $data['sendTime'] = $data['time'] = $update['sendTime'] = $update['time'] = time();
-        $msgIdx = $PdoMySQL->find($tb_msg, '`to` = "'.$data['to'].'" AND `from` = "' . $data['from'] . '"', 'msgIdx'); //发出的申请是否已存在       
+        $data['remark'] = $_GET['remark'];
+        $data['sendTime'] = $data['time'] = time();
+        $data['status'] = 1;
+        $msgIdx = $PdoMySQL->find($tb_msg, '( `to` = "'.$data['to'].'" AND `from` = "' . $data['from'] . '") OR ( `to` = "'.$data['from'].'" AND `from` = "' . $data['to'] . '")', 'msgIdx'); //发出的申请是否已存在            
+        if (!$data['to'] || !$data['from']) {
+            $res['code'] = -1;
+            $res['msg'] = "";
+            $res['data'] = -1;
+            echo  json_encode($res); 
+            exit();
+        }
         if ($msgIdx['msgIdx']) {
-            $success = $PdoMySQL->update($update,$tb_msg,'msgIdx = "' . $msgIdx['msgIdx'] . '"');
+            $success = $PdoMySQL->update($data,$tb_msg,'msgIdx = "' . $msgIdx['msgIdx'] . '"');
         }else{
             $success = $PdoMySQL->add($data,$tb_msg);
         }
@@ -267,7 +275,7 @@ switch ($act) {
         $res['msg'] = "";
         $res['data'] = $success;
         echo  json_encode($res); 
-        break;      
+        break; 
     case 'set_allread'://系统消息全部设置为已读
         $memberIdx = $_SESSION['info']['id'] ;
         $sql_msg = "select msgIdx,status from tb_msg where  ( `from` = ".$memberIdx." AND ( `status` = ".AGREE_BY_TO." OR `status` = ".DISAGREE_BY_TO." ) ) ";

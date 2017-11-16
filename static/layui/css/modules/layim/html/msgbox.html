@@ -75,7 +75,7 @@
                         <li class="layim-msgbox-system">
                             <p><em>系统：</em><b>{{ item.username }}</b>
                             {{# if(item.status == 2 || item.status == 4){ }}
-                            已同意你的好友申请 <button class="layui-btn layui-btn-mini btncolor chat" data-type="friend" data-uid="{{item.to}}">发起会话</button>
+                            已同意你的好友申请 <button class="layui-btn layui-btn-mini btncolor chat" data-name="{{ item.username }}" data-chattype="friend" data-type="chat" data-uid="{{item.to}}">发起会话</button>
                             {{# }else{ }}
                             已拒绝你的好友申请
                             {{# } }}
@@ -91,12 +91,12 @@
                             <span>{{ item.sendTime }}</span>
                           </p>
                           <p class="layim-msgbox-content">
-                            {{# if(item.msgType == 1){ }} 
                             申请添加你为好友
-                            {{# }else{ }}
-                            申请进群
-                            {{# } }}                             
-                            <span>{{ item.remark ? '附言: '+item.remark : '' }}</span> <button class="layui-btn layui-btn-mini btncolor chat" data-type="friend" data-uid="{{item.from}}">发起会话</button>
+                            <span>{{ item.remark ? '附言: '+item.remark : '' }}</span> 
+                            {{# if(item.status == 2 || item.status == 4){ }}
+                            <button class="layui-btn layui-btn-mini btncolor chat" data-name="{{ item.username }}" data-chattype="friend" data-type="chat" data-uid="{{item.from}}">发起会话</button> 
+                            {{# } }}  
+
                           </p>
                           <p class="layim-msgbox-btn">
                             {{# if(item.status == 2 || item.status == 4){ }}
@@ -116,7 +116,7 @@
                         <li class="layim-msgbox-system">
                             <p><em>系统：</em><b>{{ item.username }}</b>
                             {{# if(item.status == 2 || item.status == 4){ }}
-                            已同意你的加群申请 <button class="layui-btn layui-btn-mini btncolor chat" data-type="group" data-uid="{{item.to}}">发起会话</button>
+                            已同意你的加群申请 <button class="layui-btn layui-btn-mini btncolor chat" data-name="{{ item.username }}" data-chattype="group" data-type="chat" data-uid="{{item.to}}">发起会话</button>
                             {{# }else{ }}
                             已拒绝你的加群申请
                             {{# } }}
@@ -216,7 +216,16 @@ var formatDate = function (now) {
             layer.confirm('确定拒绝吗？', function (index) {
                 parent.layui.im.receiveAddFriendGroup(othis,3);//type 1添加好友 3添加群
             });
+        },chat: function(othis){//发起好友聊天
+            var  uid = othis.data('uid'), avatar = "http://test.guoshanchina.com/uploads/person/"+uid+'.jpg';            
+            parent.layui.layim.chat({
+                name: othis.data('name')
+                ,type: othis.data('chattype')
+                ,avatar: avatar
+                ,id: uid
+            });
         }
+
     };
     //打开页面即把系统消息标记为已读
     $(function(){  
@@ -226,7 +235,9 @@ var formatDate = function (now) {
     $('body').on('click', '.layui-btn', function () {
         var othis = $(this), type = othis.data('type');
         active[type] ? active[type].call(this, othis) : '';
-    });
+    });    
+          // layer.close(index);
+   
 });
         </script>
     </body>
