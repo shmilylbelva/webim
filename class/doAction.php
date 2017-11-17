@@ -9,11 +9,12 @@ $PdoMySQL = new PdoMySQL;
 
 #执行动作获取
 $act = empty($_GET['action']) ? null : $_GET['action'];
-$BASEURL = 'http://a1.easemob.com/XXXXX/XXXXX/';
+$BASEURL = 'http://a1.easemob.com/1199170801115017/guoshan/';
 $APIURL = '../uploads/';
 $tables = 'tb_person';
 $tb_skin = 'tb_skin';
 $tb_msg = 'tb_msg';
+$tb_chatlog = 'tb_chatlog';
 const ADD_USER_MSG = 1;//为请求添加用户
 const ADD_USER_SYS = 2;//为系统消息（添加好友
 const ADD_GROUP_MSG = 3;//为请求加群
@@ -306,6 +307,43 @@ switch ($act) {
         $res['msg'] = "";
         echo  json_encode($res); 
         break;          
+    case 'addChatLog'://记录聊天记录
+        $data['to'] = $_GET['to'];       
+        $data['content'] = $_GET['content'];
+        $data['sendTime'] = $_GET['sendTime'];
+        $data['type'] = $_GET['type'];
+        $data['from'] = $_SESSION['info']['id'];
+        if (!$data['from']) {
+            $res['code'] = -1;
+            echo  json_encode($res); 
+            exit();   
+        }
+        $success = $PdoMySQL->add($data,$tb_chatlog);
+        if ($success) {
+            $res['code'] = 0;
+        }else{
+            $res['code'] = -1;
+        }
+        $res['msg'] = "";
+        echo  json_encode($res); 
+        break;      
+    case 'getChatLog'://读取聊天记录
+        $data['to'] = $_GET['to'];       
+        $memberIdx = $_SESSION['info']['id'];
+        if (!$data['from']) {
+            $res['code'] = -1;
+            echo  json_encode($res); 
+            exit();   
+        }
+        $success = $PdoMySQL->add($data,$tb_chatlog);
+        if ($success) {
+            $res['code'] = 0;
+        }else{
+            $res['code'] = -1;
+        }
+        $res['msg'] = "";
+        echo  json_encode($res); 
+        break;         
     default :
         echo '{"code":"9999","status":"n","info":"关键参数传入错误，请返回请求来源网址"}';
         break;

@@ -25,7 +25,6 @@
             conf = $.extend(conf, options); //把layim继承出去，方便在register中使用
             this.register();
             im.init(options.user,options.pwd);
-            // im.connectWithToken(options.user,options.pwd);
         },
         register: function () {
             var layim = conf.layim;
@@ -318,11 +317,6 @@
         },
         //自定义消息，把消息格式定义为layim的消息类型
         defineMessage: function (message,msgType) {
-            if (message.delay) {
-                var timestamp = Date.parse(new Date(message.delay));                   
-            }else{
-                var timestamp = (new Date()).valueOf(); 
-            }     
             var msg;
             switch (msgType) 
             {
@@ -332,39 +326,59 @@
                 case 'File': msg = 'file('+message.url+')['+message.filename+']';break;
                 case 'Video': msg = 'video['+message.video+']';break;
             };
-            for (i in cachedata.friend[0].list)
-            {
-                if (cachedata.friend[0].list[i].id === message.from) {var username = cachedata.friend[0].list[i].username}
-            }
             if (message.type == 'chat') {
                 var type = 'friend';
                 var id = message.from;
             }else if(message.type == 'groupchat'){
                 var type = 'group';
                 var id = message.to;
-            }          
-            var data = {mine: false,cid: 0,username:username,avatar:"./uploads/person/"+message.from+".jpg",content:msg,id:id,fromid: message.from,timestamp:timestamp,type:type}
-            conf.layim.getMessage(data);
-
+            }               
+            if (message.delay) {//离线消息获取不到本地cachedata用户名称需要从服务器获取
+                $.get('class/doAction.php?action=get_one_user_data', {memberIdx:message.from}, function (res) {
+                    var res_data = eval('(' + res + ')');
+                    if (res_data.code == 0) {
+                        var username = res_data.data.memberName; 
+                        var data = {mine: false,cid: 0,username:username,avatar:"./uploads/person/"+message.from+".jpg",content:msg,id:id,fromid: message.from,timestamp:timestamp,type:type}                                              
+                        conf.layim.getMessage(data);
+                    }
+                });                
+                var timestamp = Date.parse(new Date(message.delay));                   
+            }else{
+                var timestamp = (new Date()).valueOf(); 
+                for (i in cachedata.friend[0].list)
+                { 
+                    if (cachedata.friend[0].list[i].id === message.from) {var username = cachedata.friend[0].list[i].username;}
+                } 
+                conf.layim.getMessage(data);               
+            }         
         }, 
         sendMsg: function (data) {  //根据layim提供的data数据，进行解析
             var id = conn.getUniqueId();
             var content = data.mine.content;
             var msg = new WebIM.message('txt', id);      // 创建文本消息
-            var url = content.replace(/img\[([^\s\[\]]+?)\]/g, function(img){  //转义图片
-              var msg = new WebIM.message('img', id); 
-              return img.replace(/^img/g, '');
-            });  // 生成本地消息id
+            // var url = content.replace(/img\[([^\s\[\]]+?)\]/g, function(img){  //转义图片
+            //   var msg = new WebIM.message('img', id); 
+            //   return img.replace(/^img/g, '');
+            // });  // 生成本地消息id
+            
             msg.set({
                 msg: data.mine.content,   
-                file:url,// 消息内容
                 to: data.to.id,                          // 接收消息对象（用户id）
                 roomType: false,
-                success: function (id, serverMsgId) {
-                    console.log('send private text Success');
+                success: function (id, serverMsgId) {//发送成功则记录信息到服务器
+                    $.get('class/doAction.php?action=addChatLog', {to:data.to.id,content:data.mine.content,sendTime: data.mine.timestamp,type:data.to.type}, function (res) {
+                        var data = eval('(' + res + ')');
+                        if (data.code != 0) {
+                            console.log('message record fail');                       
+                        }
+                        
+                    });
                 },
-                fail: function(e){
-                    console.log("Send private text error");
+                fail: function(e){//发送失败移除发送消息并提示发送失败
+                    var logid = cachedata.local.chatlog[data.to.type+data.to.id];
+                        logid.pop();                 
+                    var timestamp = '.timestamp'+data.mine.timestamp;
+                    $(timestamp).html('<i class="layui-icon" style="color: #F44336;font-size: 20px;float: left;margin-top: 1px;">&#x1007;</i>发送失败 刷新页面试试！');  
                 }
             });
             if (data.to.type == 'group') {
@@ -501,7 +515,7 @@
         addGroup:function(othis){
 
         },
-        receiveAddFriendGroup:function(othis,agree){
+        receiveAddFriendGroup:function(othis,agree){//确认添加好友或群
             var li = othis.parents('li')
                     , uid = li.data('uid')
                     , username = li.data('name')
