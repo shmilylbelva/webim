@@ -75,7 +75,17 @@ require_once 'class/url.php';
                     ,getMsgBox:{
                         url: 'class/doAction.php?action=getMsgBox'
                         , type: 'get' //默认post
-                    }                    
+                    }  
+                    //获取总的记录数
+                    ,getChatLogTotal:{
+                        url: 'class/doAction.php?action=getChatLogTotal'
+                        , type: 'get' //默认post
+                    }                       
+                    //获取历史记录
+                    ,getChatLog:{
+                        url: 'class/doAction.php?action=getChatLog'
+                        , type: 'get' //默认post
+                    }                                       
                     , isAudio: false //开启聊天工具栏音频
                     , isVideo: false //开启聊天工具栏视频
 

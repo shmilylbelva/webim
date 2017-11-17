@@ -326,22 +326,41 @@ switch ($act) {
         }
         $res['msg'] = "";
         echo  json_encode($res); 
-        break;      
-    case 'getChatLog'://读取聊天记录
-        $data['to'] = $_GET['to'];       
+        break; 
+    case 'getChatLogTotal'://获取总的条数
+        $id = $_GET['?id'];//好友/群 id
         $memberIdx = $_SESSION['info']['id'];
-        if (!$data['from']) {
-            $res['code'] = -1;
-            echo  json_encode($res); 
-            exit();   
-        }
-        $success = $PdoMySQL->add($data,$tb_chatlog);
-        if ($success) {
+        $rows = 20;//每页显示数量
+        $sql = "select COUNT(*) as count from tb_chatlog where ((`to` = ".$memberIdx ." AND `from` = ".$id." ) 
+        OR (`to` = ".$id ." AND `from` = ".$memberIdx.") AND status = 1 )";
+        $count = $PdoMySQL->getRow($sql);
+        if ($count) {
             $res['code'] = 0;
         }else{
             $res['code'] = -1;
         }
-        $res['msg'] = "";
+        $res['count'] = "";
+        $res['data']['count'] = $count['count'];
+        $res['data']['limit'] = $rows;
+        echo  json_encode($res);
+        break;         
+    case 'getChatLog'://读取聊天记录
+        $id = $_GET['?id'];//好友/群 id      
+        $page = $_GET['page'] ;//当前页
+        $rows = 20;//每页显示数量
+        $select_from = ($page-1) * $rows;            
+        $memberIdx = $_SESSION['info']['id'];
+        $sql_msg = "select c.*,p1.memberName as fromName,p2.memberName as toName from tb_chatlog as c 
+                    JOIN tb_person as p1 ON c.from = p1.memberIdx JOIN tb_person as p2 ON c.to = p2.memberIdx    where ((c.to = ".$memberIdx ." AND c.from = ".$id." ) 
+        OR (c.to = ".$id ." AND c.from = ".$memberIdx.") AND c.status = 1 ) limit ".$select_from. ','.$rows;
+        $ChatLog = $PdoMySQL->getAll($sql_msg);
+        if ($ChatLog) {
+            $res['code'] = 0;
+        }else{
+            $res['code'] = -1;
+        }
+        $res['count'] = "";
+        $res['data'] = $ChatLog;
         echo  json_encode($res); 
         break;         
     default :
