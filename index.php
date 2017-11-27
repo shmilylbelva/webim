@@ -68,9 +68,19 @@ require_once 'class/url.php';
                     }
                     //获取推荐好友
                     ,getRecommend:{
-                        url: 'class/doAction.php?action=find'
-                        , type: 'post' //默认post
+                        url: 'class/doAction.php?action=getRecommend'
+                        , type: 'get' //默认
                     }
+                    //查找好友
+                    ,findFriendTotal:{
+                        url: 'class/doAction.php?action=findFriendTotal'
+                        , type: 'get' //默认
+                    }                      
+                    //查找好友
+                    ,findFriend:{
+                        url: 'class/doAction.php?action=findFriend'
+                        , type: 'get' //默认
+                    }                    
                     //获取系统消息
                     ,getMsgBox:{
                         url: 'class/doAction.php?action=getMsgBox'
@@ -95,7 +105,7 @@ require_once 'class/url.php';
                     //         , title: '代码'
                     //         , icon: '&#xe64e;'
                     //     }]
-                    ,title: '国善' 
+                    ,title: 'layim' 
                     ,copyright:true
                     , initSkin: '1.jpg' //1-5 设置初始背景
                     // , initSkin: '3.jpg' //1-5 设置初始背景

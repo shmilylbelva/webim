@@ -9,7 +9,7 @@ $PdoMySQL = new PdoMySQL;
 
 #执行动作获取
 $act = empty($_GET['action']) ? null : $_GET['action'];
-$BASEURL = 'http://a1.easemob.com/1199170801115017/guoshan/';
+$BASEURL = 'http://a1.easemob.com/XXXXXXXXXXXXXX/XXX/';
 $APIURL = '../uploads/';
 $tables = 'tb_person';
 $tb_skin = 'tb_skin';
@@ -206,14 +206,52 @@ switch ($act) {
         $res['data']['src'] = $type;
         echo  json_encode($res); 
         break;     
-    case 'find'://获取默认好友推荐
+    case 'getRecommend'://获取默认好友推荐
         $sql = "select memberIdx,memberName,signature,memberAge,memberSex from tb_person order by rand() limit 16 ";
         $get_recommend = $PdoMySQL->getAll($sql);        
         $res['code'] = 0;
         $res['msg'] = "";
         $res['data'] = $get_recommend;
         echo  json_encode($res); 
-        break;     
+        break;    
+    case 'findFriendTotal'://获取总的条数
+        $type = $_GET['type'];
+        $value = $_GET['value'];
+        $rows = 16;//每页显示数量
+        if ($type == 'friend') {//好友
+            $sql = "select COUNT(*) as count from tb_person where (memberIdx LIKE '%{$value}%' OR memberName LIKE '%{$value}%' OR phoneNumber LIKE '%{$value}%' OR emailAddress LIKE '%{$value}%')";
+        }else{
+            $sql = "select COUNT(*) as count from tb_group where (groupIdx LIKE '%{$value}%' OR groupName LIKE '%{$value}%' OR des LIKE '%{$value}%')"; 
+        }
+        $count = $PdoMySQL->getRow($sql);
+        if ($count) {
+            $res['code'] = 0;
+        }else{
+            $res['code'] = -1;
+        }
+        $res['count'] = "";
+        $res['data']['count'] = $count['count'];
+        $res['data']['limit'] = $rows;
+        echo  json_encode($res);
+        break;              
+    case 'findFriend'://查找好友或群
+        $type = $_GET['type'];
+        $value = $_GET['value'];
+        $page = $_GET['page'] ;//当前页
+        $page = $page?$page:1;
+        $rows = 16;//每页显示数量
+        $select_from = ($page-1) * $rows;         
+        if ($type == 'friend') {//好友
+            $sql = "select memberIdx,memberName,signature,memberAge,memberSex from tb_person where (memberIdx LIKE '%{$value}%' OR memberName LIKE '%{$value}%' OR phoneNumber LIKE '%{$value}%' OR emailAddress LIKE '%{$value}%') limit ".$select_from. ','.$rows;
+        }else{
+            $sql = "select groupIdx,groupName,des,number from tb_group where (groupIdx LIKE '%{$value}%' OR groupName LIKE '%{$value}%' OR des LIKE '%{$value}%') limit ".$select_from. ','.$rows;  
+        }
+        $get_friend = $PdoMySQL->getAll($sql);        
+        $res['code'] = 0;
+        $res['msg'] = "";
+        $res['data'] = $get_friend;
+        echo  json_encode($res); 
+        break;          
     case 'get_one_user_data'://获取默认好友推荐
         $memberIdx = $_GET['memberIdx'];
         $user = $PdoMySQL->find($tables, 'memberIdx = "' . $memberIdx . '"','memberIdx,memberName,signature,memberAge,memberSex');       
