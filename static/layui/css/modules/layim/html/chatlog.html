@@ -26,9 +26,9 @@ body .layim-chat-main{height: auto;padding-bottom: 45px;}
 <textarea title="消息模版" id="LAY_tpl" style="display:none;">
 {{# layui.each(d.data, function(index, item){
   if(item.from == parent.layui.layim.cache().mine.id){ }}
-    <li class="layim-chat-mine"><div class="layim-chat-user"><img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg"><cite><i>{{ layui.data.date(item.timestamp) }}</i>{{ item.fromName }}</cite></div><div class="layim-chat-text">{{ layui.layim.content(item.content) }}</div></li>
+    <li class="layim-chat-mine"><div class="layim-chat-user"><img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg"><cite><i>{{ item.timestamp }}</i>{{ item.fromName }}</cite></div><div class="layim-chat-text">{{ layui.layim.content(item.content) }}</div></li>
   {{# } else { }}
-    <li><div class="layim-chat-user"><img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg"><cite>{{ item.fromName }}<i>{{ layui.data.date(item.timestamp) }}</i></cite></div><div class="layim-chat-text">{{ layui.layim.content(item.content) }}</div></li>
+    <li><div class="layim-chat-user"><img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg"><cite>{{ item.fromName }}<i>{{item.timestamp }}</i></cite></div><div class="layim-chat-text">{{ layui.layim.content(item.content) }}</div></li>
   {{# }
 }); }}
 </textarea>
@@ -58,6 +58,10 @@ layui.use(['layim', 'laypage','socket'], function (socket) {
   //开始请求聊天记录
   ,param =  location.search; //获得URL参数。该窗口url会携带会话id和type，他们是你请求聊天记录的重要凭据
   var url = '../../../../../../'+cachedata.base.getChatLogTotal.url || {}; 
+  function formatDate(nS) { 
+   return new Date(parseInt(nS)).toLocaleString();   
+  }
+
   $.get(url+'&'+param, function(data){
     var res = eval('(' + data + ')');
     if(res.code != 0){
@@ -86,6 +90,9 @@ layui.use(['layim', 'laypage','socket'], function (socket) {
             if(res.code != 0){
                 return layer.msg(res.msg);
             }
+            layui.each(res.data, function(index, item){
+                res.data[index]['timestamp'] =  formatDate(item.timestamp);
+            });            
             var html = laytpl(LAY_tpl.value).render({
               data: res.data
             });

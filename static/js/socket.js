@@ -513,7 +513,49 @@
 
         },
         addGroup:function(othis){
+            var li = othis.parents('li')
+                    , uid = li.data('uid')
+                    , name = li.data('name');
+            var avatar = './uploads/person/'+uid+'.jpg';
+            var default_avatar = './uploads/empty2.jpg';
+            var isAdd = false;
+            for (i in cachedata.group)//是否已经加群
+            {
+                if (cachedata.group[i].id == uid) {isAdd = true;break;}
+            }
 
+            parent.layui.layim.add({//弹出添加好友对话框
+                isAdd: isAdd
+                ,groupname: name || []
+                ,uid:uid
+                ,avatar: im['IsExist'].call(this, avatar)?avatar:default_avatar
+                ,group:  parent.layui.layim.cache().friend || []
+                ,type: 'group'
+                ,submit: function(group,remark,index){//确认发送添加请求
+                    $.get('class/doAction.php?action=add_msg', {to: uid,msgType:3,remark:remark}, function (res) {
+                        var data = eval('(' + res + ')');
+                        if (data.code == 0) {
+                            var options = {
+                                    groupId: uid,
+                                    success: function(resp) {
+                                        console.log("Response: ", resp);
+                                    },
+                                    error: function(e) {
+                                        if(e.type == 17){
+                                            console.log("您已经在这个群组里了");
+                                        }
+                                    }
+                                };
+                            conn.joinGroup(options);                          
+                            layer.msg('你申请加入'+name+'的消息已发送。请等待管理员确认');
+                        }else{
+                            layer.msg('你申请加入'+name+'的消息发送失败。请刷新浏览器后重试');
+                        }
+                    });
+                },function(){
+                    layer.close(index);
+                }
+            });  
         },
         receiveAddFriendGroup:function(othis,agree){//确认添加好友或群
             var li = othis.parents('li')

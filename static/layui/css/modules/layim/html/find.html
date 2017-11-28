@@ -85,7 +85,7 @@ layui.use([ 'layim','laypage','form','socket',], function(socket){
 			$('#LAY_view').html(html);	
 	  	});		
 	}
-    $('body').on('click', '.layui-btn', function () {//添加好友
+    $('body').on('click', '.add', function () {//添加好友
         var othis = $(this), type = othis.data('type');
         type == 'friend' ? parent.layui.im.addFriend(othis) : parent.layui.im.addGroup(othis);
     });
@@ -175,7 +175,7 @@ layui.use([ 'layim','laypage','form','socket',], function(socket){
 							<img src="../../../../../../uploads/person/{{item.memberIdx}}.jpg " onerror="javascript:this.src='../../../../../../uploads/person/empty2.jpg'" >
 							<span>{{item.memberName}}({{item.memberIdx}})</span>
 							<p>{{item.signature}}  {{#  if(item.signature == ''){ }}我很懒，懒得写签名{{#  } }} </p>
-							<button class="layui-btn layui-btn-mini btncolor" data-type="friend"><i class="layui-icon">&#xe654;</i>加好友</button>
+							<button class="layui-btn layui-btn-mini btncolor add" data-type="friend"><i class="layui-icon">&#xe654;</i>加好友</button>
 						</li>
 					</div>
 					{{#  }); }}
@@ -186,7 +186,7 @@ layui.use([ 'layim','laypage','form','socket',], function(socket){
 							<img src="../../../../../../uploads/person/{{item.groupIdx}}.jpg " onerror="javascript:this.src='../../../../../../uploads/person/empty2.jpg'" >
 							<span>{{item.groupName}}({{item.groupIdx}})</span>
 							<p>{{item.des}}  {{#  if(item.des == ''){ }}无{{#  } }} </p>
-							<button class="layui-btn layui-btn-mini btncolor" data-type="group"><i class="layui-icon">&#xe654;</i>加群</button>
+							<button class="layui-btn layui-btn-mini btncolor add" data-type="group"><i class="layui-icon">&#xe654;</i>加群</button>
 						</li>
 					</div>
 					{{#  }); }}

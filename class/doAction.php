@@ -385,12 +385,15 @@ switch ($act) {
     case 'getChatLog'://读取聊天记录
         $id = $_GET['?id'];//好友/群 id      
         $page = $_GET['page'] ;//当前页
+        $type = $_GET['type'] ;//当前页
         $rows = 20;//每页显示数量
         $select_from = ($page-1) * $rows;            
         $memberIdx = $_SESSION['info']['id'];
-        $sql_msg = "select c.*,p1.memberName as fromName,p2.memberName as toName from tb_chatlog as c 
-                    JOIN tb_person as p1 ON c.from = p1.memberIdx JOIN tb_person as p2 ON c.to = p2.memberIdx    where ((c.to = ".$memberIdx ." AND c.from = ".$id." ) 
-        OR (c.to = ".$id ." AND c.from = ".$memberIdx.") AND c.status = 1 ) limit ".$select_from. ','.$rows;
+        if ($type == 'friend') {
+            $sql_msg = "select c.content,c.sendTime AS timestamp,c.from,p1.memberName as fromName,p2.memberName as toName from tb_chatlog as c JOIN tb_person as p1 ON c.from = p1.memberIdx LEFT JOIN tb_person as p2 ON c.to = p2.memberIdx    where ((c.to = ".$memberIdx ." AND c.from = ".$id." ) OR (c.to = ".$id ." AND c.from = ".$memberIdx.") AND c.status = 1 ) limit ".$select_from. ','.$rows;
+        }elseif($type == 'group'){
+            $sql_msg = "select c.content,c.sendTime AS timestamp,c.from,p1.memberName as fromName,p2.groupName as toName from tb_chatlog as c JOIN tb_person as p1 ON c.from = p1.memberIdx LEFT JOIN tb_group as p2 ON c.to = p2.groupIdx where c.to = '".$id."' limit ".$select_from. ','.$rows;
+        }
         $ChatLog = $PdoMySQL->getAll($sql_msg);
         if ($ChatLog) {
             $res['code'] = 0;
@@ -400,7 +403,7 @@ switch ($act) {
         $res['count'] = "";
         $res['data'] = $ChatLog;
         echo  json_encode($res); 
-        break;         
+        break;    
     default :
         echo '{"code":"9999","status":"n","info":"关键参数传入错误，请返回请求来源网址"}';
         break;
