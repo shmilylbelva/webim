@@ -197,6 +197,7 @@
                 },  
                 onClosed: function ( message ) {},         //连接关闭回调
                 onTextMessage: function ( message ) {
+                    console.log(message);
                     im.defineMessage(message,'Text');
                 },    //收到文本消息
                 onEmojiMessage: function ( message ) {},   //收到表情消息
@@ -338,8 +339,8 @@
                     var res_data = eval('(' + res + ')');
                     if (res_data.code == 0) {
                         var username = res_data.data.memberName; 
-                        var data = {mine: false,cid: 0,username:username,avatar:"./uploads/person/"+message.from+".jpg",content:msg,id:id,fromid: message.from,timestamp:timestamp,type:type}                                              
-                        conf.layim.getMessage(data);
+                        // var data = {mine: false,cid: 0,username:username,avatar:"./uploads/person/"+message.from+".jpg",content:msg,id:id,fromid: message.from,timestamp:timestamp,type:type}                                              
+                        // conf.layim.getMessage(data);
                     }
                 });                
                 var timestamp = Date.parse(new Date(message.delay));                   
@@ -348,9 +349,11 @@
                 for (i in cachedata.friend[0].list)
                 { 
                     if (cachedata.friend[0].list[i].id === message.from) {var username = cachedata.friend[0].list[i].username;}
-                } 
-                conf.layim.getMessage(data);               
-            }         
+                }                
+            }  
+                var data = {mine: false,cid: 0,username:username,avatar:"./uploads/person/"+message.from+".jpg",content:msg,id:id,fromid: message.from,timestamp:timestamp,type:type}
+                conf.layim.getMessage(data);            
+
         }, 
         sendMsg: function (data) {  //根据layim提供的data数据，进行解析
             var id = conn.getUniqueId();
