@@ -13,7 +13,19 @@ require_once 'class/url.php';
     </head>
 
     <body data-token="<?php echo $uinfo['id']; ?>" data-rykey="<?php echo $uinfo['easemob_token']; ?>">
-
+    <pre>
+    已实现功能:
+        1.好友/群内的文字、表情、图片、文件 在线/离线消息发送和接收。 
+        2.查看群员列表。 
+        3.面板内快速查找。 
+        4.面板右键自定义事件 
+        5.修改签名
+        6.自定义上传背景皮肤
+        7.搜索好友/群
+        8.添加好友/群
+        9.消息盒子展示
+        体验完整功能请移步<a href="https://github.com/shmilylbelva/webim" style="color: red">这里</a>
+    </pre>        
     </body>
         <script type='text/javascript' src='static/js/webim.config.js'></script>
         <script type='text/javascript' src='static/js/strophe-1.2.8.min.js'></script>
@@ -105,7 +117,7 @@ require_once 'class/url.php';
                     //         , title: '代码'
                     //         , icon: '&#xe64e;'
                     //     }]
-                    ,title: 'layim' 
+                    ,title: '国善' 
                     ,copyright:true
                     , initSkin: '1.jpg' //1-5 设置初始背景
                     // , initSkin: '3.jpg' //1-5 设置初始背景

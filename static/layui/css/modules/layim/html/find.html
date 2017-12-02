@@ -87,7 +87,8 @@ layui.use([ 'layim','laypage','form','socket',], function(socket){
 	}
     $('body').on('click', '.add', function () {//添加好友
         var othis = $(this), type = othis.data('type');
-        type == 'friend' ? parent.layui.im.addFriend(othis) : parent.layui.im.addGroup(othis);
+        parent.layui.im.addFriendGroup(othis,type);
+        // type == 'friend' ? parent.layui.im.addFriend(othis,type) : parent.layui.im.addGroup(othis);        
     });
 
     $('body').on('click', '.back', function () {//返回推荐好友
@@ -183,7 +184,7 @@ layui.use([ 'layim','laypage','form','socket',], function(socket){
 					{{#  layui.each(d.data, function(index, item){ }}
 					<div class="layui-col-xs3 layui-find-list">
 						<li layim-event="add" data-type="group" data-index="0" data-uid="{{ item.groupIdx }}" data-name="{{item.groupName}}">
-							<img src="../../../../../../uploads/person/{{item.groupIdx}}.jpg " onerror="javascript:this.src='../../../../../../uploads/person/empty2.jpg'" >
+							<img src="../../../../../../uploads/person/{{item.groupIdx}}.jpg " onerror="javascript:this.src='../../../../../../uploads/person/empty1.jpg'" >
 							<span>{{item.groupName}}({{item.groupIdx}})</span>
 							<p>{{item.des}}  {{#  if(item.des == ''){ }}无{{#  } }} </p>
 							<button class="layui-btn layui-btn-mini btncolor add" data-type="group"><i class="layui-icon">&#xe654;</i>加群</button>

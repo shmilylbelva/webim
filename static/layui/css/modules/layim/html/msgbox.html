@@ -28,17 +28,17 @@
                     {{# if(item.from == d.memberIdx){ }}
                         <li data-uid="{{ item.to }}">
                           <a href="javascript:void(0);" target="_blank">
-                            <img src="http://test.guoshanchina.com/uploads/person/{{ item.to }}.jpg" class="layui-circle layim-msgbox-avatar">
+                            <img src="http://test.guoshanchina.com/uploads/person/{{ item.to }}.jpg" class="layui-circle layim-msgbox-avatar" onerror="javascript:this.src='../../../../../../uploads/person/{{# if(item.msgType == 1){ }}empty2.jpg{{# }else{ }}empty1.jpg{{# } }} '">
                           </a>
                           <p class="layim-msgbox-user">
-                            <a href="javascript:void(0);" target="_blank"><b>{{ item.username||'' }}</b></a>
+                            <a href="javascript:void(0);" target="_blank"><b>{{ item.groupName||'' }}</b></a>
                             <span>{{ item.sendTime }}</span>
                           </p>
                           <p class="layim-msgbox-content">
                             {{# if(item.msgType == 1){ }} 
                             申请添加对方为好友
                             {{# }else{ }}
-                            申请加群
+                            申请加入该群
                             {{# } }}                            
                             <span>{{ item.remark ? '附言: '+item.remark : '' }}</span>
                           </p>
@@ -47,9 +47,9 @@
                           </p>
                         </li>
                     {{# }else{ }}
-                        <li data-uid="{{ item.from }}" data-id="{{ item.msgIdx }}" data-type="{{item.msgType}}" data-name="{{ item.username }}" data-signature="{{ item.signature }}">
+                        <li data-uid="{{ item.from }}" data-id="{{ item.msgIdx }}" data-type="{{item.msgType}}" data-name="{{ item.username }}" {{# if(item.groupIdx){ }} data-groupidx="{{ item.groupIdx||'' }}"  data-group="{{ item.groupName||'' }}" {{#} }} data-signature="{{ item.signature }}">
                           <a href="javascript:void(0);" target="_blank">
-                            <img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg" class="layui-circle layim-msgbox-avatar">
+                            <img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg" class="layui-circle layim-msgbox-avatar" onerror="javascript:this.src='../../../../../../uploads/person/{{# if(item.msgType == 1){ }}empty2.jpg{{# }else{ }}empty1.jpg{{# } }} '">
                           </a>
                           <p class="layim-msgbox-user">
                             <a href="javascript:void(0);" target="_blank"><b>{{ item.username||'' }}</b></a>
@@ -59,7 +59,7 @@
                             {{# if(item.msgType == 1){ }} 
                             申请添加你为好友
                             {{# }else{ }}
-                            申请进群
+                            申请加入 {{ item.groupName||'' }} 群
                             {{# } }}                             
                             <span>{{ item.remark ? '附言: '+item.remark : '' }}</span>
                           </p>
@@ -84,7 +84,7 @@
                     {{# }else{ }}
                         <li>
                           <a href="javascript:void(0);" target="_blank">
-                            <img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg" class="layui-circle layim-msgbox-avatar">
+                            <img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg" class="layui-circle layim-msgbox-avatar" onerror="javascript:this.src='../../../../../../uploads/person/empty2.jpg'">
                           </a>
                           <p class="layim-msgbox-user">
                             <a href="javascript:void(0);" target="_blank"><b>{{ item.username||'' }}</b></a>
@@ -111,24 +111,24 @@
                     {{# } }} 
 
                 {{# }else if(item.msgType == 4){ }}
-
                     {{# if(item.from == d.memberIdx){ }}
                         <li class="layim-msgbox-system">
-                            <p><em>系统：</em><b>{{ item.username }}</b>
+                            <p><em>系统：</em> 管理员 {{ item.handle }} 
                             {{# if(item.status == 2 || item.status == 4){ }}
-                            已同意你的加群申请 <button class="layui-btn layui-btn-mini btncolor chat" data-name="{{ item.username }}" data-chattype="group" data-type="chat" data-uid="{{item.to}}">发起会话</button>
+                            已同意你加入群 <b>{{ item.groupName }}</b> <button class="layui-btn layui-btn-mini btncolor chat" data-name="{{ item.groupName }}" data-chattype="group" data-type="chat" data-uid="{{item.to}}">发起会话</button>
                             {{# }else{ }}
-                            已拒绝你的加群申请
+                            已拒绝你加入群 <b>{{ item.groupName }}</b>
                             {{# } }}
                             <span>{{ item.readTime }}</span></p>
                         </li>
                     {{# }else{ }}
                         <li class="layim-msgbox-system">
                             <p><em>系统：</em>
+                            管理员{{ item.handle }}
                             {{# if(item.status == 2 || item.status == 4){ }}
-                            你已同意 <b>{{ item.username }}</b> 的加群请求 
+                            已同意 <b>{{ item.username }}</b> 加入群 <b>{{ item.groupName }}</b> 
                             {{# }else{ }}
-                            你已拒绝 <b>{{ item.username }}</b> 的加群请求
+                            你已拒绝 <b>{{ item.username }}</b> 加入群 <b>{{ item.groupName }}</b> 
                             {{# } }}
                             <span>{{ item.readTime }}</span></p>
                         </li>

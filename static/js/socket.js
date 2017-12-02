@@ -197,7 +197,6 @@
                 },  
                 onClosed: function ( message ) {},         //连接关闭回调
                 onTextMessage: function ( message ) {
-                    console.log(message);
                     im.defineMessage(message,'Text');
                 },    //收到文本消息
                 onEmojiMessage: function ( message ) {},   //收到表情消息
@@ -247,6 +246,7 @@
                     WebIM.utils.download.call(conn, options);
                 },   //收到视频消息
                 onPresence: function ( message ) {//监听对方的添加或者删除好友请求，并做相应的处理。
+                    console.log(message);
                     if (message.type == 'unsubscribe') {
                         conf.layim.removeList({//从我的列表删除
                           type: 'friend' //或者group
@@ -260,7 +260,7 @@
                     }else if(message.type =='subscribe'){//收到添加请求
                         im.audio('新');                                               
                     }else if(message.type =='subscribed'){//对方通过了你的好友请求
-                        
+                        console.log(message);
                         if (message.to == cachedata.mine.id && message.status =='Success') {
                             im.audio('新');   
                             $.get('class/doAction.php?action=get_one_user_data',{memberIdx:message.from},function(res){
@@ -274,7 +274,6 @@
                                     ,sign: data.data.signature || [] //好友签名
                                 }); 
                                 ext.init();//更新右键点击事件
-                                 
                             })               
                         };
 
@@ -282,9 +281,47 @@
                         if (message.to == cachedata.mine.id && message.status =='rejectAddFriend') {
                             im.audio('新');          
                         };
+                    }else if(message.type == 'joinGroupNotifications'){//群管理收到加群申请 将该管理员加入消息组
+                        $.get('class/doAction.php?action=add_admin_msg', {from: message.from,adminGroup: message.to,to: message.gid}, function (res) {
+                            // var data = eval('(' + res + ')');
+                            // if (data.code == 0) {                             
+                            //     layer.msg('你申请加入'+message.toNick+'的消息已发送。请等待管理员确认');
+                            // }else{
+                            //     layer.msg('你申请加入'+message.toNick+'的消息发送失败。请刷新浏览器后重试');
+                            // }
+                        });                          
+                        im.audio('新');
+                    }else if(message.type == 'memberJoinPublicGroupSuccess'){
+                        // $.get('class/doAction.php?action=get_one_user_data',{memberIdx:message.mid},function(res){
+                            // var data = eval('(' + res + ')');
+                            // conf.layim.addList({
+                            //     type: 'group' //列表类型，只支持friend和group两种
+                            //     ,avatar: './uploads/person/'+message.mid +'.jpg' //好友头像
+                            //     ,groupname: data.data.memberName || [] //好友昵称
+                            //     ,id: message.from //群组id
+                            // }); 
+                        //     ext.init();//更新右键点击事件
+                        // })                         
+                    }else if(message.type == 'joinPublicGroupSuccess'){
+                        im.audio('新');
+                        var options = {
+                            groupId: message.from,
+                            success: function(resp){
+                                conf.layim.addList({
+                                    type: 'group' //列表类型，只支持friend和group两种
+                                    ,avatar: './uploads/person/'+resp.data[0].id +'.jpg' //好友头像
+                                    ,groupname: resp.data[0].name || [] //群名称
+                                    ,id: resp.data[0].id  //群组id
+                                }); 
+                                ext.init();//更新右键点击事件                                
+                            },
+                            error: function(){}
+                        };
+                        conn.getGroupInfo(options);                        
                     }
                 },//处理“广播”或“发布-订阅”消息，如联系人订阅请求、处理群组、聊天室被踢解散等消息
                 onRoster: function ( message ) {
+                    console.log('处理“广播”');
                     if (message[0].subscription == 'to' && message[0].ask == 'subscribe') {
                         $.get('class/doAction.php?action=get_one_user_data',{memberIdx:message[0].name},function(res){
                             var data = eval('(' + res + ')');
@@ -293,7 +330,9 @@
                         });                             
                     }
                 },         //处理好友申请
-                onInviteMessage: function ( message ) {},  //处理群组邀请
+                onInviteMessage: function ( message ) {
+                    console.log('处理群组邀请');
+                },  //处理群组邀请
                 onOnline: function () {},                  //本机网络连接成功
                 onOffline: function () {},                 //本机网络掉线
                 onError: function ( message ) {},          //失败回调
@@ -472,43 +511,72 @@
             audio.src = layui.cache.dir+'css/modules/layim/voice/'+ cachedata.base.voice;
             audio.play(); //消息提示音              
         },
-        addFriend:function(othis){
+        addFriendGroup:function(othis,type){
             var li = othis.parents('li')
                     , uid = li.data('uid')
                     , name = li.data('name');
             var avatar = './uploads/person/'+uid+'.jpg';
-            var default_avatar = './uploads/empty2.jpg';
-
             var isAdd = false;
-            if(cachedata.mine.id == uid){//添加的是自己
-                layer.msg('不能添加自己');
-                return false;
+            if (type == 'friend') {
+                var default_avatar = './uploads/person/empty2.jpg';
+                if(cachedata.mine.id == uid){//添加的是自己
+                    layer.msg('不能添加自己');
+                    return false;
+                }
+                for (i in cachedata.friend[0].list)//是否已经是好友
+                {
+                    if (cachedata.friend[0].list[i].id == uid) {isAdd = true;break;}
+                }
+            }else{
+                var default_avatar = './uploads/person/empty1.jpg';
+                for (i in cachedata.group)//是否已经加群
+                {
+                    if (cachedata.group[i].id == uid) {isAdd = true;break;}
+                }
             }
-            for (i in cachedata.friend[0].list)//是否已经是好友
-            {
-                if (cachedata.friend[0].list[i].id == uid) {isAdd = true;break;}
-            }
-
             parent.layui.layim.add({//弹出添加好友对话框
                 isAdd: isAdd
                 ,username: name || []
                 ,uid:uid
                 ,avatar: im['IsExist'].call(this, avatar)?avatar:default_avatar
                 ,group:  parent.layui.layim.cache().friend || []
-                ,type: 'friend'
+                ,type: type
                 ,submit: function(group,remark,index){//确认发送添加请求
-                    $.get('class/doAction.php?action=add_msg', {to: uid,msgType:1,remark:remark}, function (res) {
-                        var data = eval('(' + res + ')');
-                        if (data.code == 0) {
-                            conn.subscribe({
-                                to: uid,
-                                message: remark  
-                            });                            
-                            layer.msg('你申请添加'+name+'为好友的消息已发送。请等待对方确认');
-                        }else{
-                            layer.msg('你申请添加'+name+'为好友的消息发送失败。请刷新浏览器后重试');
-                        }
-                    });
+                    if (type == 'friend') {
+                        $.get('class/doAction.php?action=add_msg', {to: uid,msgType:1,remark:remark}, function (res) {
+                            var data = eval('(' + res + ')');
+                            if (data.code == 0) {
+                                conn.subscribe({
+                                    to: uid,
+                                    message: remark  
+                                });                            
+                                layer.msg('你申请添加'+name+'为好友的消息已发送。请等待对方确认');
+                            }else{
+                                layer.msg('你申请添加'+name+'为好友的消息发送失败。请刷新浏览器后重试');
+                            }
+                        });
+                    }else{
+                        $.get('class/doAction.php?action=add_msg', {to: uid,msgType:3,remark:remark}, function (res) {
+                            var data = eval('(' + res + ')');
+                            if (data.code == 0) {
+                                var options = {
+                                    groupId: uid,
+                                    success: function(resp) {
+                                        // console.log("Response: ", resp);
+                                    },
+                                    error: function(e) {
+                                        if(e.type == 17){
+                                            console.log("您已经在这个群组里了");
+                                        }
+                                    }
+                                };
+                                conn.joinGroup(options);                                
+                                layer.msg('你申请加入'+name+'的消息已发送。请等待管理员确认');
+                            }else{
+                                layer.msg('你申请加入'+name+'的消息发送失败。请刷新浏览器后重试');
+                            }
+                        });                         
+                    }
                 },function(){
                     layer.close(index);
                 }
@@ -520,7 +588,7 @@
                     , uid = li.data('uid')
                     , name = li.data('name');
             var avatar = './uploads/person/'+uid+'.jpg';
-            var default_avatar = './uploads/empty2.jpg';
+            var default_avatar = './uploads/person/empty2.jpg';
             var isAdd = false;
             for (i in cachedata.group)//是否已经加群
             {
@@ -535,21 +603,22 @@
                 ,group:  parent.layui.layim.cache().friend || []
                 ,type: 'group'
                 ,submit: function(group,remark,index){//确认发送添加请求
+                    var options = {
+                            groupId: uid,
+                            success: function(resp) {
+                                console.log("Response: ", resp);
+                            },
+                            error: function(e) {
+                                if(e.type == 17){
+                                    console.log("您已经在这个群组里了");
+                                }
+                            }
+                        };
+                    conn.joinGroup(options);                     
                     $.get('class/doAction.php?action=add_msg', {to: uid,msgType:3,remark:remark}, function (res) {
                         var data = eval('(' + res + ')');
                         if (data.code == 0) {
-                            var options = {
-                                    groupId: uid,
-                                    success: function(resp) {
-                                        console.log("Response: ", resp);
-                                    },
-                                    error: function(e) {
-                                        if(e.type == 17){
-                                            console.log("您已经在这个群组里了");
-                                        }
-                                    }
-                                };
-                            conn.joinGroup(options);                          
+                         
                             layer.msg('你申请加入'+name+'的消息已发送。请等待管理员确认');
                         }else{
                             layer.msg('你申请加入'+name+'的消息发送失败。请刷新浏览器后重试');
@@ -562,33 +631,35 @@
         },
         receiveAddFriendGroup:function(othis,agree){//确认添加好友或群
             var li = othis.parents('li')
-                    , uid = li.data('uid')
-                    , username = li.data('name')
                     , type = li.data('type')
+                    , uid = li.data('uid')
                     , signature = li.data('signature')
                     , msgIdx = li.data('id'); 
             if (type == 1) {
                 type = 'friend';
+                var username = li.data('name');     
+                var avatar = './uploads/person/'+uid+'.jpg';                
                 msgType = 2;
             }else{
-                type = 'group';               
+                type = 'group';
+                var username = li.data('group');               
+                var groupIdx = li.data('groupidx');  
                 msgType = 4;  
             }
-            var status = agree == 2?2:3;
-            var avatar = './uploads/person/'+uid+'.jpg';
-            var default_avatar = './uploads/empty2.jpg'; 
+            var status = agree == 2?2:3; 
             if (agree == 2) {
-                conf.layim.setFriendGroup({
-                    type: type
-                    , username: username//用户名称或群组名称
-                    , avatar: im['IsExist'].call(this, avatar)?avatar:default_avatar
-                    , group: parent.layui.layim.cache().friend //获取好友分组数据
-                    , submit: function (group, index) { 
-                        $.get('class/doAction.php?action=modify_msg', {msgIdx: msgIdx,msgType:msgType,status:status}, function (res) {
-                            var data = eval('(' + res + ')');
-                            if (data.code == 0) {
-                                //将好友/群 追加到主面板
-                                if (type == 'friend') {
+                if (msgType == 2) {
+                    var default_avatar = './uploads/person/empty2.jpg';
+                    conf.layim.setFriendGroup({
+                        type: type
+                        , username: username//用户名称或群组名称
+                        , avatar: im['IsExist'].call(this, avatar)?avatar:default_avatar
+                        , group: parent.layui.layim.cache().friend //获取好友分组数据
+                        , submit: function (group, index) { 
+                            $.get('class/doAction.php?action=modify_msg', {msgIdx: msgIdx,msgType:msgType,status:status}, function (res) {
+                                var data = eval('(' + res + ')');
+                                if (data.code == 0) {
+                                    //将好友 追加到主面板
                                     parent.layui.layim.addList({
                                         type: 'friend'
                                         , avatar: im['IsExist'].call(this, avatar)?avatar:default_avatar //好友头像
@@ -597,29 +668,47 @@
                                         , id: '"'+uid+'"' //好友ID
                                         , sign: signature //好友签名
                                     });
+                                    conn.subscribed({//同意添加后通知对方
+                                      to: uid,
+                                      message : 'Success'
+                                    });                                
+                                    parent.layer.close(index);
+                                    othis.parent().html('已同意');
+                                    parent.location.reload();
+                                    ext.init();//更新右键点击事件                          
                                 }else{
-                                    parent.layui.layim.addList({
-                                        type: 'group'
-                                        , avatar: default_group_avatar //默认群头像
-                                        , groupname: username //群昵称
-                                        , id: uid //群ID
-                                    });
+                                    console.log('添加失败');
                                 }
-                                conn.subscribed({//同意添加后通知对方
-                                  to: uid,
-                                  message : 'Success'
-                                });                                
-                                parent.layer.close(index);
-                                othis.parent().html('已同意');
-                                parent.location.reload();
-                                ext.init();//更新右键点击事件                          
-                            }else{
-                                console.log('添加失败');
-                            }
-                        });                    
-                        layer.close(index);
-                    }
-                }); 
+                            });                    
+                            layer.close(index);
+                        }
+                    }); 
+                }else if(msgType = 4){
+                    var default_avatar = './uploads/person/empty1.jpg';
+                    $.get('class/doAction.php?action=modify_msg', {msgIdx: msgIdx,msgType:msgType,status:status}, function (res) {
+                        var data = eval('(' + res + ')');
+                        if (data.code == 0) {
+                            var options = {
+                                    applicant: uid,
+                                    groupId: groupIdx,
+                                    success: function(resp){  
+                                        conn.subscribed({//同意添加后通知对方
+                                          to: uid,
+                                          message : 'addGroupSuccess'
+                                        });                                                                  
+                                    },
+                                    error: function(e){}
+                                };
+                            conn.agreeJoinGroup(options);                           
+                            othis.parent().html('已同意');
+                            // parent.location.reload();
+                            ext.init();//更新右键点击事件                          
+                        }else{
+                            console.log('添加失败');
+                        }
+                    });                    
+                }
+
             }else{              
                 $.get('class/doAction.php?action=modify_msg', {msgIdx: msgIdx,msgType:msgType,status:status}, function (res) {
                     var data = eval('(' + res + ')');

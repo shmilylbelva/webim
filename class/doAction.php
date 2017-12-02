@@ -265,24 +265,36 @@ switch ($act) {
         $page = $_GET['page'] ;
         $rows= 10;//每页显示数量
         $select_from = ($page - 1) * $rows;         
-        $sql_msg = "select * from tb_msg where (`to` = ".$memberIdx ." OR `from` = ".$memberIdx." ) ORDER BY  time DESC  limit ".$select_from. ','.$rows;
+        $sql_msg = "select * from tb_msg where (`to` = ".$memberIdx ." OR `from` = ".$memberIdx." OR find_in_set(".$memberIdx.", adminGroup) ) ORDER BY  time DESC  limit ".$select_from. ','.$rows;
         $msgBox = $PdoMySQL->getAll($sql_msg); 
         foreach ($msgBox as $key => &$value) {
-            if (($value['msgType'] == ADD_USER_MSG || $value['msgType'] == ADD_USER_SYS || $value['msgType'] == ADD_GROUP_MSG || $value['msgType'] == ALLUSER_SYS ) && $value['to'] == $memberIdx) {//收到加好友消息（被添加者接收消息）收到加群消息（群主接收消息）
-                $userId = $value['from'];
+            if ($value['msgType'] == ADD_USER_MSG || $value['msgType'] == ADD_USER_SYS) {
+                if ($value['to'] == $memberIdx) {
+                    $userId = $value['from'];//收到加好友消息（被添加者接收消息）
+                }elseif($value['from'] == $memberIdx ){
+                    $userId = $value['to'];//收到系统消息(申请是否通过) 加好友消息（添加者接收消息）
+                }              
+            }
+            if ($value['msgType'] == ADD_GROUP_MSG || $value['msgType'] == ADD_GROUP_SYS) {//收到加群消息（群主接收消息）
+                $userId = $value['from'];//发出消息的人
+                $sql_msg = "select groupName from tb_group where groupIdx = ".$value['to'];
+                $group = $PdoMySQL->getRow($sql_msg); 
+                $value['groupName'] = $group['groupName'];
+                $value['groupIdx'] = $value['to'];
+                if ($value['handle']) {
+                    $username = $PdoMySQL->find($tables, 'memberIdx = "' . $value['handle'] . '"', 'memberName'); 
+                    $value['handle'] = $username['memberName']; //处理该请求的管理员
+                }
             }; 
-            if (($value['msgType'] == ADD_USER_MSG || $value['msgType'] == ADD_USER_SYS || $value['msgType'] == ADD_GROUP_MSG || $value['msgType'] == ADD_GROUP_SYS) && ($value['from'] == $memberIdx )) {//收到系统消息(申请是否通过) 加好友消息（添加者接收消息）加群消息（申请者接收消息）
-                $userId = $value['to'];
-            };
             if ($userId) {
                 $username = $PdoMySQL->find($tables, 'memberIdx = "' . $userId . '"', 'memberName,signature'); 
                 $value['username'] = $username['memberName']; 
                 $value['signature'] = $username['signature']; 
             }else{//平台发布消息
                 $value['username'] = '平台发布';
-            }
+            }              
         } 
-        $sql_msg = "select COUNT(*) as count from tb_msg where (`to` = ".$memberIdx ." OR `from` = ".$memberIdx." )";
+        $sql_msg = "select COUNT(*) as count from tb_msg where (`to` = ".$memberIdx ." OR `from` = ".$memberIdx." OR find_in_set(".$memberIdx.", adminGroup) )";
         $pages = $PdoMySQL->getRow($sql_msg);         
         $res['code'] = 0;
         $res['pages'] = ceil($pages['count']/$rows);
@@ -297,7 +309,7 @@ switch ($act) {
         $data['remark'] = $_GET['remark'];
         $data['sendTime'] = $data['time'] = time();
         $data['status'] = 1;
-        $msgIdx = $PdoMySQL->find($tb_msg, '( `to` = "'.$data['to'].'" AND `from` = "' . $data['from'] . '") OR ( `to` = "'.$data['from'].'" AND `from` = "' . $data['to'] . '")', 'msgIdx'); //发出的申请是否已存在            
+        $msgIdx = $PdoMySQL->find($tb_msg, '( `to` = "'.$data['to'].'" AND `from` = "' . $data['from'] . '")', 'msgIdx'); //发出的申请是否已存在            
         if (!$data['to'] || !$data['from']) {
             $res['code'] = -1;
             $res['msg'] = "";
@@ -315,6 +327,29 @@ switch ($act) {
         $res['data'] = $success;
         echo  json_encode($res); 
         break; 
+    case 'add_admin_msg':
+        $data['from'] = $_GET['from'];        
+        $data['to'] = $_GET['to'];
+        if (!$data['to'] || !$data['from']) {
+            $res['code'] = -1;
+            $res['msg'] = "";
+            $res['data'] = -1;
+            echo  json_encode($res); 
+            exit();
+        }        
+        $data['adminGroup'] = $_GET['adminGroup'];
+        $msgIdx = $PdoMySQL->find($tb_msg, '( `to` = "'.$data['to'].'" AND `from` = "' . $data['from'] . '")', 'msgIdx,adminGroup'); //发出的申请是否已存在            
+        if ($msgIdx['msgIdx']) {
+            if ($msgIdx['adminGroup'] && $msgIdx['adminGroup'] != $data['adminGroup']) {
+                $data['adminGroup'] = $msgIdx['adminGroup'].','.$data['adminGroup'];
+            }
+            $success = $PdoMySQL->update($data,$tb_msg,'msgIdx = "' . $msgIdx['msgIdx'] . '"');
+        }
+        $res['code'] = 0;
+        $res['msg'] = "";
+        $res['data'] = $success;
+        echo  json_encode($res); 
+        break;
     case 'set_allread'://系统消息全部设置为已读
         $memberIdx = $_SESSION['info']['id'] ;
         $sql_msg = "select msgIdx,status from tb_msg where  ( `from` = ".$memberIdx." AND ( `status` = ".AGREE_BY_TO." OR `status` = ".DISAGREE_BY_TO." ) ) ";
@@ -329,14 +364,18 @@ switch ($act) {
         echo  json_encode($res);  
         break;           
     case 'modify_msg'://修改添加状态
-        $msgType = $_GET['msgType'];       
-        $data['msgType'] = $msgType == ADD_USER_SYS?ADD_USER_SYS:ADD_GROUP_SYS;       
+        $msgType = $_GET['msgType'];    
+        $memberIdx = $_SESSION['info']['id'];   
+        $data['msgType'] = $msgType == ADD_USER_SYS?ADD_USER_SYS:ADD_GROUP_SYS;   
+        if ($data['msgType'] == ADD_GROUP_SYS) {
+            $data['handle'] = $memberIdx;
+        }    
         $msgIdx = $_GET['msgIdx'];
         $status = $_GET['status'];
         $data['status'] = $status == AGREE_BY_TO?AGREE_BY_TO:DISAGREE_BY_TO;
         $data['time'] = time();
         $data['readTime'] = $data['time'];
-        $success = $PdoMySQL->update($data,$tb_msg,'`to` = "'.$_SESSION['info']['id'].'" AND `msgIdx` = "' . $msgIdx . '"');
+        $success = $PdoMySQL->update($data,$tb_msg,'( `to` = "'.$memberIdx.'" OR find_in_set("'.$memberIdx.'", adminGroup)) AND `msgIdx` = "' . $msgIdx . '"');
         if ($success) {
             $res['code'] = 0;
         }else{
@@ -403,7 +442,7 @@ switch ($act) {
         $res['count'] = "";
         $res['data'] = $ChatLog;
         echo  json_encode($res); 
-        break;    
+        break;         
     default :
         echo '{"code":"9999","status":"n","info":"关键参数传入错误，请返回请求来源网址"}';
         break;

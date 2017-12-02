@@ -10,10 +10,27 @@ Target Server Type    : MYSQL
 Target Server Version : 50710
 File Encoding         : 65001
 
-Date: 2017-11-28 23:08:26
+Date: 2017-12-03 00:03:53
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for `tb_admin`
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_admin`;
+CREATE TABLE `tb_admin` (
+  `adminIdx` int(10) NOT NULL AUTO_INCREMENT,
+  `memberIdx` int(10) NOT NULL,
+  `groupIdx` bigint(30) NOT NULL,
+  `type` tinyint(1) DEFAULT '1' COMMENT '1管理员 2所有者',
+  PRIMARY KEY (`adminIdx`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of tb_admin
+-- ----------------------------
+INSERT INTO `tb_admin` VALUES ('1', '1570845', '34331010596865', '2');
 
 -- ----------------------------
 -- Table structure for `tb_chatlog`
@@ -28,7 +45,7 @@ CREATE TABLE `tb_chatlog` (
   `type` enum('chatroom','friend','group') DEFAULT 'friend',
   `status` tinyint(1) DEFAULT '1' COMMENT '1 可以正常访问 2禁止访问',
   PRIMARY KEY (`chatlogIdx`,`from`,`to`)
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of tb_chatlog
@@ -56,6 +73,18 @@ INSERT INTO `tb_chatlog` VALUES ('72', '911117', '32403609419777', '1', '1511878
 INSERT INTO `tb_chatlog` VALUES ('73', '911117', '1570855', '22', '1511878617164', 'friend', '1');
 INSERT INTO `tb_chatlog` VALUES ('74', '911117', '32403609419777', '12', '1511878722004', 'group', '1');
 INSERT INTO `tb_chatlog` VALUES ('75', '911117', '1570855', '1', '1511881452853', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('76', '911117', '1570855', 'zz', '1512135777476', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('77', '911117', '1570855', 'dd', '1512135940494', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('78', '911117', '1570855', 'cc', '1512136016032', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('79', '911117', '1570855', 'xx', '1512136404362', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('80', '911117', '1570855', 'dd', '1512136564459', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('81', '911117', '32403609419777', 'dd', '1512136573671', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('82', '911117', '32403609419777', 'ee', '1512138880024', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('83', '911117', '1570845', '滴滴', '1512197280536', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('84', '911117', '1570855', '？', '1512197776494', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('85', '911117', '1570845', 'c', '1512211708277', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('86', '911117', '34331010596865', '33', '1512230149894', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('87', '911117', '34331010596865', 'fff', '1512230524019', 'group', '1');
 
 -- ----------------------------
 -- Table structure for `tb_group`
@@ -72,7 +101,7 @@ CREATE TABLE `tb_group` (
 -- ----------------------------
 -- Records of tb_group
 -- ----------------------------
-INSERT INTO `tb_group` VALUES ('32032104185857', '测试', '点点滴滴', '1000');
+INSERT INTO `tb_group` VALUES ('34331010596865', '不扯淡', '点点滴滴', '1000');
 INSERT INTO `tb_group` VALUES ('32403609419777', 'layim一群', '2', '1000');
 INSERT INTO `tb_group` VALUES ('32403628294145', 'layim二群', '1', '1000');
 
@@ -84,23 +113,26 @@ CREATE TABLE `tb_msg` (
   `msgIdx` int(20) NOT NULL AUTO_INCREMENT,
   `msgType` tinyint(1) DEFAULT '1' COMMENT '1为请求添加用户2为系统消息（添加好友）3为请求加群 4为系统消息（添加群） 5 全体会员消息',
   `from` int(20) DEFAULT NULL COMMENT '消息发送者 0表示为系统消息',
-  `to` int(20) DEFAULT NULL COMMENT '消息接收者 0表示全体会员',
+  `to` bigint(20) DEFAULT NULL COMMENT '消息接收者 0表示全体会员',
   `status` tinyint(4) DEFAULT '1' COMMENT '1未读 2同意 3拒绝 4同意且返回消息已读 5拒绝且返回消息已读 6全体消息已读',
   `remark` varchar(128) DEFAULT NULL COMMENT '附加消息',
   `sendTime` char(10) DEFAULT NULL COMMENT '发送消息时间',
   `readTime` char(10) DEFAULT NULL COMMENT '读消息时间',
   `time` char(10) DEFAULT NULL,
+  `adminGroup` bigint(20) NOT NULL DEFAULT '0' COMMENT '接收消息的管理员',
+  `handle` bigint(20) DEFAULT NULL COMMENT '处理该请求的管理员id',
   PRIMARY KEY (`msgIdx`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of tb_msg
 -- ----------------------------
-INSERT INTO `tb_msg` VALUES ('7', '2', '1570855', '911117', '4', '你好', '1510760568', '1510760575', '1510760575');
-INSERT INTO `tb_msg` VALUES ('2', '1', '911117', '911088', '1', '很高兴认识你1', '1510677891', null, null);
-INSERT INTO `tb_msg` VALUES ('3', '2', '911117', '1570845', '5', '很高兴认识你2', '1510677891', '1510679891', null);
-INSERT INTO `tb_msg` VALUES ('4', '2', '911117', '911100', '5', '很高兴认识你3', '1510677791', '1510689891', null);
-INSERT INTO `tb_msg` VALUES ('8', '2', '911117', '1570855', '4', '', '1510758910', '1510758915', '1510758915');
+INSERT INTO `tb_msg` VALUES ('7', '2', '1570855', '911117', '4', '你好', '1510760568', '1510760575', '1510760575', '0', null);
+INSERT INTO `tb_msg` VALUES ('2', '1', '911117', '911088', '1', '很高兴认识你1', '1510677891', null, null, '0', null);
+INSERT INTO `tb_msg` VALUES ('3', '2', '911117', '1570845', '4', '？', '1512224909', '1512228739', '1512228739', '0', null);
+INSERT INTO `tb_msg` VALUES ('4', '2', '911117', '911100', '5', '很高兴认识你3', '1510677791', '1510689891', null, '0', null);
+INSERT INTO `tb_msg` VALUES ('8', '2', '911117', '1570855', '4', '', '1510758910', '1510758915', '1510758915', '0', null);
+INSERT INTO `tb_msg` VALUES ('17', '4', '911117', '34331010596865', '4', '232323', '1512230120', '1512230125', '1512230125', '1570845', '1570845');
 
 -- ----------------------------
 -- Table structure for `tb_person`
@@ -155,6 +187,6 @@ CREATE TABLE `tb_skin` (
 -- ----------------------------
 -- Records of tb_skin
 -- ----------------------------
-INSERT INTO `tb_skin` VALUES ('4', '911117', '911117_1510293501.jpg', '1');
+INSERT INTO `tb_skin` VALUES ('4', '911117', '3.jpg', '0');
 INSERT INTO `tb_skin` VALUES ('5', '1570855', '2.jpg', '0');
 INSERT INTO `tb_skin` VALUES ('6', '1570845', '4.jpg', '0');
