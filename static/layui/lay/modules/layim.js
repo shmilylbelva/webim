@@ -319,10 +319,12 @@ layui.define(['layer', 'laytpl', 'upload'], function(exports){
     ,'{{# if(d.data.type === "group" ){ }}'
     ,'{{# if(d.data.isAdd){  }}'
     ,'<div data-uid="{{d.data.uid}}">你已经是该群的成员，不能重复添加。</div>'
-    ,'{{# }else{ }}'
+    ,'{{# }else if(d.data.approval != "-1"){ }}'
     ,'<p>请输入验证信息</p>'
+    ,'{{# }else{ }}'
+    ,'<p>该群开启了免审核，是否立即加入。</p>'
     ,'{{# } }}'
-    ,'{{# } if(d.type !== "setGroup" && !d.data.isAdd){ }}'
+    ,'{{# } if(d.type !== "setGroup" && !d.data.isAdd && d.data.approval != "-1"){ }}'
       ,'<textarea id="LAY_layimRemark" placeholder="验证信息" class="layui-textarea"></textarea>'
     ,'{{# } }}'
     ,'</div>'
@@ -815,11 +817,12 @@ layui.define(['layer', 'laytpl', 'upload'], function(exports){
       }[data.type] || ''
       ,shade: false
       ,resize: false
-      ,btn: type ? ['确认', '取消'] : ['发送申请', '关闭']
+      ,btn: type ? ['确认', '取消'] : (data.approval == '-1'?['确认', '取消'] : ['发送申请', '关闭'])
       ,content: laytpl(elemAddTpl).render({
         data: {
           name: data.username || data.groupname
           ,isAdd:data.isAdd//是否已经添加该好友或群
+          ,approval:data.approval//加群是否验证
           ,uid:data.uid || []//添加的好友id或群id
           ,avatar: data.avatar
           ,group: data.group || parent.layui.layim.cache().friend || []
@@ -1023,7 +1026,6 @@ layui.define(['layer', 'laytpl', 'upload'], function(exports){
   //接受消息
   var messageNew = {}, getMessage = function(data){
     data = data || {};
-    
     var elem = $('.layim-chatlist-'+ data.type + data.id);
     var group = {}, index = elem.index();
     

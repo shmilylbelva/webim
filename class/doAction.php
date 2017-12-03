@@ -15,6 +15,7 @@ $tables = 'tb_person';
 $tb_skin = 'tb_skin';
 $tb_msg = 'tb_msg';
 $tb_chatlog = 'tb_chatlog';
+$tb_group = 'tb_group';
 const ADD_USER_MSG = 1;//为请求添加用户
 const ADD_USER_SYS = 2;//为系统消息（添加好友
 const ADD_GROUP_MSG = 3;//为请求加群
@@ -244,14 +245,51 @@ switch ($act) {
         if ($type == 'friend') {//好友
             $sql = "select memberIdx,memberName,signature,memberAge,memberSex from tb_person where (memberIdx LIKE '%{$value}%' OR memberName LIKE '%{$value}%' OR phoneNumber LIKE '%{$value}%' OR emailAddress LIKE '%{$value}%') limit ".$select_from. ','.$rows;
         }else{
-            $sql = "select groupIdx,groupName,des,number from tb_group where (groupIdx LIKE '%{$value}%' OR groupName LIKE '%{$value}%' OR des LIKE '%{$value}%') limit ".$select_from. ','.$rows;  
+            $sql = "select groupIdx,groupName,des,number,approval from tb_group where (groupIdx LIKE '%{$value}%' OR groupName LIKE '%{$value}%' OR des LIKE '%{$value}%') limit ".$select_from. ','.$rows;  
         }
         $get_friend = $PdoMySQL->getAll($sql);        
         $res['code'] = 0;
         $res['msg'] = "";
         $res['data'] = $get_friend;
         echo  json_encode($res); 
-        break;          
+        break;  
+    case 'userMaxGroupNumber'://判断用户最大建群数
+        $memberIdx = $_SESSION['info']['id'] ;
+        $sql = "select count(*) as cn from tb_group where belong = '{$memberIdx}' ";
+        $cn = $PdoMySQL->getRow($sql);       
+        if ($cn['cn'] < 6) {//最多建5个群
+            $res['code'] = 0;
+            $res['msg'] = "";
+            $res['data'] = $groupIdx;            
+        }else{
+            $res['code'] = -1;
+            $res['msg'] = "超过最大建群数 5";
+            $res['data'] = '';
+        }
+        echo  json_encode($res);         
+        break;  
+    case 'commitGroupInfo'://提交建群信息
+        $data['belong'] = $_SESSION['info']['id'] ;
+        $data['groupIdx'] = $_GET['groupIdx'];
+        $data['groupName'] = $_GET['groupName'];
+        $data['des'] = $_GET['des'];
+        $data['number'] = $_GET['number'];
+        $data['approval'] = $_GET['approval'];
+        $groupIdx = $PdoMySQL->find($tb_group, 'groupIdx ="'.$data['groupIdx'].'" OR groupName = "'.$data['groupName'].'"', 'groupIdx'); 
+        $sql = "select count(*) as cn from tb_group where belong = '{$data['belong']}' ";
+        $cn = $PdoMySQL->getRow($sql);       
+        if (!$groupIdx['groupIdx'] && $cn['cn'] < 6) {//最多建5个群
+            $success = $PdoMySQL->add($data,$tb_group);
+            $res['code'] = 0;
+            $res['msg'] = "";
+            $res['data'] = $groupIdx;            
+        }else{
+            $res['code'] = -1;
+            $res['msg'] = "群名称已存在或超过最大建群数 5";
+            $res['data'] = '';
+        }
+        echo  json_encode($res); 
+        break; 
     case 'get_one_user_data'://获取默认好友推荐
         $memberIdx = $_GET['memberIdx'];
         $user = $PdoMySQL->find($tables, 'memberIdx = "' . $memberIdx . '"','memberIdx,memberName,signature,memberAge,memberSex');       

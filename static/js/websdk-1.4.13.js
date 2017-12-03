@@ -13250,7 +13250,8 @@
 	 * @since 1.4.11
 	 */
 	connection.prototype.createGroupNew = function (opt) {
-	    opt.data.owner = this.user;
+	    opt.data.owner = ""+this.user+"";
+	    opt.data.maxusers = parseInt(opt.data.maxusers);
 	    var options = {
 	        url: this.apiUrl + '/' + this.orgName + '/' + this.appName + '/chatgroups',
 	        dataType: 'json',

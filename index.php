@@ -23,7 +23,8 @@ require_once 'class/url.php';
         6.自定义上传背景皮肤
         7.搜索好友/群
         8.添加好友/群
-        9.消息盒子展示
+        9.新建群
+        10.消息盒子展示
         体验完整功能请移步<a href="https://github.com/shmilylbelva/webim" style="color: red">这里</a>
     </pre>        
     </body>
@@ -92,12 +93,17 @@ require_once 'class/url.php';
                     ,findFriend:{
                         url: 'class/doAction.php?action=findFriend'
                         , type: 'get' //默认
-                    }                    
+                    }  
+                    //提交建群信息
+                    ,commitGroupInfo:{
+                        url: 'class/doAction.php?action=commitGroupInfo'
+                        , type: 'get' //默认
+                    }                                       
                     //获取系统消息
                     ,getMsgBox:{
                         url: 'class/doAction.php?action=getMsgBox'
                         , type: 'get' //默认post
-                    }  
+                    }                      
                     //获取总的记录数
                     ,getChatLogTotal:{
                         url: 'class/doAction.php?action=getChatLogTotal'
@@ -117,7 +123,7 @@ require_once 'class/url.php';
                     //         , title: '代码'
                     //         , icon: '&#xe64e;'
                     //     }]
-                    ,title: '国善' 
+                    ,title: 'layim' 
                     ,copyright:true
                     , initSkin: '1.jpg' //1-5 设置初始背景
                     // , initSkin: '3.jpg' //1-5 设置初始背景
@@ -125,6 +131,7 @@ require_once 'class/url.php';
                     , msgbox: layui.cache.dir + 'css/modules/layim/html/msgbox.html' //消息盒子页面地址，若不开启，剔除该项即可
                     , find: layui.cache.dir + 'css/modules/layim/html/find.html' //发现页面地址，若不开启，剔除该项即可
                     , chatLog: layui.cache.dir + 'css/modules/layim/html/chatLog.html' //聊天记录页面地址，若不开启，剔除该项即可
+                    , createGroup: layui.cache.dir + 'css/modules/layim/html/createGroup.html' //创建群页面地址，若不开启，剔除该项即可
                 });  
             });
         </script>  

@@ -90,7 +90,10 @@ layui.use([ 'layim','laypage','form','socket',], function(socket){
         parent.layui.im.addFriendGroup(othis,type);
         // type == 'friend' ? parent.layui.im.addFriend(othis,type) : parent.layui.im.addGroup(othis);        
     });
-
+    $('body').on('click', '.createGroup', function () {//创建群
+        var othis = $(this);
+        parent.layui.im.createGroup(othis);
+    });
     $('body').on('click', '.back', function () {//返回推荐好友
         getRecommend();
         $("#LAY_page").css("display","none");
@@ -160,7 +163,7 @@ layui.use([ 'layim','laypage','form','socket',], function(socket){
 			<div class="layui-col-xs3 mt15">
 				<input type="radio" name="add" value="friend" title="找人" checked="">
 				<input type="radio" name="add" value="group" title="找群">
-				<button class="layui-btn layui-btn-mini btncolor" >我要建群</button>		
+				<button class="layui-btn layui-btn-mini btncolor createGroup" >我要建群</button>		
 		    </div>
 		</div>  
 		<div id="LAY_view"></div>
@@ -183,7 +186,7 @@ layui.use([ 'layim','laypage','form','socket',], function(socket){
 				{{# }else{ }}
 					{{#  layui.each(d.data, function(index, item){ }}
 					<div class="layui-col-xs3 layui-find-list">
-						<li layim-event="add" data-type="group" data-index="0" data-uid="{{ item.groupIdx }}" data-name="{{item.groupName}}">
+						<li layim-event="add" data-type="group" data-approval="{{ item.approval }}" data-index="0" data-uid="{{ item.groupIdx }}" data-name="{{item.groupName}}">
 							<img src="../../../../../../uploads/person/{{item.groupIdx}}.jpg " onerror="javascript:this.src='../../../../../../uploads/person/empty1.jpg'" >
 							<span>{{item.groupName}}({{item.groupIdx}})</span>
 							<p>{{item.des}}  {{#  if(item.des == ''){ }}无{{#  } }} </p>

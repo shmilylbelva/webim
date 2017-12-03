@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50710
 File Encoding         : 65001
 
-Date: 2017-12-03 00:03:53
+Date: 2017-12-03 23:38:03
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -45,7 +45,7 @@ CREATE TABLE `tb_chatlog` (
   `type` enum('chatroom','friend','group') DEFAULT 'friend',
   `status` tinyint(1) DEFAULT '1' COMMENT '1 可以正常访问 2禁止访问',
   PRIMARY KEY (`chatlogIdx`,`from`,`to`)
-) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=120 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of tb_chatlog
@@ -85,6 +85,38 @@ INSERT INTO `tb_chatlog` VALUES ('84', '911117', '1570855', '？', '151219777649
 INSERT INTO `tb_chatlog` VALUES ('85', '911117', '1570845', 'c', '1512211708277', 'friend', '1');
 INSERT INTO `tb_chatlog` VALUES ('86', '911117', '34331010596865', '33', '1512230149894', 'group', '1');
 INSERT INTO `tb_chatlog` VALUES ('87', '911117', '34331010596865', 'fff', '1512230524019', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('88', '911117', '1570845', '柔软', '1512285805471', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('89', '911117', '911117', '柔软', '1512285814205', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('90', '911117', '911117', '2', '1512286001202', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('91', '911117', '34331010596865', '12', '1512287599037', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('92', '911117', '34331010596865', '；', '1512287626476', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('93', '911117', '34331010596865', 'k', '1512287677239', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('94', '1570845', '34331010596865', '测试', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('95', '911117', '34331010596865', '12', '1512289102663', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('96', '911117', '34331010596865', 'l', '1512289156466', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('97', '911117', '34331010596865', '学习', '1512289299543', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('98', '911117', '34331010596865', '是是是', '1512289460817', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('99', '911117', '34331010596865', '方法', '1512289580873', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('100', '911117', '34331010596865', '成都', '1512289726888', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('101', '911117', '34331010596865', '滴滴滴', '1512289754688', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('102', '911117', '34331010596865', '吃饭VC', '1512289882684', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('103', '911117', '34331010596865', '方法', '1512289895093', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('104', '911117', '34331010596865', '飞', '1512290077637', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('105', '911117', '34331010596865', '那你', '1512290105902', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('106', '1570845', '34331010596865', '美的不要不要的', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('107', '911117', '34331010596865', '可能', '1512290855772', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('108', '911117', '34331010596865', '‘’', '1512290877775', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('109', '1570845', '34331010596865', '美的不要不要的', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('110', '911117', '34331010596865', 'll', '1512291097560', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('111', '911117', '34331010596865', '方法', '1512291240770', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('112', '1570845', '34331010596865', '的点点滴滴', '1512291254187', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('113', '911117', '34331010596865', '王企鹅', '1512291259820', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('114', '911117', '34331010596865', '树先生', '1512291316828', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('115', '911117', '34331010596865', '方法', '1512291436620', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('116', '911117', '34331010596865', '方法', '1512291442416', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('117', '911117', '1570845', '恩恩', '1512291467697', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('118', '911117', '34501063409665', '方法', '1512304640443', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('119', '911117', '34515089162242', '花海', '', 'group', '1');
 
 -- ----------------------------
 -- Table structure for `tb_group`
@@ -95,15 +127,19 @@ CREATE TABLE `tb_group` (
   `groupName` varchar(63) DEFAULT NULL COMMENT '群名称',
   `des` varchar(256) DEFAULT NULL COMMENT '描述',
   `number` int(10) DEFAULT NULL COMMENT '人数',
+  `approval` tinyint(1) NOT NULL DEFAULT '1' COMMENT '-1无需验证 1需要验证',
+  `belong` int(10) DEFAULT NULL COMMENT '群主',
   PRIMARY KEY (`groupIdx`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of tb_group
 -- ----------------------------
-INSERT INTO `tb_group` VALUES ('34331010596865', '不扯淡', '点点滴滴', '1000');
-INSERT INTO `tb_group` VALUES ('32403609419777', 'layim一群', '2', '1000');
-INSERT INTO `tb_group` VALUES ('32403628294145', 'layim二群', '1', '1000');
+INSERT INTO `tb_group` VALUES ('34331010596865', '不扯淡', '点点滴滴', '1000', '1', null);
+INSERT INTO `tb_group` VALUES ('32403609419777', 'layim一群', '2', '1000', '1', null);
+INSERT INTO `tb_group` VALUES ('32403628294145', 'layim二群', '1', '1000', '1', null);
+INSERT INTO `tb_group` VALUES ('34501063409665', '不验证', '不验证', '20', '-1', '1570845');
+INSERT INTO `tb_group` VALUES ('34515427852290', '12', '12', '500', '-1', '911117');
 
 -- ----------------------------
 -- Table structure for `tb_msg`
@@ -122,7 +158,7 @@ CREATE TABLE `tb_msg` (
   `adminGroup` bigint(20) NOT NULL DEFAULT '0' COMMENT '接收消息的管理员',
   `handle` bigint(20) DEFAULT NULL COMMENT '处理该请求的管理员id',
   PRIMARY KEY (`msgIdx`)
-) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of tb_msg
@@ -132,7 +168,8 @@ INSERT INTO `tb_msg` VALUES ('2', '1', '911117', '911088', '1', '很高兴认识
 INSERT INTO `tb_msg` VALUES ('3', '2', '911117', '1570845', '4', '？', '1512224909', '1512228739', '1512228739', '0', null);
 INSERT INTO `tb_msg` VALUES ('4', '2', '911117', '911100', '5', '很高兴认识你3', '1510677791', '1510689891', null, '0', null);
 INSERT INTO `tb_msg` VALUES ('8', '2', '911117', '1570855', '4', '', '1510758910', '1510758915', '1510758915', '0', null);
-INSERT INTO `tb_msg` VALUES ('17', '4', '911117', '34331010596865', '4', '232323', '1512230120', '1512230125', '1512230125', '1570845', '1570845');
+INSERT INTO `tb_msg` VALUES ('17', '4', '911117', '34331010596865', '4', '23', '1512290980', '1512290985', '1512290985', '1570845', '1570845');
+INSERT INTO `tb_msg` VALUES ('20', '4', '1570845', '34515089162242', '2', '流量', '1512314670', '1512314678', '1512314678', '911117', '911117');
 
 -- ----------------------------
 -- Table structure for `tb_person`
