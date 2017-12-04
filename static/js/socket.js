@@ -88,7 +88,16 @@
                     // console.log(ele);
                     $(".ul-context-menu>li").attr("data-id",ele[0].id);
                 },
-                menu: [{ // 菜单项
+                menu: [
+                    { // 菜单项
+                        text: "发送消息",
+                        icon: "static/img/add.png",
+                        callback: function(ele) {
+                            console.log(ele[0].dataset.id);
+
+                        }
+                    },                
+                    { // 菜单项
                         text: "查看资料",
                         icon: "static/img/add.png",
                         callback: function(ele) {
@@ -100,7 +109,16 @@
                         text: "聊天记录",
                         icon: "static/img/paste.png",
                         callback: function(ele) {
-                            alert("粘贴");
+                            var friend_id = ele[0].dataset.id.replace(/^layim-friend/g, ''); 
+                            for (i in cachedata.friend[0].list)
+                            {
+                                if (cachedata.friend[0].list[i].id === friend_id) {var username = cachedata.friend[0].list[i].username;}
+                            }
+                            im.getChatLog({
+                                name: username,
+                                id: friend_id,
+                                type:'friend'
+                            });    
                         }
                     },
                     {
@@ -124,7 +142,21 @@
                                 layer.close(index);
                             });                                                    
                         }
-                    }
+                    },
+                    {
+                        text: "修改备注名称",
+                        icon: "static/img/del.png",
+                        callback: function(ele) {
+                            alert('开发中');                                                   
+                        }
+                    },     
+                    {
+                        text: "移动联系人至",
+                        icon: "static/img/del.png",
+                        callback: function(ele) {
+                            alert('开发中');                                              
+                        }
+                    },                                   
                 ]
             });
 
@@ -139,22 +171,60 @@
                 target: function(ele) { // 当前元素
                     $(".ul-context-menu>li").attr("data-id",ele[0].id);
                 },
-                menu: [{ // 菜单项
+                menu: [
+                    { // 菜单项
+                        text: "发送群消息",
+                        icon: "static/img/add.png",
+                        callback: function(ele) {
+                            alert("开发中");
+                        }
+                    },
+                    { // 菜单项
                         text: "查看资料",
                         icon: "static/img/add.png",
                         callback: function(ele) {
-                            alert("新增");
+                            alert("开发中");
                         }
                     },
                     {
                         text: "聊天记录",
                         icon: "static/img/paste.png",
                         callback: function(ele) {
-                            alert("粘贴");
+                            var group_id = ele[0].dataset.id.replace(/^layim-group/g, ''); 
+                            for (i in cachedata.group)
+                            {
+                                if (cachedata.group[i].id === group_id) {var groupname = cachedata.group[i].groupname;}
+                            }
+                            im.getChatLog({
+                                name: groupname,
+                                id: group_id,
+                                type:'group'
+                            });   
                         }
                     },
                     {
                         text: "退出该群",
+                        icon: "static/img/del.png",
+                        callback: function(ele) {
+                            var group_id = ele[0].dataset.id.replace(/^layim-group/g, '');   
+                            for (i in cachedata.group)
+                            {
+                                if (cachedata.group[i].id === group_id) {var groupname = cachedata.group[i].groupname;var avatar = cachedata.group[i].avatar;}
+                            }
+                            layer.confirm('您真的要退出该群吗？退出后你将不会再接收此群的会话消息。<div class="layui-layim-list"><li layim-event="chat" data-type="friend" data-index="0"><img src="'+avatar+'"><span>'+groupname+'</span></li></div>', {
+                                btn: ['确定','取消'], //按钮
+                                title:['提示','background:#b4bdb8'],
+                                shade: 0
+                            }, function(){
+                                im.leaveGroup(group_id);  
+                            }, function(){
+                                var index = layer.open();  
+                                layer.close(index);
+                            }); 
+                        }
+                    },
+                    {
+                        text: "修改备注名称",
                         icon: "static/img/del.png",
                         callback: function(ele) {
                             var group_id = ele[0].dataset.id.replace(/^layim-group/g, '');   
@@ -449,6 +519,22 @@
             // msg.body.Type = 'img';
             conn.send(msg.body);
         },      
+        getChatLog: function (data){
+            if(!cachedata.base.chatLog){
+            return layer.msg('未开启更多聊天记录');
+            }
+            var index = layer.open({
+                type: 2
+                ,maxmin: true
+                ,title: '与 '+ data.name +' 的聊天记录'
+                ,area: ['450px', '600px']
+                ,shade: false
+                ,skin: 'layui-box'
+                ,anim: 2
+                ,id: 'layui-layim-chatlog'
+                ,content: cachedata.base.chatLog + '?id=' + data.id + '&type=' + data.type
+            });
+        },
         removeFriends: function (username) {
             conn.removeRoster({
                 to: username,
@@ -739,17 +825,26 @@
                         },
                         success: function (respData) {
                             if (respData.data.groupid) {
-                                $.get('class/doAction.php?action=commitGroupInfo', {groupIdx:respData.data.groupid,groupName: data.groupName,des:data.des,number:data.number,approval:data.approval}, function(data){
-                                    var res = eval('(' + data + ')');
+                                $.get('class/doAction.php?action=commitGroupInfo', {groupIdx:respData.data.groupid,groupName: data.groupName,des:data.des,number:data.number,approval:data.approval}, function(respdata){
+                                    var res = eval('(' + respdata + ')');
                                     if(res.code == 0){
-
+                                        //将群 追加到主面板
+                                        var avatar = './uploads/person/'+respData.data.groupid+'.jpg'; 
+                                        var default_avatar = './static/img/tel.jpg';
+                                        console.log(data);
+                                        parent.layui.layim.addList({
+                                            type: 'group'
+                                            , avatar: im['IsExist'].call(this, avatar)?avatar:default_avatar //好友头像
+                                            , groupname: data.groupName //群名称
+                                            , id: respData.data.groupid //群id
+                                        });
                                     }else{
                                         return layer.msg(res.msg);
                                     }
                                     layer.close(layer.index);
                                 });   
                             }                  
-                            console.log(respData);
+                            
                         },
                         error: function () {}
                     };

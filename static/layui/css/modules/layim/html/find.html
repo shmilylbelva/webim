@@ -114,7 +114,7 @@ layui.use([ 'layim','laypage','form','socket',], function(socket){
 				var res = eval('(' + data + ')');
 				if(res.code != 0){
 				    return layer.msg(res.msg);
-				}
+				}		
 				laypage.render({
 				  elem: 'LAY_page'
 				  ,count: res.data.count
