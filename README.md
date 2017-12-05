@@ -1,6 +1,6 @@
 # WebIM
 ##简述
->本webim是基于 [layim v3.0.4 Pro 商用版]( http://layim.layui.com/) 和[环信webim3.X](https://www.easemob.com/)开发而成的，本项目仅供学习使用，使用前请先到layim[官网]( http://layim.layui.com/)获取layim的授权许可 。目前已完成的功能有：
+>本webim是基于 [layim]( http://layim.layui.com/) 和[环信webim3.X](https://www.easemob.com/)开发而成的，本项目仅供学习使用，使用前请先到layim[官网]( http://layim.layui.com/)获取layim的授权许可 。目前已完成的功能有：
 1. 好友间的文字、表情、图片、文件的发送和接收。
 2.群内的文字、表情、图片、文件的发送和接收，查看群员列表。
 3.面板内通过昵称和帐号的快速查找好友。
