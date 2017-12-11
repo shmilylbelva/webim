@@ -132,6 +132,7 @@ require_once 'class/url.php';
                     , find: layui.cache.dir + 'css/modules/layim/html/find.html' //发现页面地址，若不开启，剔除该项即可
                     , chatLog: layui.cache.dir + 'css/modules/layim/html/chatLog.html' //聊天记录页面地址，若不开启，剔除该项即可
                     , createGroup: layui.cache.dir + 'css/modules/layim/html/createGroup.html' //创建群页面地址，若不开启，剔除该项即可
+                    , getInformation: layui.cache.dir + 'css/modules/layim/html/getInformation.html' //好友群资料页面
                 });  
             });
         </script>  

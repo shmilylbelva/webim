@@ -77,11 +77,11 @@
     var ext = {
         init : function(){//定义右键操作
             $(".layim-list-friend >li > ul > li").contextMenu({
-                width: 110, // width
-                itemHeight: 25, // 菜单项height
+                width: 140, // width
+                itemHeight: 30, // 菜单项height
                 bgColor: "#fff", // 背景颜色
                 color: "#333", // 字体颜色
-                fontSize: 12, // 字体大小
+                fontSize: 15, // 字体大小
                 hoverBgColor: "#009bdd", // hover背景颜色
                 hoverColor: "#fff", // hover背景颜色
                 target: function(ele) { // 当前元素
@@ -93,7 +93,7 @@
                 menu: [
                     { // 菜单项
                         text: "发送消息",
-                        icon: "static/img/add.png",
+                        icon: "&#xe63a;",
                         callback: function(ele) {
                             var othis = ele.parent(),
                                 friend_id = othis[0].dataset.id.replace(/^layim-friend/g, ''),
@@ -109,14 +109,18 @@
                     },                
                     { // 菜单项
                         text: "查看资料",
-                        icon: "static/img/add.png",
+                        icon: "&#xe62a;",
                         callback: function(ele) {
-                            console.log(ele[0].dataset.id);
+                            var othis = ele.parent(),friend_id = othis[0].dataset.id.replace(/^layim-friend/g, '');
+                            // im.getInformation({
+                            //     id: friend_id,
+                            //     type:'friend'
+                            // });                        
                         }
                     },
                     {
                         text: "聊天记录",
-                        icon: "static/img/paste.png",
+                        icon: "&#xe60e;",
                         callback: function(ele) {
                             var othis = ele.parent(),
                                 friend_id = othis[0].dataset.id.replace(/^layim-friend/g, ''),
@@ -129,8 +133,22 @@
                         }
                     },
                     {
+                        text: "修改备注名称",
+                        icon: "&#xe6b2;",
+                        callback: function(ele) {
+                            alert('开发中');                                                   
+                        }
+                    },     
+                    {
+                        text: "移动联系人至",
+                        icon: "&#xe630;",
+                        callback: function(ele) {
+                            alert('开发中');                                              
+                        }
+                    }, 
+                    {
                         text: "删除好友",
-                        icon: "static/img/del.png",
+                        icon: "&#xe640;",
                         callback: function(ele) {
                             var othis = ele.parent(),
                                 friend_id = othis[0].dataset.id.replace(/^layim-friend/g, ''); 
@@ -149,30 +167,16 @@
                                 layer.close(index);
                             });                                                    
                         }
-                    },
-                    {
-                        text: "修改备注名称",
-                        icon: "static/img/del.png",
-                        callback: function(ele) {
-                            alert('开发中');                                                   
-                        }
-                    },     
-                    {
-                        text: "移动联系人至",
-                        icon: "static/img/del.png",
-                        callback: function(ele) {
-                            alert('开发中');                                              
-                        }
-                    },                                   
+                    }                                                      
                 ]
             });
 
             $(".layim-tab-content >li > .layim-list-group > li").contextMenu({
-                width: 110, // width
-                itemHeight: 25, // 菜单项height
+                width: 140, // width
+                itemHeight: 30, // 菜单项height
                 bgColor: "#fff", // 背景颜色
                 color: "#333", // 字体颜色
-                fontSize: 12, // 字体大小
+                fontSize: 15, // 字体大小
                 hoverBgColor: "#009bdd", // hover背景颜色
                 hoverColor: "#fff", // hover背景颜色
                 target: function(ele) { // 当前元素
@@ -183,7 +187,7 @@
                 menu: [
                     { // 菜单项
                         text: "发送群消息",
-                        icon: "static/img/add.png",
+                        icon: "&#xe63a;",
                         callback: function(ele) {
                             var othis = ele.parent(),
                                 group_id = othis[0].dataset.id.replace(/^layim-group/g, ''),
@@ -199,14 +203,18 @@
                     },
                     { // 菜单项
                         text: "查看资料",
-                        icon: "static/img/add.png",
+                        icon: "&#xe62a;",
                         callback: function(ele) {
-                            alert("开发中");
+                            var othis = ele.parent(),group_id = othis[0].dataset.id.replace(/^layim-group/g, '');
+                            // im.getInformation({
+                            //     id: group_id,
+                            //     type:'group'
+                            // });  
                         }
                     },
                     {
                         text: "聊天记录",
-                        icon: "static/img/paste.png",
+                        icon: "&#xe60e;",
                         callback: function(ele) {
                             var othis = ele.parent(),
                                 group_id = othis[0].dataset.id.replace(/^layim-group/g, ''),
@@ -217,10 +225,17 @@
                                 type:'group'
                             });   
                         }
+                    },                    
+                    {
+                        text: "修改备注名称",
+                        icon: "&#xe6b2;",
+                        callback: function(ele) {
+
+                        }
                     },
                     {
                         text: "退出该群",
-                        icon: "static/img/del.png",
+                        icon: "&#xe613;",
                         callback: function(ele) {
                             var othis = ele.parent(),
                                 group_id = othis[0].dataset.id.replace(/^layim-group/g, ''),  
@@ -236,13 +251,6 @@
                                 var index = layer.open();  
                                 layer.close(index);
                             }); 
-                        }
-                    },
-                    {
-                        text: "修改备注名称",
-                        icon: "static/img/del.png",
-                        callback: function(ele) {
-
                         }
                     }
                 ]
@@ -812,6 +820,9 @@
             });
         },
         commitGroupInfo: function(othis,data){
+            if (!data.groupName) {
+                return false;
+            }
             $.get('class/doAction.php?action=userMaxGroupNumber', {}, function(res){
                 var resData = eval('(' + res + ')');
                 if(resData.code == 0){
@@ -855,7 +866,20 @@
                 }
                 layer.close(layer.index);
             });
-        }                                
+        },
+        getInformation: function(data){
+           var id = data.id || {},type = data.type || {};
+            var index = layer.open({
+                type: 2
+                ,title: '创建群'
+                ,shade: false
+                ,maxmin: false
+                ,area: ['550px', '400px']
+                ,skin: 'layui-box layui-layer-border'
+                ,resize: false
+                ,content: cachedata.base.getInformation+'?id='+id+'&type='+type
+            });           
+        }                             
     };
     exports('socket', socket);
     exports('im', im);

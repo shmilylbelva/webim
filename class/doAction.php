@@ -255,6 +255,9 @@ switch ($act) {
         break;  
     case 'userMaxGroupNumber'://判断用户最大建群数
         $memberIdx = $_SESSION['info']['id'] ;
+        if (!$memberIdx) {
+            exit();
+        }        
         $sql = "select count(*) as cn from tb_group where belong = '{$memberIdx}' ";
         $cn = $PdoMySQL->getRow($sql);       
         if ($cn['cn'] < 6) {//最多建5个群
