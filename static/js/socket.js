@@ -112,10 +112,10 @@
                         icon: "&#xe62a;",
                         callback: function(ele) {
                             var othis = ele.parent(),friend_id = othis[0].dataset.id.replace(/^layim-friend/g, '');
-                            // im.getInformation({
-                            //     id: friend_id,
-                            //     type:'friend'
-                            // });                        
+                            im.getInformation({
+                                id: friend_id,
+                                type:'friend'
+                            });                        
                         }
                     },
                     {
@@ -206,10 +206,10 @@
                         icon: "&#xe62a;",
                         callback: function(ele) {
                             var othis = ele.parent(),group_id = othis[0].dataset.id.replace(/^layim-group/g, '');
-                            // im.getInformation({
-                            //     id: group_id,
-                            //     type:'group'
-                            // });  
+                            im.getInformation({
+                                id: group_id,
+                                type:'group'
+                            });  
                         }
                     },
                     {
@@ -844,6 +844,7 @@
                                         var avatar = './uploads/person/'+respData.data.groupid+'.jpg'; 
                                         var default_avatar = './static/img/tel.jpg';
                                         console.log(data);
+                                        layer.msg(res.msg);
                                         parent.layui.layim.addList({
                                             type: 'group'
                                             , avatar: im['IsExist'].call(this, avatar)?avatar:default_avatar //好友头像
@@ -871,12 +872,12 @@
            var id = data.id || {},type = data.type || {};
             var index = layer.open({
                 type: 2
-                ,title: '创建群'
+                ,title: type  == 'friend'? '好友资料':'群资料'
                 ,shade: false
                 ,maxmin: false
-                ,area: ['550px', '400px']
+                ,area: ['400px', '700px']
                 ,skin: 'layui-box layui-layer-border'
-                ,resize: false
+                ,resize: true
                 ,content: cachedata.base.getInformation+'?id='+id+'&type='+type
             });           
         }                             

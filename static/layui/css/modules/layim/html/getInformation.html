@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>创建群</title>
+<title>好友/群资料</title>
 <link rel="stylesheet" href="../../../layui.2.1.7.css">
 <link rel="stylesheet" href="../../../layui.demo.css">
 <style type="text/css">
@@ -26,9 +26,9 @@
     display: inline-block;
     vertical-align: top;
     font-size: 14px;
-	overflow: hidden; 
-	text-overflow:ellipsis; 
-	white-space: nowrap;
+  overflow: hidden; 
+  text-overflow:ellipsis; 
+  white-space: nowrap;
 }
 .layui-find-list li span {
     margin-top: 4px;
@@ -40,16 +40,30 @@
     line-height: 18px;
     font-size: 12px;
     color: #999;
-	overflow: hidden; 
-	text-overflow:ellipsis; 
-	white-space: nowrap;
+  overflow: hidden; 
+  text-overflow:ellipsis; 
+  white-space: nowrap;
 }
 .back{
-	cursor:pointer;
+  cursor:pointer;
 }
 .lay_page{position: fixed;bottom: 0;margin-left: -15px;margin-bottom: 20px;background: #fff;width: 100%;}
 .layui-laypage{width: 105px;margin:0 auto;display: block}
-.pt30{padding-top: 30px;}
+.pt13{padding-top: 13px;}
+.pd0{padding: 0px;}
+.label{    
+    float: left;
+    display: block;
+    padding: 9px 5px;
+    width: 40px;
+    font-weight: 400;
+    text-align: right;
+  }
+.block {
+    margin-left: 60px;
+    min-height: 36px;
+}
+
 </style>
 <script type='text/javascript' src='../../../../../../static/js/webim.config.js'></script>
 <script type='text/javascript' src='../../../../../../static/js/strophe-1.2.8.min.js'></script>
@@ -62,65 +76,97 @@ layui.config({
 }).extend({
     socket: 'socket'
 });
-layui.use(['form','layim','laypage','socket',], function(socket){
+layui.use(['layim','form','laydate','socket',], function(socket,form,laydate){
   var layim = layui.layim
   , layer = layui.layer
   ,laytpl = layui.laytpl
   ,form = layui.form
-  ,$ = layui.jquery
-  ,laypage = layui.laypage
-  ,param =  location.search;
-	var cache = parent.layui.layim.cache();  
-	var url = '../../../../../../'+cache.base.commitGroupInfo.url || {};  //获得URL参数。
+  ,laydate = layui.laydate
+  ,$ = layui.jquery;
+  var cache = parent.layui.layim.cache();  
+  var url = '../../../../../../'+cache.base.getInformation.url || {};  //获得URL参数。
     $('body').on('click', '.sure', function () {//添加好友
         var othis = $(this);
-		var data = {
-			des:$("#des").val(),
-			groupName:$("#groupName").val(),
-			number:$("input[name='number']:checked").val(),
-			approval:$("input[name='approval']:checked").val(),
-		};         
+        var data = {
+          des:$("#des").val(),
+          groupName:$("#groupName").val(),
+          number:$("input[name='number']:checked").val(),
+          approval:$("input[name='approval']:checked").val(),
+        };         
         parent.layui.im.commitGroupInfo(othis,data);       
     });
+    laydate.render({ 
+      elem: '#birthday'
+      ,format: 'yyyy年MM月dd日' //可任意组合
+    });  
 });
 </script>
 </head>
-<body>	    
-<form class="layui-form layui-row mt15" action="">
-  <div class="layui-form-item layui-col-xs11">
-    <label class="layui-form-label">群名称</label>
-    <div class="layui-input-block">
-      <input type="text" name="groupName" id="groupName" lay-verify="required" autocomplete="off" placeholder="为你们的群取个给力的名字吧！" class="layui-input">
-    </div>
-  </div>
-  <div class="layui-form-item layui-col-xs11">
-    <label class="layui-form-label">群简介</label>
-    <div class="layui-input-block">
-      <input type="text" name="des" id="des" autocomplete="off" placeholder="简单介绍一下吧！" class="layui-input">
-    </div>
-  </div>
-  <div class="layui-form-item layui-col-xs11">
-    <label class="layui-form-label">群规模</label>
-    <div class="layui-input-block">
-		<input type="radio" name="number" value="200" title="200人">
-		<input type="radio" name="number" value="500" title="500人" checked="">    	
-		<input type="radio" name="number" value="1000" title="1000人">    	
-    </div>
-  </div>  
-  <div class="layui-form-item layui-col-xs11">
-    <label class="layui-form-label">加群验证</label>
-    <div class="layui-input-block">
-		<input type="radio" name="approval" value="1" title="需要验证" checked="">
-		<input type="radio" name="approval" value="-1" title="无需验证">    	
-    </div>
-  </div>    
-  <div class="layui-form-item layui-col-xs10 layui-col-xs-offset1 pt30">
-    <div class="layui-input-block">
-      <a lay-submit class="layui-btn btncolor sure" >确认创建</a>
-      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-    </div>
-  </div>    
-</form>
+<body>      
+<div class="layui-form" id="LAY_view">
+      <div class="layui-col-xs11 pt13">
+        <div class="layui-col-xs6 ">
+          <label class="label">昵&nbsp;&nbsp;称</label>
+          <div class="block">
+            <input type="text" class="layui-input" name="memberName" id="memberName" lay-verify="required" autocomplete="off" placeholder="">
+          </div>
+        </div>        
+        <div class="layui-col-xs6">
+          <label class="label">性&nbsp;&nbsp;别</label>
+          <div class="block">
+            <select name="memberSex" lay-verify="required">
+              <option value="">请选择性别</option>
+              <option value="1">男</option>
+              <option value="2">女</option>
+              <option value="0">保密</option>
+            </select>            
+          </div>
+        </div> 
+      </div>
+      <div class="layui-col-xs11 pt13">
+        <div class="layui-col-xs6 ">
+          <label class="label">生&nbsp;&nbsp;日</label>
+          <div class="block">
+            <input type="text" class="layui-input" name="birthday" id="birthday" lay-verify="required">
+          </div>
+        </div>        
+        <div class="layui-col-xs6">
+          <label class="label">血&nbsp;&nbsp;型</label>
+          <div class="block">
+            <select name="memberSex" lay-verify="required">
+              <option value="">请选择血型</option>
+              <option value="1">A型</option>
+              <option value="2">B型</option>
+              <option value="3">AB型</option>
+              <option value="4">O型</option>
+              <option value="5">其他血型</option>
+            </select>            
+          </div>
+        </div> 
+      </div>      
+      <div class="layui-col-xs11 pt13">
+          <label class="label">职&nbsp;&nbsp;业</label>
+          <div class="block">
+            <select name="memberSex" lay-verify="required">
+              <option value="">请选择职业</option>
+              <option value="1">计算机/互联网/通信</option>
+              <option value="2">生产/工艺/制造</option>
+              <option value="3">文化/广告/传媒</option>
+              <option value="4">学生</option>
+              <option value="5">其他</option>
+            </select>            
+          </div>
+      </div>      
+</div>
 
+<textarea title="资料模版" id="LAY_tpl" style="display:none;">
+{{# layui.each(d.data, function(index, item){
+  if(item.from == parent.layui.layim.cache().mine.id){ }}
+    <li class="layim-chat-mine"><div class="layim-chat-user"><img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg"><cite><i>{{ item.timestamp }}</i>{{ item.fromName }}</cite></div><div class="layim-chat-text">{{ layui.layim.content(item.content) }}</div></li>
+  {{# } else { }}
+    <li><div class="layim-chat-user"><img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg"><cite>{{ item.fromName }}<i>{{item.timestamp }}</i></cite></div><div class="layim-chat-text">{{ layui.layim.content(item.content) }}</div></li>
+  {{# }
+}); }}
+</textarea>  
 </body>
 </html>

@@ -130,7 +130,7 @@ require_once 'class/url.php';
                     , notice: true //是否开启桌面消息提醒，默认false
                     , msgbox: layui.cache.dir + 'css/modules/layim/html/msgbox.html' //消息盒子页面地址，若不开启，剔除该项即可
                     , find: layui.cache.dir + 'css/modules/layim/html/find.html' //发现页面地址，若不开启，剔除该项即可
-                    , chatLog: layui.cache.dir + 'css/modules/layim/html/chatLog.html' //聊天记录页面地址，若不开启，剔除该项即可
+                    , chatLog: layui.cache.dir + 'css/modules/layim/html/chatlog.html' //聊天记录页面地址，若不开启，剔除该项即可
                     , createGroup: layui.cache.dir + 'css/modules/layim/html/createGroup.html' //创建群页面地址，若不开启，剔除该项即可
                     , getInformation: layui.cache.dir + 'css/modules/layim/html/getInformation.html' //好友群资料页面
                 });  

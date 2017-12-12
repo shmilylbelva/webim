@@ -284,7 +284,7 @@ switch ($act) {
         if (!$groupIdx['groupIdx'] && $cn['cn'] < 6) {//最多建5个群
             $success = $PdoMySQL->add($data,$tb_group);
             $res['code'] = 0;
-            $res['msg'] = "";
+            $res['msg'] = "群 ".$data['groupName']." 创建成功";
             $res['data'] = $groupIdx;            
         }else{
             $res['code'] = -1;
