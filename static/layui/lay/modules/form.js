@@ -72,6 +72,7 @@ layui.define('layer', function(exports){
   
   //表单控件渲染
   Form.prototype.render = function(type){
+
     var that = this, items = {
       //下拉选择框
       select: function(){
@@ -304,7 +305,6 @@ layui.define('layer', function(exports){
   //自动完成渲染
   var form = new Form(), dom = $(document);
   form.render();
-  
   //表单reset重置渲染
   dom.on('reset', ELEM, function(){
     setTimeout(function(){
