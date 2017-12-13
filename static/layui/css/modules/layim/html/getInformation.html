@@ -7,49 +7,8 @@
 <link rel="stylesheet" href="../../../layui.2.1.7.css">
 <link rel="stylesheet" href="../../../layui.demo.css">
 <style type="text/css">
-.layui-find-list li img {
-    position: absolute;
-    left: 15px;
-    top: 8px;
-    width: 36px;
-    height: 36px;
-    border-radius: 100%;
-}
-.layui-find-list li {
-    position: relative;
-    height: 90px;;
-    padding: 5px 15px 5px 60px;
-    font-size: 0;
-    cursor: pointer;
-}
-.layui-find-list li * {
-    display: inline-block;
-    vertical-align: top;
-    font-size: 14px;
-  overflow: hidden; 
-  text-overflow:ellipsis; 
-  white-space: nowrap;
-}
-.layui-find-list li span {
-    margin-top: 4px;
-    max-width: 155px;
-}
 
-.layui-find-list li p {
-    display: block;
-    line-height: 18px;
-    font-size: 12px;
-    color: #999;
-  overflow: hidden; 
-  text-overflow:ellipsis; 
-  white-space: nowrap;
-}
-.back{
-  cursor:pointer;
-}
-.lay_page{position: fixed;bottom: 0;margin-left: -15px;margin-bottom: 20px;background: #fff;width: 100%;}
-.layui-laypage{width: 105px;margin:0 auto;display: block}
-.pt13{padding-top: 13px;}
+.pt15{padding-top: 15px;}
 .pd0{padding: 0px;}
 .label{    
     float: left;
@@ -60,10 +19,17 @@
     text-align: right;
   }
 .block {
-    margin-left: 60px;
+    margin-left: 55px;
     min-height: 36px;
 }
-
+.layui-input, .layui-textarea {
+    display: block;
+    width: 98%;
+    padding-left: 10px;
+}
+.noresize{
+  resize:none;
+}
 </style>
 <script type='text/javascript' src='../../../../../../static/js/webim.config.js'></script>
 <script type='text/javascript' src='../../../../../../static/js/strophe-1.2.8.min.js'></script>
@@ -83,90 +49,137 @@ layui.use(['layim','form','laydate','socket',], function(socket,form,laydate){
   ,form = layui.form
   ,laydate = layui.laydate
   ,$ = layui.jquery;
+  param =  location.search;//获得URL参数。该窗口url会携带会话id和type
   var cache = parent.layui.layim.cache();  
+  laydate.render({ 
+    elem: '#birthday'
+    ,format: 'yyyy年MM月dd日' //可任意组合
+  });  
+  $("#close").click(function(){
+    var index = parent.layer.getFrameIndex(window.name); 
+    parent.layer.close(index);
+  });   
+
   var url = '../../../../../../'+cache.base.getInformation.url || {};  //获得URL参数。
-    $('body').on('click', '.sure', function () {//添加好友
-        var othis = $(this);
-        var data = {
-          des:$("#des").val(),
-          groupName:$("#groupName").val(),
-          number:$("input[name='number']:checked").val(),
-          approval:$("input[name='approval']:checked").val(),
-        };         
-        parent.layui.im.commitGroupInfo(othis,data);       
-    });
-    laydate.render({ 
-      elem: '#birthday'
-      ,format: 'yyyy年MM月dd日' //可任意组合
-    });  
+  $.get(url+'&'+param, {}, function(data){
+      var res = eval('(' + data + ')');
+      if(res.code != 0){
+          return layer.msg(res.msg);
+      }          
+      var html = laytpl(LAY_tpl.value).render({
+        data: res.data
+      });
+      $('#LAY_view').html(html);
+  });
+
+  // form.on('submit(formsave)', function(data){
+  //   layer.msg(JSON.stringify(data.field));
+  //   return false;
+  // });     
 });
 </script>
 </head>
 <body>      
 <div class="layui-form" id="LAY_view">
-      <div class="layui-col-xs11 pt13">
+           
+</div>
+
+<textarea title="资料模版" id="LAY_tpl" style="display:none;">
+{{# if(d.data.type == 'friend'){ }}
+      <div class="layui-col-xs12 pt15">
         <div class="layui-col-xs6 ">
           <label class="label">昵&nbsp;&nbsp;称</label>
           <div class="block">
-            <input type="text" class="layui-input" name="memberName" id="memberName" lay-verify="required" autocomplete="off" placeholder="">
+            <input type="text" class="layui-input" name="memberName" id="memberName" lay-verify="required" autocomplete="off" value="{{d.data.memberName}}">
           </div>
         </div>        
         <div class="layui-col-xs6">
           <label class="label">性&nbsp;&nbsp;别</label>
           <div class="block">
-            <select name="memberSex" lay-verify="required">
+            <select name="memberSex" >
               <option value="">请选择性别</option>
-              <option value="1">男</option>
-              <option value="2">女</option>
-              <option value="0">保密</option>
+              <option value="1" {{# if(d.data.memberSex == '1'){ }} selected="selected" {{# } }}>男</option>
+              <option value="2" {{# if(d.data.memberSex == '2'){ }} selected="selected" {{# } }}>女</option>
+              <option value="3" {{# if(d.data.memberSex == '3'){ }} selected="selected" {{# } }}>保密</option>
             </select>            
           </div>
         </div> 
       </div>
-      <div class="layui-col-xs11 pt13">
+      <div class="layui-col-xs12 pt15">
         <div class="layui-col-xs6 ">
           <label class="label">生&nbsp;&nbsp;日</label>
           <div class="block">
-            <input type="text" class="layui-input" name="birthday" id="birthday" lay-verify="required">
+            <input type="text" class="layui-input" name="birthday" id="birthday" value="{{ d.birthday}}">
           </div>
         </div>        
         <div class="layui-col-xs6">
           <label class="label">血&nbsp;&nbsp;型</label>
           <div class="block">
-            <select name="memberSex" lay-verify="required">
+            <select name="blood_type" >
               <option value="">请选择血型</option>
-              <option value="1">A型</option>
-              <option value="2">B型</option>
-              <option value="3">AB型</option>
-              <option value="4">O型</option>
-              <option value="5">其他血型</option>
+              <option value="1" {{# if(d.data.blood_type == 'A型'){ }} selected="selected" {{# } }}>A型</option>
+              <option value="2" {{# if(d.data.blood_type == 'B型'){ }} selected="selected" {{# } }}>B型</option>
+              <option value="3" {{# if(d.data.blood_type == 'AB型'){ }} selected="selected" {{# } }}>AB型</option>
+              <option value="4" {{# if(d.data.blood_type == 'O型'){ }} selected="selected" {{# } }}>O型</option>
+              <option value="5" {{# if(d.data.blood_type == '其他血型'){ }} selected="selected" {{# } }}>其他血型</option>
             </select>            
           </div>
         </div> 
       </div>      
-      <div class="layui-col-xs11 pt13">
+      <div class="layui-col-xs11 pt15">
           <label class="label">职&nbsp;&nbsp;业</label>
           <div class="block">
-            <select name="memberSex" lay-verify="required">
+            <select name="jobs" >
               <option value="">请选择职业</option>
-              <option value="1">计算机/互联网/通信</option>
-              <option value="2">生产/工艺/制造</option>
-              <option value="3">文化/广告/传媒</option>
-              <option value="4">学生</option>
-              <option value="5">其他</option>
-            </select>            
+              <option value="1" {{# if(d.data.blood_type == '1'){ }} selected="selected" {{# } }}>计算机/互联网/通信</option>  
+              <option value="2" {{# if(d.data.blood_type == '2'){ }} selected="selected" {{# } }}>生产/工艺/制造</option>
+              <option value="3" {{# if(d.data.blood_type == '3'){ }} selected="selected" {{# } }}>医疗/护理/制药</option>
+              <option value="4" {{# if(d.data.blood_type == '4'){ }} selected="selected" {{# } }}>金融/银行/投资/保险</option>
+              <option value="5" {{# if(d.data.blood_type == '5'){ }} selected="selected" {{# } }}>商业/服务业/个体经营</option>
+              <option value="6" {{# if(d.data.blood_type == '6'){ }} selected="selected" {{# } }}>文化/广告/传媒</option>
+              <option value="7" {{# if(d.data.blood_type == '7'){ }} selected="selected" {{# } }}>娱乐/艺术/表演</option>
+              <option value="8" {{# if(d.data.blood_type == '8'){ }} selected="selected" {{# } }}>律师/法务</option>               
+              <option value="9" {{# if(d.data.blood_type == '9'){ }} selected="selected" {{# } }}>教育/培训</option>               
+              <option value="10" {{# if(d.data.blood_type == '10'){ }} selected="selected" {{# } }}>公务员/行政/事业单位</option>
+              <option value="11" {{# if(d.data.blood_type == '11'){ }} selected="selected" {{# } }}>模特</option>
+              <option value="12" {{# if(d.data.blood_type == '12'){ }} selected="selected" {{# } }}>空姐</option>
+              <option value="13" {{# if(d.data.blood_type == '13'){ }} selected="selected" {{# } }}>学生</option>
+              <option value="14" {{# if(d.data.blood_type == '14'){ }} selected="selected" {{# } }}>其他</option>
+            </select>      
           </div>
-      </div>      
-</div>
-
-<textarea title="资料模版" id="LAY_tpl" style="display:none;">
-{{# layui.each(d.data, function(index, item){
-  if(item.from == parent.layui.layim.cache().mine.id){ }}
-    <li class="layim-chat-mine"><div class="layim-chat-user"><img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg"><cite><i>{{ item.timestamp }}</i>{{ item.fromName }}</cite></div><div class="layim-chat-text">{{ layui.layim.content(item.content) }}</div></li>
-  {{# } else { }}
-    <li><div class="layim-chat-user"><img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg"><cite>{{ item.fromName }}<i>{{item.timestamp }}</i></cite></div><div class="layim-chat-text">{{ layui.layim.content(item.content) }}</div></li>
-  {{# }
-}); }}
+      </div>
+      <div class="layui-col-xs12 pt15">
+          <label class="label">Q&nbsp;&nbsp;&nbsp;&nbsp;Q</label>
+          <div class="block">
+            <input type="text" class="layui-input" name="qq" id="qq" value="{{d.data.qq}}" >
+          </div>
+      </div>        
+      <div class="layui-col-xs12 pt15">
+          <label class="label">微&nbsp;&nbsp;信</label>
+          <div class="block">
+            <input type="text" class="layui-input" name="wechat" id="wechat" value="{{d.data.wechat}}">
+          </div>
+      </div>   
+      <div class="layui-col-xs12 pt15">
+          <label class="label">手&nbsp;&nbsp;机</label>
+          <div class="block">
+            <input type="text" class="layui-input" name="phoneNumber" id="phoneNumber" value="{{d.data.phoneNumber}}">
+          </div>
+      </div> 
+      <div class="layui-col-xs12 pt15">
+          <label class="label">邮&nbsp;&nbsp;箱</label>
+          <div class="block">
+            <input type="text" class="layui-input" name="emailAddress" id="emailAddress" value="{{d.data.emailAddress}}">
+          </div>
+      </div>                
+ 
+      <div class="layui-form-item pt15">
+        <div class="layui-input-block">
+          <button class="layui-btn" lay-submit lay-filter="formsave">保存</button>
+          <button type="button" id="close" class="layui-btn layui-btn-primary">关闭</button>
+        </div>
+      </div> 
+  {{# } }}
 </textarea>  
 </body>
 </html>

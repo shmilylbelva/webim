@@ -253,6 +253,21 @@ switch ($act) {
         $res['data'] = $get_friend;
         echo  json_encode($res); 
         break;  
+    case 'getInformation'://获取好友资料
+        $id = $_GET['?id'];//好友/群 id      
+        $type = $_GET['type'] ;//当前类型
+        if ($type == 'friend') {//好友
+            $sql = "select memberIdx,memberName,memberSex,birthday,signature,emailAddress,phoneNumber,blood_type,job,qq,wechat from tb_person where memberIdx = ".$id;
+        }else{
+            break; 
+        }
+        $getInformation = $PdoMySQL->getRow($sql);   
+        $getInformation['type'] = $type;     
+        $res['code'] = 0;
+        $res['msg'] = "";
+        $res['data'] = $getInformation;
+        echo  json_encode($res); 
+        break;            
     case 'userMaxGroupNumber'://判断用户最大建群数
         $memberIdx = $_SESSION['info']['id'] ;
         if (!$memberIdx) {

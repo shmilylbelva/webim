@@ -13,7 +13,7 @@ require_once 'class/url.php';
     </head>
 
     <body data-token="<?php echo $uinfo['id']; ?>" data-rykey="<?php echo $uinfo['easemob_token']; ?>">
-    <pre>
+    <pre style="padding-top: 50px;padding-left: 50px">
     已实现功能:
         1.好友/群内的文字、表情、图片、文件 在线/离线消息发送和接收。 
         2.查看群员列表。 
@@ -26,6 +26,7 @@ require_once 'class/url.php';
         9.新建群
         10.消息盒子展示
         体验完整功能请移步<a href="https://github.com/shmilylbelva/webim" style="color: red">这里</a>
+        如果登陆一段时间后接收不到消息，可能是有别的小伙伴登陆了这个账号^_^,点击这里<a href="http://test.guoshanchina.com/login.php" style="color: red">重新登陆</a>即可(还没做退出登陆……)
     </pre>        
     </body>
         <script type='text/javascript' src='static/js/webim.config.js'></script>
@@ -84,7 +85,7 @@ require_once 'class/url.php';
                         url: 'class/doAction.php?action=getRecommend'
                         , type: 'get' //默认
                     }
-                    //查找好友
+                    //查找好友总数
                     ,findFriendTotal:{
                         url: 'class/doAction.php?action=findFriendTotal'
                         , type: 'get' //默认
@@ -92,6 +93,11 @@ require_once 'class/url.php';
                     //查找好友
                     ,findFriend:{
                         url: 'class/doAction.php?action=findFriend'
+                        , type: 'get' //默认
+                    }  
+                    //获取好友资料
+                    ,getInformation:{
+                        url: 'class/doAction.php?action=getInformation'
                         , type: 'get' //默认
                     }  
                     //提交建群信息
@@ -113,7 +119,7 @@ require_once 'class/url.php';
                     ,getChatLog:{
                         url: 'class/doAction.php?action=getChatLog'
                         , type: 'get' //默认post
-                    }                                       
+                    }                                     
                     , isAudio: false //开启聊天工具栏音频
                     , isVideo: false //开启聊天工具栏视频
 
@@ -126,13 +132,12 @@ require_once 'class/url.php';
                     ,title: 'layim' 
                     ,copyright:true
                     , initSkin: '1.jpg' //1-5 设置初始背景
-                    // , initSkin: '3.jpg' //1-5 设置初始背景
                     , notice: true //是否开启桌面消息提醒，默认false
                     , msgbox: layui.cache.dir + 'css/modules/layim/html/msgbox.html' //消息盒子页面地址，若不开启，剔除该项即可
                     , find: layui.cache.dir + 'css/modules/layim/html/find.html' //发现页面地址，若不开启，剔除该项即可
                     , chatLog: layui.cache.dir + 'css/modules/layim/html/chatlog.html' //聊天记录页面地址，若不开启，剔除该项即可
                     , createGroup: layui.cache.dir + 'css/modules/layim/html/createGroup.html' //创建群页面地址，若不开启，剔除该项即可
-                    , getInformation: layui.cache.dir + 'css/modules/layim/html/getInformation.html' //好友群资料页面
+                    , Information: layui.cache.dir + 'css/modules/layim/html/getInformation.html' //好友群资料页面
                 });  
             });
         </script>  

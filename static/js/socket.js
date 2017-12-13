@@ -872,13 +872,14 @@
            var id = data.id || {},type = data.type || {};
             var index = layer.open({
                 type: 2
-                ,title: type  == 'friend'? '好友资料':'群资料'
+                ,title: type  == 'friend'?(cachedata.mine.id == id?'我的资料':'好友资料') :'群资料'
                 ,shade: false
                 ,maxmin: false
-                ,area: ['400px', '700px']
+                // ,closeBtn: 0
+                ,area: ['400px', '600px']
                 ,skin: 'layui-box layui-layer-border'
                 ,resize: true
-                ,content: cachedata.base.getInformation+'?id='+id+'&type='+type
+                ,content: cachedata.base.Information+'?id='+id+'&type='+type
             });           
         }                             
     };
