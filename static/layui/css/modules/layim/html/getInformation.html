@@ -30,58 +30,18 @@
 .noresize{
   resize:none;
 }
+.select{
+    height: 38px;
+    line-height: 38px;
+    border: 1px solid #e6e6e6;
+    background-color: #fff;
+    border-radius: 2px;
+}
 </style>
-<script type='text/javascript' src='../../../../../../static/js/webim.config.js'></script>
-<script type='text/javascript' src='../../../../../../static/js/strophe-1.2.8.min.js'></script>
-<script type='text/javascript' src='../../../../../../static/js/websdk-1.4.13.js'></script> 
-<!-- <script src="../../../../layui.2.1.7.js"></script> -->
-<script src="../../../../../layui/layui.js"></script>
-<script>
-layui.config({
-    base: '../../../../../../static/js/'
-}).extend({
-    socket: 'socket'
-});
-layui.use(['layim','form','laydate','socket',], function(socket,form,laydate){
-  var layim = layui.layim
-  , layer = layui.layer
-  ,laytpl = layui.laytpl
-  ,form = layui.form
-  ,laydate = layui.laydate
-  ,$ = layui.jquery;
-  param =  location.search;//获得URL参数。该窗口url会携带会话id和type
-  var cache = parent.layui.layim.cache();  
-  laydate.render({ 
-    elem: '#birthday'
-    ,format: 'yyyy年MM月dd日' //可任意组合
-  });  
-  $("#close").click(function(){
-    var index = parent.layer.getFrameIndex(window.name); 
-    parent.layer.close(index);
-  });   
-
-  var url = '../../../../../../'+cache.base.getInformation.url || {};  //获得URL参数。
-  $.get(url+'&'+param, {}, function(data){
-      var res = eval('(' + data + ')');
-      if(res.code != 0){
-          return layer.msg(res.msg);
-      }          
-      var html = laytpl(LAY_tpl.value).render({
-        data: res.data
-      });
-      $('#LAY_view').html(html);
-  });
-
-  // form.on('submit(formsave)', function(data){
-  //   layer.msg(JSON.stringify(data.field));
-  //   return false;
-  // });     
-});
-</script>
 </head>
 <body>      
 <div class="layui-form" id="LAY_view">
-           
+      
 </div>
 
 <textarea title="资料模版" id="LAY_tpl" style="display:none;">
@@ -96,7 +56,7 @@ layui.use(['layim','form','laydate','socket',], function(socket,form,laydate){
         <div class="layui-col-xs6">
           <label class="label">性&nbsp;&nbsp;别</label>
           <div class="block">
-            <select name="memberSex" >
+            <select name="memberSex" class="select" style="display: block;">
               <option value="">请选择性别</option>
               <option value="1" {{# if(d.data.memberSex == '1'){ }} selected="selected" {{# } }}>男</option>
               <option value="2" {{# if(d.data.memberSex == '2'){ }} selected="selected" {{# } }}>女</option>
@@ -109,13 +69,13 @@ layui.use(['layim','form','laydate','socket',], function(socket,form,laydate){
         <div class="layui-col-xs6 ">
           <label class="label">生&nbsp;&nbsp;日</label>
           <div class="block">
-            <input type="text" class="layui-input" name="birthday" id="birthday" value="{{ d.birthday}}">
+            <input type="text" class="layui-input" name="birthday" id="birthday" value="{{ d.data.birthday}}">
           </div>
         </div>        
         <div class="layui-col-xs6">
           <label class="label">血&nbsp;&nbsp;型</label>
           <div class="block">
-            <select name="blood_type" >
+            <select name="blood_type" class="select" style="display: block;">
               <option value="">请选择血型</option>
               <option value="1" {{# if(d.data.blood_type == 'A型'){ }} selected="selected" {{# } }}>A型</option>
               <option value="2" {{# if(d.data.blood_type == 'B型'){ }} selected="selected" {{# } }}>B型</option>
@@ -129,7 +89,7 @@ layui.use(['layim','form','laydate','socket',], function(socket,form,laydate){
       <div class="layui-col-xs11 pt15">
           <label class="label">职&nbsp;&nbsp;业</label>
           <div class="block">
-            <select name="jobs" >
+            <select name="jobs" class="select" style="display: block;">
               <option value="">请选择职业</option>
               <option value="1" {{# if(d.data.blood_type == '1'){ }} selected="selected" {{# } }}>计算机/互联网/通信</option>  
               <option value="2" {{# if(d.data.blood_type == '2'){ }} selected="selected" {{# } }}>生产/工艺/制造</option>
@@ -172,7 +132,13 @@ layui.use(['layim','form','laydate','socket',], function(socket,form,laydate){
             <input type="text" class="layui-input" name="emailAddress" id="emailAddress" value="{{d.data.emailAddress}}">
           </div>
       </div>                
- 
+      <div class="layui-col-xs12 pt15">
+          <label class="label">签&nbsp;&nbsp;名</label>
+          <div class="layui-input-block">
+<contenteditable  placeholder="请输入内容" name="signature" class="layui-input " value="" >{{d.data.signature}}
+ </contenteditable >         
+          </div>
+      </div>   
       <div class="layui-form-item pt15">
         <div class="layui-input-block">
           <button class="layui-btn" lay-submit lay-filter="formsave">保存</button>
@@ -182,4 +148,57 @@ layui.use(['layim','form','laydate','socket',], function(socket,form,laydate){
   {{# } }}
 </textarea>  
 </body>
+<script type='text/javascript' src='../../../../../../static/js/webim.config.js'></script>
+<script type='text/javascript' src='../../../../../../static/js/strophe-1.2.8.min.js'></script>
+<script type='text/javascript' src='../../../../../../static/js/websdk-1.4.13.js'></script> 
+<script src="../../../../layui.2.1.7.js"></script>
+<!-- <script src="../../../../../layui/layui.js"></script> -->
+<script>
+layui.config({
+    base: '../../../../../../static/js/'
+}).extend({
+    socket: 'socket'
+});
+layui.use(['form','laydate'], function(){
+  var form = layui.form
+  ,laydate = layui.laydate;
+
+  layui.use(['layim','socket','laydate','form','laytpl'], function(socket){
+    var layim = layui.layim
+    , layer = layui.layer
+    ,laytpl = layui.laytpl
+    ,$ = layui.jquery;
+    
+    param =  location.search;//获得URL参数。该窗口url会携带会话id和type
+    var cache = parent.layui.layim.cache();  
+    laydate.render({ 
+      elem: '#birthday'
+      ,format: 'yyyy年MM月dd日' //可任意组合
+    });  
+
+    var url = '../../../../../../'+cache.base.getInformation.url || {};  //获得URL参数。
+    $.get(url+'&'+param, {}, function(data){
+        var res = eval('(' + data + ')');
+        if(res.code != 0){
+            return layer.msg(res.msg);
+        } 
+        var html = laytpl(LAY_tpl.value).render({
+          data: res.data
+        });
+        $('#LAY_view').html(html);
+        laydate.render({ 
+          elem: '#birthday'
+          ,format: 'yyyy年MM月dd日' //可任意组合
+        });    
+    $("#close").click(function(){
+      console.log('1');
+      var index = parent.layer.getFrameIndex(window.name); 
+      parent.layer.close(index);
+    });      
+    });
+  });
+}); 
+
+</script>
+
 </html>
