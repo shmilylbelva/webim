@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50710
 File Encoding         : 65001
 
-Date: 2017-12-03 23:38:03
+Date: 2017-12-15 23:42:17
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -45,7 +45,7 @@ CREATE TABLE `tb_chatlog` (
   `type` enum('chatroom','friend','group') DEFAULT 'friend',
   `status` tinyint(1) DEFAULT '1' COMMENT '1 可以正常访问 2禁止访问',
   PRIMARY KEY (`chatlogIdx`,`from`,`to`)
-) ENGINE=InnoDB AUTO_INCREMENT=120 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=211 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of tb_chatlog
@@ -117,6 +117,97 @@ INSERT INTO `tb_chatlog` VALUES ('116', '911117', '34331010596865', '方法', '1
 INSERT INTO `tb_chatlog` VALUES ('117', '911117', '1570845', '恩恩', '1512291467697', 'friend', '1');
 INSERT INTO `tb_chatlog` VALUES ('118', '911117', '34501063409665', '方法', '1512304640443', 'group', '1');
 INSERT INTO `tb_chatlog` VALUES ('119', '911117', '34515089162242', '花海', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('120', '911117', '911088', '你每天都要登陆？', '1512389544373', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('121', '911117', '911100', '旺旺', '1512391166749', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('122', '911117', '32403609419777', '？', '1512392101570', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('123', '911117', '32403609419777', '用你自己的环信秘钥呗', '1512392144299', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('124', '911117', '911088', '你好', '1512392194668', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('125', '911117', '911088', '恩', '1512392207111', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('126', '911117', '911088', '后台？ 服务端用的php', '1512392238707', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('127', '911117', '911088', '环信是起socket作用', '1512392284731', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('128', '911117', '911088', '起到的作用是通信', '1512392299941', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('129', '911117', '911088', 'layim是前端页面展示', '1512392309439', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('130', '911117', '911088', '是的，历史和换肤就需要自己的服务器配合', '1512392333857', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('131', '911117', '911088', '创建群组，搜索好友，这些都需要服务器配合的', '1512392372954', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('132', '911117', '911088', '成都', '1512392374802', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('133', '911117', '911088', '兄台有何指教', '1512392416238', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('134', '911117', '911088', 'shmily_lb_elva', '1512392424341', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('135', '911117', '911088', '微信时不时的登陆一下', '1512392439607', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('136', '911117', '911088', '不保证能及时回复', '1512392450821', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('137', '911117', '911088', '你是做什么方面的呢', '1512392477797', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('138', '911117', '911088', '厉害', '1512392508940', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('139', '911117', '911088', '就是做外包呗', '1512392661814', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('140', '911117', '911088', '。。。', '1512392688739', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('141', '911117', '911088', '你不是还自称为包工头么', '1512392703425', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('142', '911117', '911088', '[:|] ', '1512392709179', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('143', '911117', '911088', '恩', '1512392738785', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('144', '911117', '32403609419777', '朋友？', '1513005582927', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('145', '911117', '32403609419777', '废话', '1513006464238', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('146', '911117', '32403609419777', '大半夜不睡觉', '1513006480614', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('147', '911117', '32403609419777', '本来就有这个功能', '1513006503914', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('148', '911117', '32403609419777', '只是我把屏蔽了', '1513006511389', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('149', '911117', '32403609419777', '觉得不实用', '1513006523879', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('150', '911117', '32403609419777', '[):] ', '1513006534649', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('151', '911117', '32403609419777', '有的', '1513006539804', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('152', '911117', '32403609419777', '是的', '1513006561568', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('153', '911117', '32403609419777', '可以看看我的github', '1513006571107', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('154', '911117', '32403609419777', 'https://github.com/shmilylbelva/webim', '1513006594927', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('155', '911117', '32403609419777', '一直会更新完善的', '1513006603878', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('156', '911117', '32403609419777', '1028604181', '1513006610061', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('157', '911117', '32403609419777', '现在workerman版本的聊天也在上手中', '1513006630828', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('158', '911117', '32403609419777', '给个star呗', '1513006693712', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('159', '911117', '32403609419777', '可以的', '1513006732027', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('160', '911117', '32403609419777', '定制功能也可以的', '1513006739842', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('161', '911117', '32403609419777', 'video[http://www.w3school.com.cn//i/movie.ogg]', '1513087169680', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('162', '911117', '32403609419777', '收到', '1513087367335', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('163', '911117', '32403609419777', 'video[http://www.w3school.com.cn//i/movie.ogg]', '1513087513748', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('164', '911117', '32403609419777', 'video[http://ossguoshan.oss-cn-shanghai.aliyuncs.com/VID_20171212_215649.mp4]', '1513087517021', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('165', '1570855', '911085', '？？', '1513087873134', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('166', '1570855', '911085', 'video[http://www.w3school.com.cn//i/movie.ogg]', '1513087927959', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('167', '1570855', '911085', '收到了吗', '1513087943372', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('168', '1570855', '911085', '到时候如果要上线用，可以先上传到阿里云上的oss', '1513087984777', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('169', '1570855', '911085', '这样播放不会出问题', '1513087999146', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('170', '1570855', '911085', '可以', '1513088038006', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('171', '1570855', '911085', '我看看', '1513088102687', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('172', '1570855', '911085', '稍等', '1513088104790', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('173', '1570855', '911085', '你那边我没有开启发送视频', '1513088135463', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('174', '1570855', '911085', '只有我调试才有', '1513088146109', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('175', '1570855', '911085', '首先是用户上传视频到云服务器，云服务器解析后返回视频地址，后台再处理返回给客户端', '1513088235742', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('176', '1570855', '911085', '客户端接收特定的信息格式，展示视频消息', '1513088258184', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('177', '1570855', '911085', '不经过环信', '1513088312351', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('178', '1570855', '911085', '绕过环信', '1513088323906', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('179', '1570855', '911085', '是的', '1513088327318', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('180', '1570855', '911085', '可以', '1513088337272', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('181', '1570855', '911085', '如果你那边是比较私密的类型，可以不用第三方通信', '1513088385775', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('182', '1570855', '911085', '可以直接给你搭建一个通信服务器', '1513088397035', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('183', '1570855', '911085', '如果选择的是发送文件，那么久只能下载下来', '1513088432785', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('184', '1570855', '911085', '环信那边只是能够看到你这条消息', '1513088478062', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('185', '1570855', '911085', '他是看不到内容的', '1513088490557', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('186', '1570855', '911085', '文件/视频/图片，都可以不经过环信  直接通过oss', '1513088523440', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('187', '1570855', '911085', '环信只是作为一个通信介质', '1513088536117', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('188', '1570855', '911085', '相当于是快递员', '1513088542513', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('189', '1570855', '911085', '他只是知道你用一个包裹，包裹里面是什么，他并不知道', '1513088561559', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('190', '1570855', '911085', '可以的', '1513088612180', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('191', '1570855', '911085', '可以在线，', '1513088628497', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('192', '1570855', '911085', '环信传递的只是一个视频路径', '1513088644412', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('193', '1570855', '911085', '刚刚说了，文件是上传到的自己的oss', '1513088665332', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('194', '1570855', '911085', '如果觉得oss还不安全，可以直接传到自己的服务器', '1513088683113', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('195', '1570855', '911085', '直接将文件传到环信，也是可以的', '1513088773759', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('196', '1570855', '911085', '如果文档说了不能', '1513088809679', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('197', '1570855', '911085', '文档上的上传附件', '1513088838473', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('198', '1570855', '911085', '就相当于是将文件零时保存在环信的', '1513088863906', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('199', '1570855', '911085', '他返回的路径不是可以直接播放的', '1513088894134', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('200', '1570855', '911085', '需要一个秘钥', '1513088899192', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('201', '1570855', '911085', '通过秘钥才能正常访问视频', '1513088919719', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('202', '1570855', '911085', '文件类型的都是这样的', '1513088929173', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('203', '1570855', '911085', '链接肯定不行，需要上传源文件', '1513089029523', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('204', '1570855', '911085', 'layim 原生是只支持发送视频链接的', '1513089089011', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('205', '1570855', '911085', '返回给你的信息里面还有别的参数', '1513089111088', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('206', '1570855', '911085', '文档写有', '1513089119479', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('207', '1570845', '32403609419777', '1', '1513089208162', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('208', '911117', '911088', '[):] ', '1513261592914', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('209', '911117', '911088', '[<o)][;)] ', '1513261610614', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('210', '911117', '1570855', 'o', '1513344231806', 'friend', '1');
 
 -- ----------------------------
 -- Table structure for `tb_group`
@@ -139,7 +230,12 @@ INSERT INTO `tb_group` VALUES ('34331010596865', '不扯淡', '点点滴滴', '1
 INSERT INTO `tb_group` VALUES ('32403609419777', 'layim一群', '2', '1000', '1', null);
 INSERT INTO `tb_group` VALUES ('32403628294145', 'layim二群', '1', '1000', '1', null);
 INSERT INTO `tb_group` VALUES ('34501063409665', '不验证', '不验证', '20', '-1', '1570845');
+INSERT INTO `tb_group` VALUES ('34601052471298', '111', '111', '500', '1', '911117');
+INSERT INTO `tb_group` VALUES ('34601112240129', '滴滴', '滴滴', '500', '1', '911117');
+INSERT INTO `tb_group` VALUES ('35234327363585', '你好', '123445', '500', '1', '911117');
 INSERT INTO `tb_group` VALUES ('34515427852290', '12', '12', '500', '-1', '911117');
+INSERT INTO `tb_group` VALUES ('34600914059267', '啊啊', '啊啊', '500', '1', '911117');
+INSERT INTO `tb_group` VALUES ('35234343092225', '', '', '500', '1', '911117');
 
 -- ----------------------------
 -- Table structure for `tb_msg`
@@ -167,9 +263,9 @@ INSERT INTO `tb_msg` VALUES ('7', '2', '1570855', '911117', '4', '你好', '1510
 INSERT INTO `tb_msg` VALUES ('2', '1', '911117', '911088', '1', '很高兴认识你1', '1510677891', null, null, '0', null);
 INSERT INTO `tb_msg` VALUES ('3', '2', '911117', '1570845', '4', '？', '1512224909', '1512228739', '1512228739', '0', null);
 INSERT INTO `tb_msg` VALUES ('4', '2', '911117', '911100', '5', '很高兴认识你3', '1510677791', '1510689891', null, '0', null);
-INSERT INTO `tb_msg` VALUES ('8', '2', '911117', '1570855', '4', '', '1510758910', '1510758915', '1510758915', '0', null);
+INSERT INTO `tb_msg` VALUES ('8', '1', '911117', '1570855', '1', '12', '1513344364', '1510758915', '1513344364', '0', null);
 INSERT INTO `tb_msg` VALUES ('17', '4', '911117', '34331010596865', '4', '23', '1512290980', '1512290985', '1512290985', '1570845', '1570845');
-INSERT INTO `tb_msg` VALUES ('20', '4', '1570845', '34515089162242', '2', '流量', '1512314670', '1512314678', '1512314678', '911117', '911117');
+INSERT INTO `tb_msg` VALUES ('20', '4', '1570845', '34515089162242', '4', '流量', '1512314670', '1512314678', '1512314678', '911117', '911117');
 
 -- ----------------------------
 -- Table structure for `tb_person`
@@ -177,9 +273,9 @@ INSERT INTO `tb_msg` VALUES ('20', '4', '1570845', '34515089162242', '2', '流�
 DROP TABLE IF EXISTS `tb_person`;
 CREATE TABLE `tb_person` (
   `memberIdx` bigint(20) NOT NULL AUTO_INCREMENT,
-  `memberName` varchar(200) NOT NULL,
-  `memberAge` int(11) NOT NULL,
-  `memberSex` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0保密 1男 2女',
+  `memberName` varchar(200) NOT NULL COMMENT '昵称',
+  `birthday` varchar(64) NOT NULL COMMENT '生日',
+  `memberSex` tinyint(1) unsigned zerofill NOT NULL DEFAULT '3' COMMENT '1男 2女 3保密 ',
   `memberStatus` tinyint(1) NOT NULL,
   `signature` varchar(500) NOT NULL DEFAULT '',
   `emailAddress` varchar(200) NOT NULL DEFAULT '',
@@ -187,27 +283,31 @@ CREATE TABLE `tb_person` (
   `memberPWD` varchar(200) NOT NULL,
   `userToken` varchar(200) NOT NULL DEFAULT '',
   `oauth_token` varchar(200) NOT NULL,
+  `blood_type` varchar(32) NOT NULL DEFAULT '其他血型' COMMENT 'A型 B型 AB型 O型 其他血型 ',
+  `job` tinyint(2) DEFAULT '0' COMMENT '1 计算机/互联网/通信 2生产/工艺/制造 3医疗/护理/制药 4 金融/银行/投资/保险 5商业/服务业/个体经营 6文化/广告/传媒 7娱乐/艺术/表演 8 律师/法务 9教育/培训 10公务员/行政/事业单位 11模特 12空姐 13学生 14其他\r\n\r\n这里可以单独建一个职业表，作为演示，我就不设计那么多表了',
+  `qq` bigint(20) DEFAULT NULL,
+  `wechat` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`memberIdx`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1570869 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of tb_person
 -- ----------------------------
-INSERT INTO `tb_person` VALUES ('1', '11', '1', '0', '1', '', '', '1', '1', '', '1');
-INSERT INTO `tb_person` VALUES ('3', '3', '3', '0', '3', '', '', '3', '3', '', '3');
-INSERT INTO `tb_person` VALUES ('12', '1', '1', '0', '1', '', '', '1', '1', '', '1');
-INSERT INTO `tb_person` VALUES ('22', '2', '2', '0', '2', '', '', '2', '2', '', '2');
-INSERT INTO `tb_person` VALUES ('122', '1', '1', '0', '1', '', '', '1', '1', '', '1');
-INSERT INTO `tb_person` VALUES ('910992', '清风', '23', '1', '0', '星光灿烂', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '');
-INSERT INTO `tb_person` VALUES ('911058', '实力派', '30', '1', '0', '善 是一个美好', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '');
-INSERT INTO `tb_person` VALUES ('911067', '爱咋咋地', '18', '0', '0', '一个优秀的人', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '');
-INSERT INTO `tb_person` VALUES ('911085', '清晨', '48', '2', '0', '你不进步就在后退，不做温水里的癞疙宝', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '');
-INSERT INTO `tb_person` VALUES ('911088', '豆浆', '25', '0', '0', '本人是一个开朗的人', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', 'f844d7a6d5bf136c21d7bb5319fe4dd4');
-INSERT INTO `tb_person` VALUES ('911100', '等待', '19', '2', '0', '陪伴是最长情的告白', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '');
-INSERT INTO `tb_person` VALUES ('911117', '美的不要不要的', '21', '2', '0', 'The world makes way for the man who knows where he is going.', '102@qq.com', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '69ebdafcd94ee5b72b8a4044950b8bd5');
-INSERT INTO `tb_person` VALUES ('1570845', '花海', '20', '1', '0', '我就不写签名< (ˉ^ˉ)>', '', '15708440000', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '513a290382a0f562e9b98f49a64f704a');
-INSERT INTO `tb_person` VALUES ('1570855', '回眸淡然笑', '20', '2', '0', '有钱的自由，没钱的幻想！', '', '18381334800', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', 'b6eee48de455892f8eef3cbc5117dc2d');
-INSERT INTO `tb_person` VALUES ('1570868', '圆圆', '40', '0', '0', '各有各的活法', '', '1', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '2');
+INSERT INTO `tb_person` VALUES ('1', '11', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, null, null);
+INSERT INTO `tb_person` VALUES ('3', '3', '2017年12月14日', '3', '3', '', '', '3', '3', '', '3', '其他血型', null, null, null);
+INSERT INTO `tb_person` VALUES ('12', '1', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, null, null);
+INSERT INTO `tb_person` VALUES ('22', '2', '2017年12月14日', '3', '2', '', '', '2', '2', '', '2', '其他血型', null, null, null);
+INSERT INTO `tb_person` VALUES ('122', '1', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, null, null);
+INSERT INTO `tb_person` VALUES ('910992', '清风', '2017年12月14日', '1', '0', '星光灿烂', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, null, null);
+INSERT INTO `tb_person` VALUES ('911058', '实力派', '2017年12月14日', '1', '0', '善 是一个美好', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, null, null);
+INSERT INTO `tb_person` VALUES ('911067', '爱咋咋地', '2017年12月14日', '3', '0', '一个优秀的人', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, null, null);
+INSERT INTO `tb_person` VALUES ('911085', '清晨', '2017年12月14日', '2', '0', '你不进步就在后退，不做温水里的癞疙宝', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, null, null);
+INSERT INTO `tb_person` VALUES ('911088', '豆浆', '2017年12月14日', '3', '0', '本人是一个开朗的人', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', 'f844d7a6d5bf136c21d7bb5319fe4dd4', '其他血型', null, null, null);
+INSERT INTO `tb_person` VALUES ('911100', '等待', '2017年12月14日', '2', '0', '陪伴是最长情的告白', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, null, null);
+INSERT INTO `tb_person` VALUES ('911117', '美的不要不要的', '2017年12月14日', '2', '0', 'The world makes way for the man who knows where he is going.', '102@qq.com', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '69ebdafcd94ee5b72b8a4044950b8bd5', '其他血型', null, '123', '1234345');
+INSERT INTO `tb_person` VALUES ('1570845', '花海', '2017年12月14日', '1', '0', '我就不写签名< (ˉ^ˉ)>', '', '15708440000', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '513a290382a0f562e9b98f49a64f704a', '其他血型', null, null, null);
+INSERT INTO `tb_person` VALUES ('1570855', '回眸淡然笑', '2017年12月14日', '2', '0', '有钱的自由，没钱的幻想！', '', '18381334800', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', 'b6eee48de455892f8eef3cbc5117dc2d', '其他血型', null, null, null);
+INSERT INTO `tb_person` VALUES ('1570868', '圆圆', '2017年12月14日', '3', '0', '各有各的活法', '', '1', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '2', '其他血型', null, null, null);
 
 -- ----------------------------
 -- Table structure for `tb_skin`

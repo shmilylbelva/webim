@@ -7,9 +7,27 @@
 <link rel="stylesheet" href="../../../layui.2.1.7.css">
 <link rel="stylesheet" href="../../../layui.demo.css">
 <style type="text/css">
-
+.layim-msgbox{margin: 15px;}
+.layim-msgbox li{position: relative; margin-bottom: 10px; padding: 0 0px 10px 60px; padding-bottom: 10px; line-height: 22px; border-bottom: 1px dotted #e2e2e2;width: 200px;}
+.layim-msgbox .layim-msgbox-tips{margin: 0; padding: 10px 0; border: none; text-align: center; color: #999;}
+.layim-msgbox .layim-msgbox-system{padding: 0 10px 10px 10px;}
+.layim-msgbox li p span{padding-left: 5px; color: #999;}
+.layim-msgbox li p em{font-style: normal; color: #FF5722;}
+.layim-msgbox-avatar{position: absolute; left: 0; top: 0; width: 50px; height: 50px;}
+.layim-msgbox-user{padding-top: 5px;}
+.layim-msgbox-content{margin-top: 3px;}
+.layim-msgbox .layui-btn-small{padding: 0 15px; margin-left: 5px;}
+.layim-msgbox-btn{position: absolute; right: 0; top: 12px; color: #999;}
 .pt15{padding-top: 15px;}
+.pt10{padding-top: 10px;}
+.pt30{padding-top: 30px;}
 .pd0{padding: 0px;}
+.chat{
+    float: right;
+    margin-top: -70px;  
+    margin-right: 15px;
+    z-index: 999999;
+}
 .label{    
     float: left;
     display: block;
@@ -17,6 +35,12 @@
     width: 40px;
     font-weight: 400;
     text-align: right;
+  }
+.label_key{    
+    float: left;
+    display: block;
+    padding: 9px 5px;
+    font-weight: 400;
   }
 .block {
     margin-left: 55px;
@@ -46,6 +70,7 @@
 
 <textarea title="资料模版" id="LAY_tpl" style="display:none;">
 {{# if(d.data.type == 'friend'){ }}
+  {{# if(d.mine == d.data.memberIdx){ }}
       <div class="layui-col-xs12 pt15">
         <div class="layui-col-xs6 ">
           <label class="label">昵&nbsp;&nbsp;称</label>
@@ -134,18 +159,128 @@
       </div>                
       <div class="layui-col-xs12 pt15">
           <label class="label">签&nbsp;&nbsp;名</label>
-          <div class="layui-input-block">
-<contenteditable  placeholder="请输入内容" name="signature" class="layui-input " value="" >{{d.data.signature}}
- </contenteditable >         
+          <div class="block">
+            <input placeholder="请输入内容" name="signature" class="layui-input " value="{{d.data.signature}}" >
           </div>
       </div>   
-      <div class="layui-form-item pt15">
+      <div class="layui-form-item pt30">
         <div class="layui-input-block">
           <button class="layui-btn" lay-submit lay-filter="formsave">保存</button>
           <button type="button" id="close" class="layui-btn layui-btn-primary">关闭</button>
         </div>
       </div> 
-  {{# } }}
+  {{# }else{ }}   
+      <div class="layui-form-item pt15">
+        <div class="layim-msgbox">
+          <li>
+          <a href="javascript:void(0);" target="_blank">
+            <img src="../../../../../../uploads/person/{{ d.data.memberIdx }}.jpg" class="layui-circle layim-msgbox-avatar" >
+          </a>
+          <p class="layim-msgbox-user">
+            <span style="letter-spacing: 5px;">昵 称</span> {{ d.data.memberName||'' }}
+          </p>    
+          <p class="layim-msgbox-user">
+            <span>会员号</span> {{ d.data.memberIdx||'' }}
+          </p>                 
+          </li>   
+        </div>
+        <button class="layui-btn layui-btn layui-btn-primary chat" data-name="{{ d.data.memberName }}" data-chattype="friend" data-type="chat" data-uid="{{d.data.memberIdx}}">发送消息</button>        
+      </div>    
+      <div class="layui-col-xs12 ">
+          <label class="label">备&nbsp;&nbsp;注</label>
+          <div class="block">
+            <div class="label_key">{{d.data.memberName}}</div>
+          </div>
+      </div>  
+      <div class="layui-col-xs12 pt10">
+          <label class="label">分&nbsp;&nbsp;组</label>
+          <div class="block">
+            <div class="label_key">{{d.data.memberName}}</div>
+          </div>
+      </div>  
+      <div class="layui-col-xs12 pt10">
+          <label class="label">性&nbsp;&nbsp;别</label>
+          <div class="block">
+            <label class="label_key">
+               {{# if(d.data.memberSex == '1'){ }} 男 {{# } }}
+               {{# if(d.data.memberSex == '2'){ }} 女 {{# } }}
+               {{# if(d.data.memberSex == '3'){ }} 保密 {{# } }}
+            </label>         
+          </div>
+      </div>               
+      <div class="layui-col-xs12 pt10">
+        <div class="layui-col-xs6 ">
+          <label class="label">生&nbsp;&nbsp;日</label>
+          <div class="block">
+            <div class="label_key">{{d.data.birthday}}</div>
+          </div>
+        </div>        
+        <div class="layui-col-xs6">
+          <label class="label">血&nbsp;&nbsp;型</label>
+          <div class="block">
+            <label class="label_key">
+               {{# if(d.data.blood_type == 'A型'){ }} A型 {{# } }}
+               {{# if(d.data.blood_type == 'B型'){ }} B型 {{# } }}
+               {{# if(d.data.blood_type == 'AB型'){ }} AB型 {{# } }}
+               {{# if(d.data.blood_type == 'O型'){ }} O型 {{# } }}
+               {{# if(d.data.blood_type == '其他血型'){ }} 其他血型 {{# } }}
+            </label>           
+          </div>
+        </div> 
+      </div>      
+      <div class="layui-col-xs11 pt10">
+          <label class="label">职&nbsp;&nbsp;业</label>
+          <div class="block">
+            <label class="label_key">
+               {{# if(d.data.jobs == '1'){ }} 计算机/互联网/通信 {{# } }}
+               {{# if(d.data.jobs == '2'){ }} 生产/工艺/制造 {{# } }}
+               {{# if(d.data.jobs == '3'){ }} 医疗/护理/制药 {{# } }}
+               {{# if(d.data.jobs == '4'){ }} 金融/银行/投资/保险 {{# } }}
+               {{# if(d.data.jobs == '5'){ }} 商业/服务业/个体经营 {{# } }}
+               {{# if(d.data.jobs == '6'){ }} 文化/广告/传媒 {{# } }}
+               {{# if(d.data.jobs == '7'){ }} 娱乐/艺术/表演 {{# } }}
+               {{# if(d.data.jobs == '8'){ }} 律师/法务 {{# } }}
+               {{# if(d.data.jobs == '9'){ }} 教育/培训 {{# } }}
+               {{# if(d.data.jobs == '10'){ }} 公务员/行政/事业单位 {{# } }}
+               {{# if(d.data.jobs == '11'){ }} 模特 {{# } }}
+               {{# if(d.data.jobs == '12'){ }} 空姐 {{# } }}
+               {{# if(d.data.jobs == '13'){ }} 学生 {{# } }}
+               {{# if(d.data.jobs == '14'){ }} 其他 {{# } }}
+            </label>              
+          </div>
+      </div>
+      <div class="layui-col-xs12 pt10">
+          <label class="label">Q&nbsp;&nbsp;&nbsp;&nbsp;Q</label>
+          <div class="block">
+            <div class="label_key">{{d.data.qq || []}}</div>
+          </div>
+      </div>        
+      <div class="layui-col-xs12 pt10">
+          <label class="label">微&nbsp;&nbsp;信</label>
+          <div class="block">
+            <div class="label_key">{{d.data.wechat || []}}</div>
+          </div>
+      </div>   
+      <div class="layui-col-xs12 pt10">
+          <label class="label">手&nbsp;&nbsp;机</label>
+          <div class="block">
+            <div class="label_key">{{d.data.phoneNumber || []}}</div>
+          </div>
+      </div> 
+      <div class="layui-col-xs12 pt10">
+          <label class="label">邮&nbsp;&nbsp;箱</label>
+          <div class="block">
+            <div class="label_key">{{d.data.emailAddress || []}}</div>
+          </div>
+      </div>                
+      <div class="layui-col-xs12 pt10">
+          <label class="label">签&nbsp;&nbsp;名</label>
+          <div class="block">
+            <div class="label_key">{{d.data.signature|| []}}</div>
+          </div>
+      </div>       
+  {{# } }}    
+{{# } }}
 </textarea>  
 </body>
 <script type='text/javascript' src='../../../../../../static/js/webim.config.js'></script>
@@ -183,15 +318,29 @@ layui.use(['form','laydate'], function(){
             return layer.msg(res.msg);
         } 
         var html = laytpl(LAY_tpl.value).render({
-          data: res.data
+          data: res.data,
+          mine: cache.mine.id
         });
         $('#LAY_view').html(html);
         laydate.render({ 
           elem: '#birthday'
           ,format: 'yyyy年MM月dd日' //可任意组合
-        });    
+        });  
+    $('body').on('click', '.chat', function () {
+      console.log('12');
+        var othis = $(this), type = othis.data('type');
+        chat.call(this, othis);
+    });            
+        function chat(othis){//发起好友聊天
+          var  uid = othis.data('uid'), avatar = "./uploads/person/"+uid+'.jpg';            
+          parent.layui.layim.chat({
+              name: othis.data('name')
+              ,type: othis.data('chattype')
+              ,avatar: avatar
+              ,id: uid
+          });
+        }        
     $("#close").click(function(){
-      console.log('1');
       var index = parent.layer.getFrameIndex(window.name); 
       parent.layer.close(index);
     });      

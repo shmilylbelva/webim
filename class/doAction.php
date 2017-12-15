@@ -208,7 +208,7 @@ switch ($act) {
         echo  json_encode($res); 
         break;     
     case 'getRecommend'://获取默认好友推荐
-        $sql = "select memberIdx,memberName,signature,memberAge,memberSex from tb_person order by rand() limit 16 ";
+        $sql = "select memberIdx,memberName,signature,birthday,memberSex from tb_person order by rand() limit 16 ";
         $get_recommend = $PdoMySQL->getAll($sql);        
         $res['code'] = 0;
         $res['msg'] = "";

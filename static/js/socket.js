@@ -876,12 +876,12 @@
                 ,shade: false
                 ,maxmin: false
                 // ,closeBtn: 0
-                ,area: ['400px', '600px']
+                ,area: ['400px', '670px']
                 ,skin: 'layui-box layui-layer-border'
                 ,resize: true
                 ,content: cachedata.base.Information+'?id='+id+'&type='+type
             });           
-        }                             
+        }                               
     };
     exports('socket', socket);
     exports('im', im);
