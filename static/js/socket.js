@@ -1,7 +1,8 @@
-﻿layui.define(['jquery', 'layer','contextMenu'], function (exports) {
+﻿layui.define(['jquery', 'layer','contextMenu','form'], function (exports) {
     var contextMenu = layui.contextMenu;
     var $ = layui.jquery;
     var layer = layui.layer;
+    var form = layui.form;
     var cachedata =  layui.layim.cache();  
     var conf = {
         uid: 0, //
@@ -50,7 +51,12 @@
                 //监听查看群员
                 layim.on('members', function (data) {
                 });                
-
+                $('body').on('click', '.layui-layim-user', function () {
+                    im.getInformation({
+                        id: cachedata.mine.id,
+                        type:'friend'
+                    }); 
+                }); 
                 //监听聊天窗口的切换
                 layim.on('chatChange', function (res) {
                     var type = res.data.type;
@@ -881,7 +887,7 @@
                 ,resize: true
                 ,content: cachedata.base.Information+'?id='+id+'&type='+type
             });           
-        }                               
+        }                             
     };
     exports('socket', socket);
     exports('im', im);

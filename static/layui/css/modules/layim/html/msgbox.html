@@ -75,7 +75,7 @@
                         <li class="layim-msgbox-system">
                             <p><em>系统：</em><b>{{ item.username }}</b>
                             {{# if(item.status == 2 || item.status == 4){ }}
-                            已同意你的好友申请 <button class="layui-btn layui-btn-mini btncolor chat" data-name="{{ item.username }}" data-chattype="friend" data-type="chat" data-uid="{{item.to}}">发起会话</button>
+                            已同意你的好友申请 <button class="layui-btn layui-btn-xs btncolor chat" data-name="{{ item.username }}" data-chattype="friend" data-type="chat" data-uid="{{item.to}}">发起会话</button>
                             {{# }else{ }}
                             已拒绝你的好友申请
                             {{# } }}
@@ -94,7 +94,7 @@
                             申请添加你为好友
                             <span>{{ item.remark ? '附言: '+item.remark : '' }}</span> 
                             {{# if(item.status == 2 || item.status == 4){ }}
-                            <button class="layui-btn layui-btn-mini btncolor chat" data-name="{{ item.username }}" data-chattype="friend" data-type="chat" data-uid="{{item.from}}">发起会话</button> 
+                            <button class="layui-btn layui-btn-xs btncolor chat" data-name="{{ item.username }}" data-chattype="friend" data-type="chat" data-uid="{{item.from}}">发起会话</button> 
                             {{# } }}  
 
                           </p>
@@ -115,7 +115,7 @@
                         <li class="layim-msgbox-system">
                             <p><em>系统：</em> 管理员 {{ item.handle }} 
                             {{# if(item.status == 2 || item.status == 4){ }}
-                            已同意你加入群 <b>{{ item.groupName }}</b> <button class="layui-btn layui-btn-mini btncolor chat" data-name="{{ item.groupName }}" data-chattype="group" data-type="chat" data-uid="{{item.to}}">发起会话</button>
+                            已同意你加入群 <b>{{ item.groupName }}</b> <button class="layui-btn layui-btn-xs btncolor chat" data-name="{{ item.groupName }}" data-chattype="group" data-type="chat" data-uid="{{item.to}}">发起会话</button>
                             {{# }else{ }}
                             已拒绝你加入群 <b>{{ item.groupName }}</b>
                             {{# } }}

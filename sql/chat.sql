@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50710
 File Encoding         : 65001
 
-Date: 2017-12-15 23:42:17
+Date: 2017-12-18 23:25:35
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -285,29 +285,29 @@ CREATE TABLE `tb_person` (
   `oauth_token` varchar(200) NOT NULL,
   `blood_type` varchar(32) NOT NULL DEFAULT '其他血型' COMMENT 'A型 B型 AB型 O型 其他血型 ',
   `job` tinyint(2) DEFAULT '0' COMMENT '1 计算机/互联网/通信 2生产/工艺/制造 3医疗/护理/制药 4 金融/银行/投资/保险 5商业/服务业/个体经营 6文化/广告/传媒 7娱乐/艺术/表演 8 律师/法务 9教育/培训 10公务员/行政/事业单位 11模特 12空姐 13学生 14其他\r\n\r\n这里可以单独建一个职业表，作为演示，我就不设计那么多表了',
-  `qq` bigint(20) DEFAULT NULL,
-  `wechat` varchar(64) DEFAULT NULL,
+  `qq` varchar(20) NOT NULL DEFAULT '',
+  `wechat` varchar(64) NOT NULL DEFAULT '',
   PRIMARY KEY (`memberIdx`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1570869 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of tb_person
 -- ----------------------------
-INSERT INTO `tb_person` VALUES ('1', '11', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, null, null);
-INSERT INTO `tb_person` VALUES ('3', '3', '2017年12月14日', '3', '3', '', '', '3', '3', '', '3', '其他血型', null, null, null);
-INSERT INTO `tb_person` VALUES ('12', '1', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, null, null);
-INSERT INTO `tb_person` VALUES ('22', '2', '2017年12月14日', '3', '2', '', '', '2', '2', '', '2', '其他血型', null, null, null);
-INSERT INTO `tb_person` VALUES ('122', '1', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, null, null);
-INSERT INTO `tb_person` VALUES ('910992', '清风', '2017年12月14日', '1', '0', '星光灿烂', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, null, null);
-INSERT INTO `tb_person` VALUES ('911058', '实力派', '2017年12月14日', '1', '0', '善 是一个美好', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, null, null);
-INSERT INTO `tb_person` VALUES ('911067', '爱咋咋地', '2017年12月14日', '3', '0', '一个优秀的人', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, null, null);
-INSERT INTO `tb_person` VALUES ('911085', '清晨', '2017年12月14日', '2', '0', '你不进步就在后退，不做温水里的癞疙宝', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, null, null);
-INSERT INTO `tb_person` VALUES ('911088', '豆浆', '2017年12月14日', '3', '0', '本人是一个开朗的人', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', 'f844d7a6d5bf136c21d7bb5319fe4dd4', '其他血型', null, null, null);
-INSERT INTO `tb_person` VALUES ('911100', '等待', '2017年12月14日', '2', '0', '陪伴是最长情的告白', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, null, null);
-INSERT INTO `tb_person` VALUES ('911117', '美的不要不要的', '2017年12月14日', '2', '0', 'The world makes way for the man who knows where he is going.', '102@qq.com', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '69ebdafcd94ee5b72b8a4044950b8bd5', '其他血型', null, '123', '1234345');
-INSERT INTO `tb_person` VALUES ('1570845', '花海', '2017年12月14日', '1', '0', '我就不写签名< (ˉ^ˉ)>', '', '15708440000', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '513a290382a0f562e9b98f49a64f704a', '其他血型', null, null, null);
-INSERT INTO `tb_person` VALUES ('1570855', '回眸淡然笑', '2017年12月14日', '2', '0', '有钱的自由，没钱的幻想！', '', '18381334800', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', 'b6eee48de455892f8eef3cbc5117dc2d', '其他血型', null, null, null);
-INSERT INTO `tb_person` VALUES ('1570868', '圆圆', '2017年12月14日', '3', '0', '各有各的活法', '', '1', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '2', '其他血型', null, null, null);
+INSERT INTO `tb_person` VALUES ('1', '11', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, '', '');
+INSERT INTO `tb_person` VALUES ('3', '3', '2017年12月14日', '3', '3', '', '', '3', '3', '', '3', '其他血型', null, '', '');
+INSERT INTO `tb_person` VALUES ('12', '1', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, '', '');
+INSERT INTO `tb_person` VALUES ('22', '2', '2017年12月14日', '3', '2', '', '', '2', '2', '', '2', '其他血型', null, '', '');
+INSERT INTO `tb_person` VALUES ('122', '1', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, '', '');
+INSERT INTO `tb_person` VALUES ('910992', '清风', '2017年12月14日', '1', '0', '星光灿烂', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '');
+INSERT INTO `tb_person` VALUES ('911058', '实力派', '2017年12月14日', '1', '0', '善 是一个美好', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '');
+INSERT INTO `tb_person` VALUES ('911067', '爱咋咋地', '2017年12月14日', '3', '0', '一个优秀的人', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '');
+INSERT INTO `tb_person` VALUES ('911085', '清晨', '2017年12月14日', '2', '0', '你不进步就在后退，不做温水里的癞疙宝', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '');
+INSERT INTO `tb_person` VALUES ('911088', '豆浆', '2017年12月14日', '3', '0', '本人是一个开朗的人', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', 'f844d7a6d5bf136c21d7bb5319fe4dd4', '其他血型', null, '', '');
+INSERT INTO `tb_person` VALUES ('911100', '等待', '2017年12月14日', '2', '0', '陪伴是最长情的告白', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '');
+INSERT INTO `tb_person` VALUES ('911117', '美的不要不要的', '2017年12月14日', '1', '0', 'The world makes way for the man who knows where he is going.', '1028604181@qq.com', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '69ebdafcd94ee5b72b8a4044950b8bd5', '1', '1', '1028604181', 'shmily_lb_elva');
+INSERT INTO `tb_person` VALUES ('1570845', '花海', '2017年12月14日', '1', '0', '我就不写签名< (ˉ^ˉ)>', '', '15708440000', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '513a290382a0f562e9b98f49a64f704a', '其他血型', null, '', '');
+INSERT INTO `tb_person` VALUES ('1570855', '回眸淡然笑', '2017年12月14日', '2', '0', '有钱的自由，没钱的幻想！', '', '18381334800', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', 'b6eee48de455892f8eef3cbc5117dc2d', '其他血型', null, '', '');
+INSERT INTO `tb_person` VALUES ('1570868', '圆圆', '2017年12月14日', '3', '0', '各有各的活法', '', '1', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '2', '其他血型', null, '', '');
 
 -- ----------------------------
 -- Table structure for `tb_skin`

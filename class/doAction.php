@@ -267,7 +267,21 @@ switch ($act) {
         $res['msg'] = "";
         $res['data'] = $getInformation;
         echo  json_encode($res); 
-        break;            
+        break;       
+    case 'saveMyInformation'://保存资料
+        $data = $_POST['key_value'];//好友/群 id      
+        $arr = array_filter($data);
+        $memberIdx = $_SESSION['info']['id'] ;
+        if (!$memberIdx) {
+            exit();
+        } 
+        $success = $PdoMySQL->update($arr,$tables,'memberIdx = "' . $memberIdx . '"');
+        $res['code'] = 0;
+        $res['msg'] = "";
+        $res['data'] = $success;
+        echo  json_encode($res); 
+        break;   
+               
     case 'userMaxGroupNumber'://判断用户最大建群数
         $memberIdx = $_SESSION['info']['id'] ;
         if (!$memberIdx) {

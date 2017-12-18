@@ -32,7 +32,7 @@ body .layui-layim-chat .layui-layer-content{overflow: visible;}
 .layui-layim-list li p,
 .layim-tab-content li h5 span,
 .layui-layim-list li span{overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
-.layui-layim-info .layui-layim-user{max-width: 150px; margin-right: 5px; font-size: 16px;}
+.layui-layim-info .layui-layim-user{max-width: 150px; margin-right: 5px; font-size: 16px;cursor:pointer}
 .layui-layim-status{position: relative; top: 2px; line-height: 19px; cursor: pointer;}
 .layim-status-online{color: #3FDD86;}
 .layim-status-hide{color: #DD691D;}

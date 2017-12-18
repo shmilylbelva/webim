@@ -7,7 +7,7 @@ require_once 'class/url.php';
     <head>
         <meta charset="utf-8">
         <title>layim - WebIM</title><link rel="stylesheet" href="static/css/contextMenu.css" />
-        <link rel="stylesheet" href="static/layui/css/layui.2.1.7.css">
+        <link rel="stylesheet" href="static/layui/css/layui.css">
         <link rel="stylesheet" href="static/css/menu.css">
         <link href="favicon.ico" type="image/vnd.microsoft.icon" rel="shortcut icon"/>        
     </head>
@@ -25,6 +25,7 @@ require_once 'class/url.php';
         8.添加好友/群
         9.新建群
         10.消息盒子展示
+        11.查看/修改个人信息
         体验完整功能请移步<a href="https://github.com/shmilylbelva/webim" style="color: red">这里</a>
         如果登陆一段时间后接收不到消息，可能是有别的小伙伴登陆了这个账号^_^,点击这里<a href="http://test.guoshanchina.com/login.php" style="color: red">重新登陆</a>即可(还没做退出登陆……)
     </pre>        
@@ -100,6 +101,11 @@ require_once 'class/url.php';
                         url: 'class/doAction.php?action=getInformation'
                         , type: 'get' //默认
                     }  
+                    //保存我的资料
+                    ,saveMyInformation:{
+                        url: 'class/doAction.php?action=saveMyInformation'
+                        , type: 'post' //默认
+                    }                     
                     //提交建群信息
                     ,commitGroupInfo:{
                         url: 'class/doAction.php?action=commitGroupInfo'

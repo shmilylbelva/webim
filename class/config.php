@@ -8,7 +8,6 @@ define('DB_PWD','root');
 define('DB_NAME','chat');
 define('DB_PORT','3306');
 define('DB_TYPE','mysql');
-
 error_reporting(3);
 define('DB_CHARSET','utf8');
 
