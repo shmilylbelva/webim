@@ -71,6 +71,7 @@
 <script type="text/html" title="资料模版" id="LAY_tpl" style="display:none;">
 {{# if(d.data.type == 'friend'){ }}
   {{# if(d.mine == d.data.memberIdx){ }}
+    <form class="layui-form" action="">
       <div class="layui-col-xs12 pt15">
         <div class="layui-col-xs6 ">
           <label class="label">昵&nbsp;&nbsp;称</label>
@@ -102,11 +103,11 @@
           <div class="block">
             <select name="blood_type" class="select" style="display: block;">
               <option value="">请选择血型</option>
-              <option value="1" {{# if(d.data.blood_type == 'A型'){ }} selected="selected" {{# } }}>A型</option>
-              <option value="2" {{# if(d.data.blood_type == 'B型'){ }} selected="selected" {{# } }}>B型</option>
-              <option value="3" {{# if(d.data.blood_type == 'AB型'){ }} selected="selected" {{# } }}>AB型</option>
-              <option value="4" {{# if(d.data.blood_type == 'O型'){ }} selected="selected" {{# } }}>O型</option>
-              <option value="5" {{# if(d.data.blood_type == '其他血型'){ }} selected="selected" {{# } }}>其他血型</option>
+              <option value="A型" {{# if(d.data.blood_type == 'A型'){ }} selected="selected" {{# } }}>A型</option>
+              <option value="B型" {{# if(d.data.blood_type == 'B型'){ }} selected="selected" {{# } }}>B型</option>
+              <option value="AB型" {{# if(d.data.blood_type == 'AB型'){ }} selected="selected" {{# } }}>AB型</option>
+              <option value="O型" {{# if(d.data.blood_type == 'O型'){ }} selected="selected" {{# } }}>O型</option>
+              <option value="其他血型" {{# if(d.data.blood_type == '其他血型'){ }} selected="selected" {{# } }}>其他血型</option>
             </select>            
           </div>
         </div> 
@@ -303,8 +304,7 @@ layui.use(['form','laydate'], function(){
       if(res.code != 0){
           return layer.msg(res.msg);
       } 
-      var tpl = LAY_tpl.innerHTML
-      var html = laytpl(tpl).render({
+      var html = laytpl(LAY_tpl.innerHTML).render({
         data: res.data,
         mine: cache.mine.id
       });
@@ -317,19 +317,17 @@ layui.use(['form','laydate'], function(){
           var othis = $(this), type = othis.data('type');
           chat.call(this, othis);
       });    
-      form.on('submit(*)', function(data){
+      form.on('submit(*)', function(submitData){
         var save_url = '../../../../../../'+cache.base.saveMyInformation.url || {};  //获得URL参数。
-        var key_value = data.field;
-        $.post(save_url, {key_value}, function(data){
-          var res = eval('(' + data + ')');
+        var key_value = submitData.field;
+        $.post(save_url, {key_value}, function(resp){
+          var res = eval('(' + resp + ')');
           if(res.code != 0){
               return layer.msg(res.msg);
           }else{
             layer.msg('保存成功!', {icon: 1,time: 1000}); 
-            setTimeout(function(){
               var index = parent.layer.getFrameIndex(window.name); 
               parent.layer.close(index);
-            },1000)  
           }
         });       
       });
