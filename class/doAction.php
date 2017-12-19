@@ -6,7 +6,7 @@ require_once 'PdoMySQL.class.php';
 
 #实例化pdo，redis，并设置redis监听端口
 $PdoMySQL = new PdoMySQL;
-
+date_default_timezone_set("Asia/Shanghai");
 #执行动作获取
 $act = empty($_GET['action']) ? null : $_GET['action'];
 $BASEURL = 'http://a1.easemob.com/XXXXXXXXXXXXXX/XXX/';
@@ -275,6 +275,7 @@ switch ($act) {
         if (!$memberIdx) {
             exit();
         } 
+        $arr['updateTime'] = date('Y-m-d H:i:s');
         $success = $PdoMySQL->update($arr,$tables,'memberIdx = "' . $memberIdx . '"');
         $res['code'] = 0;
         $res['msg'] = "";

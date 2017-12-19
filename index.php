@@ -33,7 +33,6 @@ require_once 'class/url.php';
         <script type='text/javascript' src='static/js/webim.config.js'></script>
         <script type='text/javascript' src='static/js/strophe-1.2.8.min.js'></script>
         <script type='text/javascript' src='static/js/websdk-1.4.13.js'></script> 
-<!-- <script src="http://www.jq22.com/jquery/jquery-1.10.2.js"></script> -->
         <script src="static/layui/layui.js"></script>
         <script>
             //layui绑定扩展
@@ -64,12 +63,12 @@ require_once 'class/url.php';
                     //上传图片接口
                     , uploadImage: {
                         url: 'class/doAction.php?action=uploadImage' //（返回的数据格式见下文）
-                        , type: '' //默认post
+                        , type: 'post' //默认post
                     }
                     //上传文件接口
                     , uploadFile: {
                         url: 'class/doAction.php?action=uploadFile' //
-                        , type: '' //默认post
+                        , type: 'post' //默认post
                     }
                     //自定义皮肤
                     ,uploadSkin: {

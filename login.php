@@ -11,9 +11,6 @@
         <link href="static/css/font-awesome.min.css" rel="stylesheet">
         <link href="static/css/bootstrap.min.css" rel="stylesheet">
         <link href="static/css/templatemo-style.css" rel="stylesheet">
-        <script src="static/js/jquery-3.1.1.min.js"></script>
-        <script src="static/layer/layer.js" charset="utf-8"></script>
-        <script src="static/layui/layui.js" charset="utf-8"></script>
     </head>
     <body class="light-gray-bg">
         <div class="templatemo-content-widget templatemo-login-widget white-bg tp-8">
@@ -43,7 +40,11 @@
         <div class="templatemo-content-widget templatemo-login-widget templatemo-register-widget white-bg">
             <p>Powered by <strong><a href="http://layim.layui.com/" class="blue-text">layim</a></strong></p>
         </div>
+        <script src="static/layui/layui.js"></script>
         <script>
+            layui.use(['layer', 'jquery'], function () {
+                var $ = layui.jquery;
+                var layer = layui.layer;        
             $(function () {
                 document.onkeyup = function (e) {
                     var ev = document.all ? window.event : e;
@@ -84,6 +85,7 @@
                     }
                 });
             });
+        });    
         </script>
     </body>
 </html>
