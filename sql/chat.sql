@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50710
 File Encoding         : 65001
 
-Date: 2017-12-19 21:22:53
+Date: 2017-12-21 23:37:41
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -45,7 +45,7 @@ CREATE TABLE `tb_chatlog` (
   `type` enum('chatroom','friend','group') DEFAULT 'friend',
   `status` tinyint(1) DEFAULT '1' COMMENT '1 可以正常访问 2禁止访问',
   PRIMARY KEY (`chatlogIdx`,`from`,`to`)
-) ENGINE=InnoDB AUTO_INCREMENT=218 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=241 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of tb_chatlog
@@ -215,6 +215,29 @@ INSERT INTO `tb_chatlog` VALUES ('214', '911117', '911088', 'img[]', '1513688749
 INSERT INTO `tb_chatlog` VALUES ('215', '911117', '911088', 'img[https://a1.easemob.com/1199170801115017/layim/chatfiles/e4265a00-e4bd-11e7-a3e2-37a7b1528b57]', '1513688987022', 'friend', '1');
 INSERT INTO `tb_chatlog` VALUES ('216', '1570855', '911117', 'img[https://a1.easemob.com/1199170801115017/layim/chatfiles/06d3ea40-e4be-11e7-b4c5-936626a4c596]', '1513689045225', 'friend', '1');
 INSERT INTO `tb_chatlog` VALUES ('217', '911117', '1570855', 'file(http://a1.easemob.com/1199170801115017/layim/chatfiles/3b5a6af0-e4be-11e7-ab49-ebff39df5654)[QQ截图20161103102615.png]', '1513689133317', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('218', '911117', '1570855', '[(*)] ', '1513689987284', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('219', '911117', '911088', '1', '1513696245320', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('220', '911117', '1570855', '1', '1513696396786', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('221', '911117', '1570855', 'file(http://a1.easemob.com/1199170801115017/layim/chatfiles/c6170f60-e4d0-11e7-92fc-f117d75d7fba?xhcPauTQEeenuYn3_B6spH9xKSTFMeM0xLzxwm51GknW6r9f)[003.jpg]', '1513697097204', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('222', '911117', '1570855', 'file(http://a1.easemob.com/1199170801115017/layim/chatfiles/5d7f6fa0-e4d1-11e7-8e43-fb8df476cecc?XX9vquTREeebBl9IAtrZNrLZOZgFIqTxmOa5ZnteMxXWpT04)[PJ7-8.JPG]', '1513697351479', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('223', '911117', '1570855', 'file(http://a1.easemob.com/1199170801115017/layim/chatfiles/6ed1a3e0-e4d1-11e7-a80a-bfe1513bb355?btGj6uTREeebpbvkckaoGcZpGjW-UpkG_WnacJMV2tn3JH6F)[PJ7-8.JPG]', '1513697380532', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('224', '911117', '1570845', 'file(http://a1.easemob.com/1199170801115017/layim/chatfiles/f69b4c40-e4d1-11e7-bfe0-3b9d3d868cb5?9ptMSuTREeext8djmi9bCByVLBpij6I9AX1YqxsDzzoQckwz)[PJ7-8.JPG]', '1513697608352', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('225', '1570845', '911117', 'file(http://a1.easemob.com/1199170801115017/layim/chatfiles/729238e0-e4d2-11e7-bdd9-7d6364738a2f?cpI46uTSEeeCkOuGA8FKMPaG_jw8sGoFra5csRkFRjMdf-pE)[1570855.jpg]', '1513697816087', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('226', '911117', '1570845', 'file(http://a1.easemob.com/1199170801115017/layim/chatfiles/7e1acc40-e4d2-11e7-87dc-9d21fb22e952?fhrMSuTSEeeMzd_O8Ffw6sMxLoG44A51ZWPwi4sK9OhLsSfM)[PJ7-8.JPG]', '1513697835685', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('227', '911117', '1570845', '\'', '1513773717642', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('228', '911117', '1570845', '12', '1513773918093', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('229', '911117', '911088', 'file(http://a1.easemob.com/1199170801115017/layim/chatfiles/d1776290-e586-11e7-872b-0f7ac0584839?0XdimuWGEeesT2tAevdXxoQ_VJz4qWWXSHbE0WE8SInpqYYz)[PJ7-8.JPG]', '1513775286489', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('230', '911117', '1570845', 'file(http://a1.easemob.com/1199170801115017/layim/chatfiles/9a74d370-e588-11e7-8be1-932ec414a77b)[PJ7-8.JPG]', '1513776053207', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('231', '911117', '1570845', 'img[https://a1.easemob.com/1199170801115017/layim/chatfiles/9cacc870-e590-11e7-831c-5b13adeabb0d]', '1513779492654', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('232', '911117', '1570845', 'file(https://a1.easemob.com/1199170801115017/layim/chatfiles/7b21a910-e599-11e7-8b72-3b18b60a61e5)[003.jpg]', '1513783313089', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('233', '911117', '1570845', 'file(https://a1.easemob.com/1199170801115017/layim=)[003.jpg]', '1513783345645', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('234', '911117', '1570845', 'file(https://a1.easemob.com/1199170801115017/layim/chatfiles/de555220-e599-11e7-b5b4-7d80c3a0b13c)[route.png]img[https://a1.easemob.com/1199170801115017/layim/chatfiles/f580b7a0-e599-11e7-9c50-cf709052d99c]', '1513783518033', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('235', '911117', '32403609419777', '当然', '1513857997134', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('236', '911117', '1570855', 'file(http://p17mgqcab.bkt.clouddn.com/HaxLogs.txt)[HaxLogs.txt]', '1513858315190', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('237', '1570845', '911117', '1', '1513858819184', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('238', '1570845', '911117', '12', '1513861082010', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('239', '1570845', '911117', 'kk', '1513861601614', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('240', '911117', '1570845', ';', '1513867870210', 'friend', '1');
 
 -- ----------------------------
 -- Table structure for `tb_group`
@@ -295,27 +318,30 @@ CREATE TABLE `tb_person` (
   `qq` varchar(20) NOT NULL DEFAULT '',
   `wechat` varchar(64) NOT NULL DEFAULT '',
   `updateTime` varchar(64) DEFAULT NULL,
+  `easemob_token` varchar(128) DEFAULT NULL COMMENT '环信token',
+  `loginTime` varchar(13) DEFAULT NULL COMMENT '登陆时间',
+  `expires_in` bigint(20) DEFAULT NULL COMMENT 'token有效时间',
   PRIMARY KEY (`memberIdx`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1570869 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of tb_person
 -- ----------------------------
-INSERT INTO `tb_person` VALUES ('1', '11', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, '', '', null);
-INSERT INTO `tb_person` VALUES ('3', '3', '2017年12月14日', '3', '3', '', '', '3', '3', '', '3', '其他血型', null, '', '', null);
-INSERT INTO `tb_person` VALUES ('12', '1', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, '', '', null);
-INSERT INTO `tb_person` VALUES ('22', '2', '2017年12月14日', '3', '2', '', '', '2', '2', '', '2', '其他血型', null, '', '', null);
-INSERT INTO `tb_person` VALUES ('122', '1', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, '', '', null);
-INSERT INTO `tb_person` VALUES ('910992', '清风', '2017年12月14日', '1', '0', '星光灿烂', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '', null);
-INSERT INTO `tb_person` VALUES ('911058', '实力派', '2017年12月14日', '1', '0', '善 是一个美好', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '', null);
-INSERT INTO `tb_person` VALUES ('911067', '爱咋咋地', '2017年12月14日', '3', '0', '一个优秀的人', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '', null);
-INSERT INTO `tb_person` VALUES ('911085', '清晨', '2017年12月14日', '2', '0', '你不进步就在后退，不做温水里的癞疙宝', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '', null);
-INSERT INTO `tb_person` VALUES ('911088', '豆浆', '2017年12月14日', '3', '0', '本人是一个开朗的人', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', 'f844d7a6d5bf136c21d7bb5319fe4dd4', '其他血型', null, '', '', null);
-INSERT INTO `tb_person` VALUES ('911100', '等待', '2017年12月14日', '2', '0', '陪伴是最长情的告白', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '', null);
-INSERT INTO `tb_person` VALUES ('911117', '美的不要不要的', '2017年12月14日', '3', '0', '本人是一个开朗的人。', '1028604181@qq.com', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '69ebdafcd94ee5b72b8a4044950b8bd5', 'B型', '1', '1028604181', 'shmily_lb_elva', '2017-12-19 19:52:23');
-INSERT INTO `tb_person` VALUES ('1570845', '花海', '2017年12月14日', '1', '0', '我就不写签名< (ˉ^ˉ)>', '', '15708440000', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '513a290382a0f562e9b98f49a64f704a', '其他血型', null, '', '', null);
-INSERT INTO `tb_person` VALUES ('1570855', '回眸淡然笑', '2017年12月14日', '2', '0', '有钱的自由，没钱的幻想！', '', '18381334800', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', 'b6eee48de455892f8eef3cbc5117dc2d', '其他血型', null, '', '', null);
-INSERT INTO `tb_person` VALUES ('1570868', '圆圆', '2017年12月14日', '3', '0', '各有各的活法', '', '1', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '2', '其他血型', null, '', '', null);
+INSERT INTO `tb_person` VALUES ('1', '11', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, '', '', null, null, null, null);
+INSERT INTO `tb_person` VALUES ('3', '3', '2017年12月14日', '3', '3', '', '', '3', '3', '', '3', '其他血型', null, '', '', null, null, null, null);
+INSERT INTO `tb_person` VALUES ('12', '1', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, '', '', null, null, null, null);
+INSERT INTO `tb_person` VALUES ('22', '2', '2017年12月14日', '3', '2', '', '', '2', '2', '', '2', '其他血型', null, '', '', null, null, null, null);
+INSERT INTO `tb_person` VALUES ('122', '1', '2017年12月14日', '3', '1', '', '', '1', '1', '', '1', '其他血型', null, '', '', null, null, null, null);
+INSERT INTO `tb_person` VALUES ('910992', '清风', '2017年12月14日', '1', '0', '星光灿烂', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '', null, null, null, null);
+INSERT INTO `tb_person` VALUES ('911058', '实力派', '2017年12月14日', '1', '0', '善 是一个美好', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '', null, null, null, null);
+INSERT INTO `tb_person` VALUES ('911067', '爱咋咋地', '2017年12月14日', '3', '0', '一个优秀的人', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '', null, null, null, null);
+INSERT INTO `tb_person` VALUES ('911085', '清晨', '2017年12月14日', '2', '0', '你不进步就在后退，不做温水里的癞疙宝', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '', null, null, null, null);
+INSERT INTO `tb_person` VALUES ('911088', '豆浆', '2017年12月14日', '3', '0', '本人是一个开朗的人', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', 'f844d7a6d5bf136c21d7bb5319fe4dd4', '其他血型', null, '', '', null, null, null, null);
+INSERT INTO `tb_person` VALUES ('911100', '等待', '2017年12月14日', '2', '0', '陪伴是最长情的告白', '', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '', '其他血型', null, '', '', null, null, null, null);
+INSERT INTO `tb_person` VALUES ('911117', '美的不要不要的', '2017年12月14日', '3', '0', '本人是一个开朗的人。', '1028604181@qq.com', '', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '69ebdafcd94ee5b72b8a4044950b8bd5', 'B型', '1', '1028604181', 'shmily_lb_elva', '2017-12-19 19:52:23', null, null, null);
+INSERT INTO `tb_person` VALUES ('1570845', '花海', '2017年12月14日', '1', '0', '我就不写签名< (ˉ^ˉ)>', '', '15708440000', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '513a290382a0f562e9b98f49a64f704a', '其他血型', null, '', '', null, null, null, null);
+INSERT INTO `tb_person` VALUES ('1570855', '回眸淡然笑', '2017年12月14日', '2', '0', '有钱的自由，没钱的幻想！', '', '18381334800', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', 'b6eee48de455892f8eef3cbc5117dc2d', '其他血型', null, '', '', null, null, null, null);
+INSERT INTO `tb_person` VALUES ('1570868', '圆圆', '2017年12月14日', '3', '0', '各有各的活法', '', '1', 'c286dc5c0b2f4707d9ba5c7ea8a021d7', 'egsudUhV$oJP', '2', '其他血型', null, '', '', null, null, null, null);
 
 -- ----------------------------
 -- Table structure for `tb_skin`
@@ -332,6 +358,6 @@ CREATE TABLE `tb_skin` (
 -- ----------------------------
 -- Records of tb_skin
 -- ----------------------------
-INSERT INTO `tb_skin` VALUES ('4', '911117', '3.jpg', '0');
+INSERT INTO `tb_skin` VALUES ('4', '911117', '911117_1513692322.jpg', '1');
 INSERT INTO `tb_skin` VALUES ('5', '1570855', '2.jpg', '0');
 INSERT INTO `tb_skin` VALUES ('6', '1570845', '4.jpg', '0');
