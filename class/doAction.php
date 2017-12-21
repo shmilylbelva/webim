@@ -576,7 +576,11 @@ switch ($act) {
         $PdoMySQL = new PdoMySQL;    
         $tables = 'tb_person';    
         $get_user = $PdoMySQL->find($tables, 'memberIdx = "' . $memberIdx . '"', 'easemob_token,loginTime,expires_in');
-        $lastTime = $get_user['loginTime']+$get_user['expires_in']-3600*24*5;//还有5天则更新token
+        if ($get_user['loginTime'] && $get_user['expires_in']) {
+            $lastTime = $get_user['loginTime']+$get_user['expires_in']-3600*24*5;//还有5天则更新token
+        }else{
+            $lastTime = 1;
+        }        
         $time = time();
         if ($time >= $lastTime) {//token失效
             $url = 'http://a1.easemob.com/1199170801115017/layim/token';
