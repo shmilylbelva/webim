@@ -26,6 +26,9 @@ require_once 'class/url.php';
         9.新建群
         10.消息盒子展示
         11.查看/修改个人信息
+        12.实时获取好友在线状态
+        13.挤下线提醒
+        14.文件储存在七牛云
         体验完整功能请移步<a href="https://github.com/shmilylbelva/webim" style="color: red">这里</a>
         如果登陆一段时间后接收不到消息，可能是有别的小伙伴登陆了这个账号^_^,点击这里<a href="http://test.guoshanchina.com/login.php" style="color: red">重新登陆</a>即可(还没做退出登陆……)
     </pre>        

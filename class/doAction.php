@@ -3,7 +3,9 @@
 #包含所需文件
 require_once 'config.php';
 require_once 'PdoMySQL.class.php';
-
+require '../vendor/qiniuSDK/autoload.php';
+use Qiniu\Auth;
+use Qiniu\Storage\UploadManager;
 #实例化pdo，redis，并设置redis监听端口
 $PdoMySQL = new PdoMySQL;
 date_default_timezone_set("Asia/Shanghai");
@@ -34,7 +36,6 @@ switch ($act) {
     case 'login':
         $param['name'] = $_POST['name'];
         $param['pwd'] = $_POST['pwd'];
-        $tables = 'tb_person';
         $get_user = $PdoMySQL->find($tables, 'memberIdx = "' . $param['name'] . '"', 'memberPWD,signature,userToken,memberName,oauth_token,memberIdx');
         $pwd = md5(md5($param['pwd']).$get_user['userToken']);
         if (empty($get_user)) {
@@ -48,16 +49,18 @@ switch ($act) {
                 $_SESSION['user_id'] = $get_user['memberIdx'];
                 $_SESSION['user_name'] = $get_user['memberName'];
                 /******获取token*********/
-                $url = $BASEURL.'token';
-                $pwd = md5($get_user['memberIdx'].'easemob');
-                $data = array('grant_type'=>'password','password'=>$pwd,'username'=>$param['name']);        
-                $json_data = json_encode($data);
-                $info = Post($json_data,$url);
-                $user_token = json_decode($info,true);
+                $user_token = getUserToken($param['name']);
+                // $url = $BASEURL.'token';
+                // $pwd = md5($get_user['memberIdx'].'easemob');
+                // $data = array('grant_type'=>'password','password'=>$pwd,'username'=>$param['name']);        
+                // $json_data = json_encode($data);
+                // $info = Post($json_data,$url);
+                // $user_token = json_decode($info,true);
                 /**********************/
                 #获取token，成功则保存session
                 $arr = array(
                     'id' => $get_user['memberIdx'],
+                    'status' => 'online',
                     'sign' => $get_user['signature'],
                     'username' => $get_user['memberName'],
                     'oauth_token'=>$get_user['oauth_token'],
@@ -114,6 +117,26 @@ switch ($act) {
         $res['data']['mine']['msgBox'] = $msgBox['count'];
         echo  json_encode($res);         
         break;
+    case 'userStatus':
+        $id = $_GET['id'];
+        $access_token = getUserToken($id);
+        if ($access_token) {
+            $authorization = 'Bearer '.$access_token['access_token'];  
+            $headers = array('Authorization:'.$authorization);
+            $url_friend = $BASEURL.'users/'.$id.'/status';
+            $online = json_decode(Get($headers,$url_friend),true); 
+            $res['code'] = 0;
+            $res['msg'] = '';
+            $res['data'] = $online['data'][$id];
+            echo  json_encode($res);             
+        }else{
+            $res['code'] = -1;
+            $res['msg'] = '';
+            $res['data'] = '';
+            echo  json_encode($res); 
+        }
+       
+        break;
     case 'uploadImage':
         $url = $BASEURL.'chatfiles';
         $headers = array('Content-type: multipart/form-data','Authorization:Bearer '.$_SESSION['info']['access_token'],'restrict-access: true');
@@ -123,21 +146,48 @@ switch ($act) {
         echo '{"code": 0 ,"msg": ""  ,"data": '.$data_info.'}';
         break;
     case 'uploadFile':
-        $url = $BASEURL.'chatfiles';
-        $headers = array('Content-type: multipart/form-data','Authorization:Bearer '.$_SESSION['info']['access_token'],'restrict-access: true');
-        $file = file_get_contents($_FILES['file']['tmp_name']);
-        $Upload_data = array('file'=>$file);
-        $data_ = Post($Upload_data,$url,$headers);
-        $data_info = json_decode($data_,true);
-        if ($data_info['entities']['0']['uuid']) {
-            $imageURL = $url.'/'.$data_info['entities']['0']['uuid'];
-        }
-        $res['code'] = 0;
-        $res['msg'] = "";
-        $res['data']['src'] = $imageURL;
-        $res['data']['name'] = $_FILES['file']['name'];
-        echo  json_encode($res);        
-        break;  
+        $auth = new Auth(AK, SK);
+        $bucket = 'lite-im';
+        // 生成上传Token
+        $token = $auth->uploadToken($bucket);
+        // 要上传文件的本地路径
+        $file = $_FILES['file'];
+        $uploadfile = $file['tmp_name'];
+        // 上传到七牛后保存的文件名
+        $key = $file['name'];
+        // 初始化 UploadManager 对象并进行文件的上传。
+        $uploadMgr = new UploadManager();
+        // 调用 UploadManager 的 putFile 方法进行文件的上传。
+        list($ret, $err) = $uploadMgr->putFile($token, $key, $uploadfile);
+        if ($err !== null) {
+            $res['code'] = -1;
+            $res['msg'] = $err;
+            $res['data'] = '';
+            echo  json_encode($res); 
+        } else {
+            $res['code'] = 0;
+            $res['msg'] = "";
+            $res['data']['src'] = QN_FILE.$ret['key'];
+            $res['data']['name'] = $key;
+            echo  json_encode($res); 
+        }       
+        break;            
+    // case 'uploadFile':
+    //     $url = $BASEURL.'chatfiles';
+    //     $headers = array('Content-type: multipart/form-data','Authorization:Bearer '.$_SESSION['info']['access_token'],'restrict-access: true');
+    //     $file = file_get_contents($_FILES['file']['tmp_name']);
+    //     $Upload_data = array('file'=>$file);
+    //     $data_ = Post($Upload_data,$url,$headers);
+    //     $data_info = json_decode($data_,true);
+    //     if ($data_info['entities']['0']['uuid']) {
+    //         $imageURL = $url.'/'.$data_info['entities']['0']['uuid'];
+    //     }
+    //     $res['code'] = 0;
+    //     $res['msg'] = "";
+    //     $res['data']['src'] = $imageURL;
+    //     $res['data']['name'] = $_FILES['file']['name'];
+    //     echo  json_encode($res);        
+    //     break;  
     case 'groupMembers':
 
         $id = $_GET['id'];
@@ -513,11 +563,38 @@ switch ($act) {
         $res['count'] = "";
         $res['data'] = $ChatLog;
         echo  json_encode($res); 
-        break;         
+        break; 
+
     default :
         echo '{"code":"9999","status":"n","info":"关键参数传入错误，请返回请求来源网址"}';
         break;
 }
+
+    function getUserToken($memberIdx){
+        require_once 'config.php';
+        require_once 'PdoMySQL.class.php';
+        $PdoMySQL = new PdoMySQL;    
+        $tables = 'tb_person';    
+        $get_user = $PdoMySQL->find($tables, 'memberIdx = "' . $memberIdx . '"', 'easemob_token,loginTime,expires_in');
+        $lastTime = $get_user['loginTime']+$get_user['expires_in']-3600*24*5;//还有5天则更新token
+        $time = time();
+        if ($time >= $lastTime) {//token失效
+            $url = 'http://a1.easemob.com/1199170801115017/layim/token';
+            $pwd = md5($memberIdx.'easemob');
+            $data = array('grant_type'=>'password','password'=>$pwd,'username'=>$memberIdx);        
+            $json_data = json_encode($data);
+            $info = Post($json_data,$url);
+            $user_token = json_decode($info,true); 
+            $data_token['easemob_token'] = $user_token['access_token'];
+            $data_token['loginTime'] = $time;
+            $data_token['expires_in'] = $user_token['expires_in'];
+            $PdoMySQL->update($data_token,$tables, 'memberIdx = "' . $memberIdx . '"');//更新token
+        }else{
+            $user_token['access_token'] = $get_user['easemob_token'];
+        }       
+        return $user_token;
+    }
+
     function Get($headers,$url){
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);

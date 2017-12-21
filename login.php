@@ -21,16 +21,16 @@
             <form action="index.html" class="templatemo-login-form">
                 <div class="form-group">
                     <div class="input-group">
-                        <div class="input-group-addon"><i class="fa fa-user fa-fw"></i></div>	        		
+                        <div class="input-group-addon"><i class="fa fa-user fa-fw"></i></div>                   
                         <input type="text" id="name" class="form-control" placeholder="请输入登录名称">           
-                    </div>	
+                    </div>  
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <div class="input-group-addon"><i class="fa fa-key fa-fw"></i></div>	        		
+                        <div class="input-group-addon"><i class="fa fa-key fa-fw"></i></div>                    
                         <input type="password" id="pwd" class="form-control" placeholder="******">           
-                    </div>	
-                </div>	          	
+                    </div>  
+                </div>              
 
                 <div class="form-group">
                     <button type="button" class="templatemo-blue-button width-100 login_btn">Login</button>

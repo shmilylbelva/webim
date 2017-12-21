@@ -62,7 +62,10 @@
                     var type = res.data.type;
                     if (type === 'friend') {
                         //模拟标注好友状态
-                        //layim.setChatStatus('<span style="color:#FF5722;">在线</span>');
+                        im.userStatus({
+                            id: res.data.id
+                        });
+                        // layim.setFriendStatus(res.data.id, status); //设置指定好友在线，即头像置灰
                     } else if (type === 'group') {
                         //模拟系统消息
                        // layim.getMessage({
@@ -271,7 +274,13 @@
         initListener: function (user,pwd) { //初始化监听
             // console.log('注册服务连接监听事件');
             // var layim = conf.layim;
-
+            var options = { 
+              apiUrl: WebIM.config.apiURL,
+              user: user,
+              pwd: pwd,
+              appKey: WebIM.config.appkey
+            };
+            conn.open(options); 
             conn.listen({
                 onOpened: function ( message ) { 
                     //连接成功回调
@@ -279,7 +288,14 @@
                     // 手动上线指的是调用conn.setPresence(); 如果conn初始化时已将isAutoLogin设置为true
                     // 则无需调用conn.setPresence();             
                 },  
-                onClosed: function ( message ) {},         //连接关闭回调
+                onClosed: function ( message ) {
+                    layer.alert('该账号已在别处登陆，是否重新登陆？', {
+                      skin: 'layui-layer-molv' //样式类名
+                      ,closeBtn: 0
+                    }, function(){
+                        window.location.href = 'login.php';
+                    });
+                },         //连接关闭回调
                 onTextMessage: function ( message ) {
                     im.defineMessage(message,'Text');
                 },    //收到文本消息
@@ -419,7 +435,14 @@
                     console.log('处理群组邀请');
                 },  //处理群组邀请
                 onOnline: function () {},                  //本机网络连接成功
-                onOffline: function () {},                 //本机网络掉线
+                onOffline: function () {
+                    layer.alert('网络不稳定，点击确认刷新页面？', {
+                      skin: 'layui-layer-molv' //样式类名
+                      ,closeBtn: 0
+                    }, function(){
+                        window.location.href = 'index.php';
+                    });                    
+                },                 //本机网络掉线
                 onError: function ( message ) {},          //失败回调
                 onBlacklistUpdate: function (list) {       //黑名单变动
                     // 查询黑名单，将好友拉黑，将好友从黑名单移除都会回调这个函数，list则是黑名单现有的所有好友信息
@@ -429,16 +452,9 @@
                 onDeliveredMessage: function(message){},   //收到消息送达客户端回执
                 onReadMessage: function(message){},        //收到消息已读回执
                 onCreateGroup: function(message){},        //创建群组成功回执（需调用createGroupNew）
-                onMutedMessage: function(message){}        //如果用户在A群组被禁言，在A群发消息会走这个回调并且消息不会传递给群其它成员
+                onMutedMessage: function(message){}        //如果用户在A群组被禁言，在A群发消息会走这个回调并且消息不会传递给群其它成员          
             }); 
 
-            var options = { 
-              apiUrl: WebIM.config.apiURL,
-              user: user,
-              pwd: pwd,
-              appKey: WebIM.config.appkey
-            };
-            conn.open(options);
         },
         //自定义消息，把消息格式定义为layim的消息类型
         defineMessage: function (message,msgType) {
@@ -887,6 +903,22 @@
                 ,resize: true
                 ,content: cachedata.base.Information+'?id='+id+'&type='+type
             });           
+        },
+        userStatus: function(data){
+            if (data.id) {
+                $.get('class/doAction.php?action=userStatus', {id:data.id}, function (res) {
+                    var data = eval('(' + res + ')');
+                    if (data.code == 0) {  
+                        if (data.data == 'online') {
+                            conf.layim.setChatStatus('<span style="color:#FF5722;">在线</span>');
+                        }else{
+                            conf.layim.setChatStatus('<span style="color:#444;">离线</span>');
+                        }                                          
+                    }else{
+                        //没有该用户
+                    }
+                });                 
+            }
         }                             
     };
     exports('socket', socket);

@@ -31,7 +31,7 @@
 .label{    
     float: left;
     display: block;
-    padding: 9px 5px;
+    padding: 9px 5px 9px 20px;
     width: 40px;
     font-weight: 400;
     text-align: right;
@@ -43,12 +43,12 @@
     font-weight: 400;
   }
 .block {
-    margin-left: 55px;
+    margin-left: 70px;
     min-height: 36px;
 }
 .layui-input, .layui-textarea {
     display: block;
-    width: 98%;
+    width: 90%;
     padding-left: 10px;
 }
 .noresize{
@@ -325,7 +325,6 @@ layui.use(['form','laydate'], function(){
           if(res.code != 0){
               return layer.msg(res.msg);
           }else{
-            layer.msg('保存成功!', {icon: 1,time: 1000}); 
               var index = parent.layer.getFrameIndex(window.name); 
               parent.layer.close(index);
           }
