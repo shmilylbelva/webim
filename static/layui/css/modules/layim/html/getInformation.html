@@ -43,7 +43,7 @@
     font-weight: 400;
   }
 .block {
-    margin-left: 70px;
+    margin-left: 55px;
     min-height: 36px;
 }
 .layui-input, .layui-textarea {
@@ -187,19 +187,7 @@
           </li>   
         </div>
             
-      </div>    
-      <div class="layui-col-xs12 ">
-          <label class="label">备&nbsp;&nbsp;注</label>
-          <div class="block">
-            <div class="label_key">{{d.data.memberName}}</div>
-          </div>
-      </div>  
-      <div class="layui-col-xs12 pt10">
-          <label class="label">分&nbsp;&nbsp;组</label>
-          <div class="block">
-            <div class="label_key">{{d.data.memberName}}</div>
-          </div>
-      </div>  
+      </div>
       <div class="layui-col-xs12 pt10">
           <label class="label">性&nbsp;&nbsp;别</label>
           <div class="block">
@@ -207,7 +195,7 @@
                {{# if(d.data.memberSex == '1'){ }} 男 {{# } }}
                {{# if(d.data.memberSex == '2'){ }} 女 {{# } }}
                {{# if(d.data.memberSex == '3'){ }} 保密 {{# } }}
-            </label>         
+            </label>
           </div>
       </div>               
       <div class="layui-col-xs12 pt10">
@@ -323,8 +311,9 @@ layui.use(['form','laydate'], function(){
         $.post(save_url, {key_value}, function(resp){
           var res = eval('(' + resp + ')');
           if(res.code != 0){
-              return layer.msg(res.msg);
+              layer.msg('保存成功!', {icon: 1,time: 1000}); 
           }else{
+            layer.msg('保存成功!', {icon: 1,time: 1000}); 
               var index = parent.layer.getFrameIndex(window.name); 
               parent.layer.close(index);
           }

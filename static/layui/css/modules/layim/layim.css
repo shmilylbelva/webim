@@ -64,8 +64,9 @@ body .layui-layim-chat .layui-layer-content{overflow: visible;}
 .layim-tab-content li ul{display: none; margin-bottom: 10px;}
 .layui-layim-list li{position:relative; height: 42px; padding: 5px 15px 5px 60px; font-size:0; cursor:pointer;}
 .layui-layim-list li:hover{background-color: #F2F2F2; background-color: rgba(0,0,0,0.05);}
-.layui-layim-list li.layim-null{height: 20px; line-height: 20px; padding: 0; font-size: 14px; color: #999; text-align: center; cursor: default;}
-.layui-layim-list li.layim-null:hover{background: none;}
+.layui-layim-list li.layim-null,.layui-layim-list span.layim-null{height: 20px; line-height: 20px; padding: 0; font-size: 14px; color: #999; text-align: center; cursor: default;}
+.layui-layim-list span.layim-null{display: inherit;}
+.layui-layim-list li.layim-null:hover,.layui-layim-list span.layim-null:hover{background: none;}
 .layui-layim-list li *{display:inline-block; *display:inline; *zoom:1; vertical-align:top; font-size: 14px;}
 .layui-layim-list li span{margin-top: 4px; max-width: 155px;}
 .layui-layim-list li img{position: absolute; left: 15px; top: 8px; width: 36px; height: 36px; border-radius: 100%;}
@@ -100,24 +101,30 @@ body .layui-layim-chat .layui-layer-title{height: 80px; border-bottom: none;  ba
     background-color: rgba(245,245,245,.7);}
 body .layui-layim-chat .layui-layer-content{background: none;}
 
-.layim-chat-list li *
+.layim-chat-list li *,.layim-group-list li *
 ,.layui-layim-min .layui-layer-content *{display: inline-block; *display:inline; *zoom:1; vertical-align:top; font-size: 14px;}
-.layim-chat-list{display: none; position: absolute; z-index: 1000; top: -80px; width: 200px; height: 100%; background-color: #D9D9D9; overflow: hidden; font-size: 0;}
-.layim-chat-list:hover{overflow-y: auto;}
-.layim-chat-list li,
+.layim-chat-list,.layim-group-list {display: none; position: absolute; z-index: 1000; top: -80px; width: 200px; height: 100%; background-color: #D9D9D9; overflow: hidden; font-size: 0;}
+.layim-chat-list:hover,.layim-group-list:hover{overflow-y: auto;}
+.layim-chat-list li,.layim-group-list li,
 .layui-layim-min .layui-layer-content{position: relative; margin: 5px; padding: 5px 30px 5px 5px; line-height: 40px; cursor: pointer; border-radius: 3px;}
 .layim-chat-list li img,
 .layui-layim-min .layui-layer-content img{width: 40px; height: 40px; border-radius: 100%;}
 .layui-layim-photos{cursor: crosshair;}
-.layim-chat-list li{white-space: nowrap;}
+.layim-chat-list li,.layim-group-list li{white-space: nowrap;}
 .layim-chat-list li span,
 .layui-layim-min .layui-layer-content span{width: 100px; padding-left: 10px; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-.layim-chat-list li span cite{color: #999; padding-left: 10px;}
-.layim-chat-list li:hover{background-color: #E2E2E2;}
-.layim-chat-list li.layim-this{background-color: #F3F3F3;}
+.layim-chat-list li span cite,.layim-group-list li span cite{color: #999; padding-left: 10px;}
+.layim-chat-list li:hover,.layim-group-list li:hover{background-color: #E2E2E2;}
+.layim-chat-list li.layim-this,.layim-group-list li.layim-this{background-color: #F3F3F3;}
 .layim-chat-list li .layui-icon{display: none; position: absolute; right: 5px; top: 7px; color: #555; font-size: 22px;}
-.layim-chat-list li .layui-icon:hover{color: #c00;}
-.layim-chat-list li:hover .layui-icon{display: inline-block;}
+.layim-chat-list li .layui-icon:hover,.layim-group-list li .lay-icon:hover{color: #c00;}
+.layim-chat-list li:hover .layui-icon,.layim-group-list li:hover .layui-icon{display: inline-block;}
+
+.layim-group-list li img{width: 27px; height: 27px; border-radius: 100%;margin-top: 2px;}
+.layim-group-list li{padding: 0px 30px 0px 5px;line-height: 34px;margin: 0px 5px}
+.layim-group-list li .layui-icon{display: inline-block; position: absolute; right: 8px; color: #555; font-size: 18px;}
+.layim-group-list li span{width: 100px; padding-left: 10px; font-size: 16px; white-space: nowrap; overflow: hidden; }
+.layim-group-list li span{width: 115px;margin-top: -1px;font-size:12px}
 
 .layim-chat-system{margin: 10px 0; text-align: center;}
 .layim-chat-system span{display: inline-block; line-height: 30px; padding: 0 15px; border-radius: 3px; background-color: #e2e2e2; cursor: default; font-size: 14px;}
@@ -168,7 +175,8 @@ body .layui-layim-chat .layui-layer-content{background: none;}
 .layim-chat-footer{border-top: 1px solid #F1F1F1;}
 .layim-chat-tool{position: relative; padding: 0 8px; height: 38px; line-height: 38px; font-size: 0;}
 .layim-chat-tool span{position: relative; margin: 0 10px; display: inline-block; *display:inline; *zoom:1; vertical-align:top; font-size: 24px; cursor: pointer;}
-.layim-chat-tool .layim-tool-log{position: absolute; right: 5px; font-size: 14px; }
+.layim-chat-tool .layim-tool-log{position: absolute; right: 10px; font-size: 14px; }
+.layim-chat-tool .layim-tool-groupMembers{right: 0px;margin:0 -5px; } 
 .layim-tool-log i{position: relative; top: 2px; margin-right: 5px; font-size: 20px; color: #999}
 .layim-tool-image input{position: absolute; font-size: 0; left: 0; top: 0; width: 100%; height: 100%; opacity: 0.01; filter: Alpha(opacity=1); cursor: pointer;}
 
@@ -193,10 +201,11 @@ body .layui-layim-face  .layui-layer-content{padding:0; background-color:#fff; c
 .layim-chat-send span:active{background-color: #59B573}
 .layim-chat-send .layim-send-btn{border-radius: 3px 0 0 3px;}
 .layim-chat-send .layim-send-set{position: relative; width: 30px; height: 32px; margin-left: 0; padding: 0; border-left: 1px solid #85C998; border-radius: 0 3px 3px 0;}
-.layim-send-set .layui-edge{top: 14px; left: 9px; border-width: 6px; border-top-style: solid; border-top-color: #fff;}
+.layim-send-set .layui-edge{top: 4px; left: 9px; border-width: 6px; border-top-style: solid; border-top-color: #fff;}
 .layim-chat-send .layim-menu-box{left: auto; right: 0; top: 33px; width: 180px; padding: 10px 0;}
 .layim-chat-send .layim-menu-box li{padding-right: 15px; line-height: 28px;}
-
+.layui-layim-group-search {z-index: 9999;display: block;position: absolute;bottom: 0px;right: -200px;height: 40px;width: 199px;line-height: 40px;}
+.layui-layim-group-search input {width: 188px;padding: 0px 0px 0px 10px;height: 39px;line-height: 39px;border: none;background-color: #fefefe;}
 /* 最小化 */
 body .layui-layim-min{border: 1px solid #D9D9D9;}
 .layui-layim-min .layui-layer-content{margin: 0 5px; padding: 5px 10px; white-space: nowrap;}

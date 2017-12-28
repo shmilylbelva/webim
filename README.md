@@ -1,20 +1,23 @@
 # WebIM
 ##简述
 >本webim是基于 [layim]( http://layim.layui.com/) 和[环信webim3.X](https://www.easemob.com/)开发而成的，本项目仅供学习使用，使用前请先到layim[官网]( http://layim.layui.com/)获取layim的授权许可 。目前已完成的功能有：
-1. 好友间的文字、表情、图片、文件的发送和接收。
-2.群内的文字、表情、图片、文件的发送和接收，查看群员列表。
-3.面板内通过昵称和帐号的快速查找好友。
-4.面板右键自定义事件（【删除好友/退群】 好友双方同时删除对方，并删除与该好友的历史会话）
-5.修改签名 至服务器
-6.可自定义上传背景皮肤 且保存至服务器
-7.搜索页面（可添加陌生人为好友，不能添加自己或已有好友，添加成功后动态将新好友添加进主面板）
-8.消息盒子展示（好友请求 加群请求等）
-9.如果你们同时也开发的app也是基于环信的，那么app是可以和web端聊天的，需要注意的是这里只支持一个账户登录一个端，需要多端同时登录首发信息需要到环信申请`增值服务-多设备同步`功能。
+    1.好友/群内的文字、表情、图片、文件 在线/离线消息发送和接收。 
+    2.查看群员列表。 
+    3.面板内快速查找。 
+    4.面板右键自定义事件 
+    5.修改签名
+    6.自定义上传背景皮肤
+    7.搜索好友/群
+    8.添加好友/群
+    9.新建群
+    10.消息盒子展示
+    11.查看/修改个人信息
+    12.实时获取好友在线状态
+    13.挤下线提醒
+    14.文件储存在七牛云
+    15.增删改 好友/好友分组
 ##说明 
->1）因为考虑到需要和app之间进行通信（表情，图片等），环信的表情定义为[/:u]类似的字符而layim则为face[/:u]的字符，为了同时满足两种情况，修改了layim.js的表情相关代码，请知晓
-2） 自定义右键的删除功能借鉴的是layim的删除历史会话
-3） 自定义上传皮肤功能，在layim.js添加了一个setSkinByUser的方法，并修改了皮肤寻则模版，对应的上传路径是class/doAction.php?action=uploadSkin
-4） 面板内的搜索好友功能，修改了layim.js的search方法
+>1 群组管理相关功能不久就能完成了
 ---
 原则上是不建议自行修改layim.js文件的，因为这样不利于后期的维护升级。
 
@@ -27,11 +30,11 @@
 
 ![获取群成员](http://upload-images.jianshu.io/upload_images/2825702-1d63105222ec4e5b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-![Q自定义右键](http://upload-images.jianshu.io/upload_images/2825702-b4605403545b7e71.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![自定义右键好友](http://upload-images.jianshu.io/upload_images/2825702-3f2f04a152686b28.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ![已经是好友不能添加](http://upload-images.jianshu.io/upload_images/2825702-2227b43c6dca4240.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ![消息盒子](http://upload-images.jianshu.io/upload_images/2825702-1c403876ecaca756.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![群管理](http://upload-images.jianshu.io/upload_images/2825702-56a71442f7475ac3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ![添加好友](http://upload-images.jianshu.io/upload_images/2825702-e37e634a7b90d123.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
 ![删除好友](http://upload-images.jianshu.io/upload_images/2825702-453f464a0da3bb6a.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
 
@@ -54,9 +57,6 @@
 用户名：911100 密码：123456
 
 用户名：911085 密码：123456
-
-用户名：911117 密码：123456
-
 
 
 开始之前，你要了解layui扩展第三方插件的方法，然后在环信注册帐号并创建应用。

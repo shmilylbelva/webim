@@ -998,13 +998,15 @@ layer.prompt = function(options, yes){
     ,success: function(layero){
       prompt = layero.find('.layui-layer-input');
       prompt.focus();
+      prompt.select();//选择全部文字
       typeof success === 'function' && success(layero);
     }
     ,resize: false
     ,yes: function(index){
       var value = prompt.val();
       if(value === ''){
-        prompt.focus();
+        // prompt.focus();
+        yes && yes(value, index, prompt);//改动
       } else if(value.length > (options.maxlength||500)) {
         layer.tips('&#x6700;&#x591A;&#x8F93;&#x5165;'+ (options.maxlength || 500) +'&#x4E2A;&#x5B57;&#x6570;', prompt, {tips: 1});
       } else {

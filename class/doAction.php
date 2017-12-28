@@ -11,25 +11,6 @@ $PdoMySQL = new PdoMySQL;
 date_default_timezone_set("Asia/Shanghai");
 #执行动作获取
 $act = empty($_GET['action']) ? null : $_GET['action'];
-$BASEURL = 'http://a1.easemob.com/XXXXXXXXXXXXXX/XXX/';
-$APIURL = '../uploads/';
-$tables = 'tb_person';
-$tb_skin = 'tb_skin';
-$tb_msg = 'tb_msg';
-$tb_chatlog = 'tb_chatlog';
-$tb_group = 'tb_group';
-const ADD_USER_MSG = 1;//为请求添加用户
-const ADD_USER_SYS = 2;//为系统消息（添加好友
-const ADD_GROUP_MSG = 3;//为请求加群
-const ADD_GROUP_SYS = 4;//为系统消息（添加群）
-const ALLUSER_SYS = 5;// 全体会员消息
-const UNREAD = 1;//未读
-const AGREE_BY_TO= 2;//同意
-const DISAGREE_BY_TO = 3;//拒绝
-const AGREE_BY_FROM = 4;//同意且返回消息已读
-const DISAGREE_BY_FROM = 5;//拒绝且返回消息已读
-const READ = 6;//全体消息已读
-
 switch ($act) {
 
     #user login
@@ -50,17 +31,11 @@ switch ($act) {
                 $_SESSION['user_name'] = $get_user['memberName'];
                 /******获取token*********/
                 $user_token = getUserToken($param['name']);
-                // $url = $BASEURL.'token';
-                // $pwd = md5($get_user['memberIdx'].'easemob');
-                // $data = array('grant_type'=>'password','password'=>$pwd,'username'=>$param['name']);        
-                // $json_data = json_encode($data);
-                // $info = Post($json_data,$url);
-                // $user_token = json_decode($info,true);
                 /**********************/
                 #获取token，成功则保存session
                 $arr = array(
                     'id' => $get_user['memberIdx'],
-                    'status' => 'online',
+                    // 'status' => 'online',
                     'sign' => $get_user['signature'],
                     'username' => $get_user['memberName'],
                     'oauth_token'=>$get_user['oauth_token'],
@@ -79,8 +54,8 @@ switch ($act) {
         $headers = array('Authorization:'.$authorization);
 //获取好友
         $uid = $_SESSION['info']['id'];
-        $url_friend = $BASEURL.'users/'.$uid.'/contacts/users';
-        $data_info = json_decode(Get($headers,$url_friend),true);
+        // $url_friend = $BASEURL.'users/'.$uid.'/contacts/users';
+        // $data_info = json_decode(Get($headers,$url_friend),true);
 //获取群组
         $url_group = $BASEURL.'users/'.$uid.'/joined_chatgroups';
         $data_group = json_decode(Get($headers,$url_group),true);
@@ -90,21 +65,35 @@ switch ($act) {
         $sql_msg = "select COUNT(*) as count from tb_msg where (`to` = ".$_SESSION['info']['id'] ." AND (msgType = ".ADD_USER_MSG ." OR msgType = ".ADD_GROUP_MSG.") AND status = ".UNREAD." ) 
         OR ( `from` = ".$_SESSION['info']['id']." AND (msgType = ".ADD_USER_SYS." OR msgType = ".ADD_GROUP_SYS." ) AND (status = ".AGREE_BY_TO." OR status = ".DISAGREE_BY_TO.") )";
         $msgBox = $PdoMySQL->getRow($sql_msg);
-        // print_r($msgBox);
-        $get_my_group[0]['groupname'] = '我的好友';
-        $get_my_group[0]['id'] = '1';
-        $get_my_group[0]['online'] = '1';              
-        foreach ($data_info['data'] as $key => $value) {
-            $sql2 = "select memberIdx AS id ,memberName AS username,signature from tb_person where memberIdx = '{$value}' ";
-            $get_my_friend = $PdoMySQL->getRow($sql2);
-            $get_my_friend['avatar'] = $APIURL.'person/'.$get_my_friend['id'].'.jpg';
-            $get_my_friend['sign'] = $get_my_friend['signature'];
-            $get_my_group[0]['list'][$key]= $get_my_friend;
+//获取我的好友分组        
+        $memberIdx = $_SESSION['info']['id'];
+        $sql_my_group = sprintf("SELECT mygroupIdx,mygroupName as groupname FROM tb_my_group WHERE memberIdx = $memberIdx order by weight");
+        $get_my_group = $PdoMySQL->getAll($sql_my_group);
+        foreach ($get_my_group as $key => $value) {
+            $mygroupIdx = $value['mygroupIdx'];
+            $sql_my_fiend = sprintf("SELECT a.memberIdx AS id ,c.nickName,a.memberName,a.signature FROM tb_person AS a
+                 LEFT JOIN tb_my_friend AS c ON c.memberIdx = a.memberIdx 
+                where c.mygroupIdx = $mygroupIdx ");
+            $get_my_friend = $PdoMySQL->getAll($sql_my_fiend);
+            foreach ($get_my_friend as $k => $v) {
+                $get_my_friend[$k]['username'] = $v['nickName'];
+                if (!$v['nickName']) {
+                    $get_my_friend[$k]['username'] = $v['memberName'];
+                }
+                $get_my_friend[$k]['avatar'] = $APIURL.'person/'.$v['id'].'.jpg';
+                $get_my_friend[$k]['sign'] = $v['signature'];
+                $get_my_group[$key]['list']= $get_my_friend;
+            }
+            $get_my_group[$key]['id'] = $value['mygroupIdx'];                
         }
+
         foreach ($data_group['data'] as $k => $v) {
             $group[$k]['groupname'] = $v['groupname'];
             $group[$k]['id'] = $v['groupid'];
             $group[$k]['avatar'] = 'static/img/tel.jpg';
+            $group[$k]['owner'] = '911117';
+            $group[$k]['manager'][0] = '1570845';
+            $group[$k]['manager'][1] = '1570855';
         }
         // $get_my_groups = json_encode($get_my_group);
         // $group = json_encode($group);
@@ -188,18 +177,41 @@ switch ($act) {
     //     $res['data']['name'] = $_FILES['file']['name'];
     //     echo  json_encode($res);        
     //     break;  
-    case 'groupMembers':
+    // case 'groupMembers':
 
+    //     $id = $_GET['id'];
+    //     $url = $BASEURL.'chatgroups/'.$id;
+    //     $headers = array('Authorization:Bearer '.$_SESSION['info']['access_token']);
+    //     $data_group = json_decode(Get($headers,$url),true);
+    //     foreach ($data_group['data'][0]['affiliations'] as $key => $value) {
+    //         $userid = array_values($value)[0];
+    //         $group[$key]['id'] = $userid;
+    //         $get_user = $PdoMySQL->find($tables, 'memberIdx = "' . $userid . '"', 'memberName,memberIdx');
+    //         $group[$key]['username'] = $get_user['memberName'];
+    //         $group[$key]['avatar'] = $APIURL.'/person/'.$userid.'.jpg';
+    //     }
+    //     $res['code'] = 0;
+    //     $res['msg'] = "";
+    //     $res['data']['list'] = $group;
+    //     echo  json_encode($res);
+    //     break;      
+    case 'groupMembers':
         $id = $_GET['id'];
-        $url = $BASEURL.'chatgroups/'.$id;
-        $headers = array('Authorization:Bearer '.$_SESSION['info']['access_token']);
-        $data_group = json_decode(Get($headers,$url),true);
-        foreach ($data_group['data'][0]['affiliations'] as $key => $value) {
-            $userid = array_values($value)[0];
-            $group[$key]['id'] = $userid;
-            $get_user = $PdoMySQL->find($tables, 'memberIdx = "' . $userid . '"', 'memberName,memberIdx');
-            $group[$key]['username'] = $get_user['memberName'];
-            $group[$key]['avatar'] = $APIURL.'/person/'.$userid.'.jpg';
+        $memberIdx = $_SESSION['info']['id'];
+        $sql_group = sprintf("SELECT a.memberIdx AS id,concat('../uploads/person/',a.memberIdx,'.jpg ')  as avatar, concat(ifnull(b.nickName,a.memberName),'(',a.memberIdx,')') AS username ,b.type from tb_person AS a LEFT JOIN tb_group_member AS b ON a.memberIdx = b.memberIdx
+         WHERE b.groupIdx = $id AND b.status = 1");
+        $group = $PdoMySQL->getAll($sql_group);//全部群成员    
+
+        $sql_friend = sprintf("SELECT b.memberIdx AS id from tb_my_group AS a INNER JOIN tb_my_friend AS b ON a.mygroupIdx = b.mygroupIdx
+         WHERE a.memberIdx = $memberIdx");
+        $friend = $PdoMySQL->getAll($sql_friend);//我的好友
+        foreach ($group as $key => $value) {
+            $group[$key]['friendship'] = 0;
+            foreach ($friend as $k => $v) {
+                if ($v['id'] == $value['id']) {
+                    $group[$key]['friendship'] = 1;
+                }
+            }            
         }
         $res['code'] = 0;
         $res['msg'] = "";
@@ -375,12 +387,28 @@ switch ($act) {
         break; 
     case 'get_one_user_data'://获取默认好友推荐
         $memberIdx = $_GET['memberIdx'];
-        $user = $PdoMySQL->find($tables, 'memberIdx = "' . $memberIdx . '"','memberIdx,memberName,signature,memberAge,memberSex');       
+        $user = $PdoMySQL->find($tables, 'memberIdx = "' . $memberIdx . '"','memberIdx,memberName,signature,memberSex');       
         $res['code'] = 0;
         $res['msg'] = "";
         $res['data'] = $user;
         echo  json_encode($res); 
-        break;       
+        break;      
+    case 'subscribed'://好友请求已通过
+        $to = $_GET['memberIdx'];
+        $from = $_SESSION['info']['id'];
+        $sql = sprintf(" SELECT a.memberIdx,a.memberName,a.signature,a.memberSex,b.mygroupIdx FROM tb_person AS a 
+            LEFT JOIN tb_msg AS b ON a.memberIdx = b.to WHERE b.from = $from AND b.to = $to");
+        $user = $PdoMySQL->getRow($sql);
+        if ($user) {
+            $data_my_friend['mygroupIdx'] = $user['mygroupIdx'];
+            $data_my_friend['memberIdx'] = $user['memberIdx'];
+            $PdoMySQL->add($data_my_friend,$tb_my_friend);  
+        }
+        $res['code'] = 0;
+        $res['msg'] = "";
+        $res['data'] = $user;
+        echo  json_encode($res); 
+        break;  
     case 'getMsgBox'://获取消息盒子
         $memberIdx = $_SESSION['info']['id'] ;
         $page = $_GET['page'] ;
@@ -428,6 +456,10 @@ switch ($act) {
         $data['from'] = $_SESSION['info']['id'];        
         $data['to'] = $_GET['to'];
         $data['remark'] = $_GET['remark'];
+        $mygroupIdx = $_GET['mygroupIdx'];
+        if ($mygroupIdx) {
+            $data['mygroupIdx'] = $mygroupIdx;
+        }
         $data['sendTime'] = $data['time'] = time();
         $data['status'] = 1;
         $msgIdx = $PdoMySQL->find($tb_msg, '( `to` = "'.$data['to'].'" AND `from` = "' . $data['from'] . '")', 'msgIdx'); //发出的申请是否已存在            
@@ -476,7 +508,6 @@ switch ($act) {
         $sql_msg = "select msgIdx,status from tb_msg where  ( `from` = ".$memberIdx." AND ( `status` = ".AGREE_BY_TO." OR `status` = ".DISAGREE_BY_TO." ) ) ";
         $msgBox = $PdoMySQL->getAll($sql_msg); 
         foreach ($msgBox as $key => $value) {
-            print_r($value['status']);
             $data['status'] = $value['status']+2;
             $username = $PdoMySQL->update($data,$tb_msg,'msgIdx = "' . $value['msgIdx'] . '"');
         } 
@@ -486,18 +517,36 @@ switch ($act) {
         break;           
     case 'modify_msg'://修改添加状态
         $msgType = $_GET['msgType'];    
-        $memberIdx = $_SESSION['info']['id'];   
+        $friendIdx = $_GET['friendIdx'];//好友消息参数     
+        $memberIdx = $_SESSION['info']['id'];  
+        $msgIdx = $_GET['msgIdx'];
+        $status = $_GET['status'];        
+        $mygroupIdx = $_GET['mygroupIdx']; //好友消息参数       
+        $from = $PdoMySQL->find($tb_msg, 'msgIdx ='.$msgIdx, 'from'); 
+        if ($friendIdx != $from['from']) {
+            $res['code'] = -1;
+            $res['msg'] = "非法请求";  
+            $res['data'] = "";  
+            echo  json_encode($res);          
+            break;
+        }
         $data['msgType'] = $msgType == ADD_USER_SYS?ADD_USER_SYS:ADD_GROUP_SYS;   
         if ($data['msgType'] == ADD_GROUP_SYS) {
             $data['handle'] = $memberIdx;
-        }    
-        $msgIdx = $_GET['msgIdx'];
-        $status = $_GET['status'];
+        }
+
         $data['status'] = $status == AGREE_BY_TO?AGREE_BY_TO:DISAGREE_BY_TO;
         $data['time'] = time();
         $data['readTime'] = $data['time'];
         $success = $PdoMySQL->update($data,$tb_msg,'( `to` = "'.$memberIdx.'" OR find_in_set("'.$memberIdx.'", adminGroup)) AND `msgIdx` = "' . $msgIdx . '"');
         if ($success) {
+            if ($friendIdx && $mygroupIdx) {
+                $data_my_friend['mygroupIdx'] = $mygroupIdx;
+                $data_my_friend['memberIdx'] = $friendIdx;
+                $PdoMySQL->add($data_my_friend,$tb_my_friend);
+            }
+
+            $mygroupIdx = $_GET['mygroupIdx']; //当为添加好友时 将好友放入相应的好友群组
             $res['code'] = 0;
         }else{
             $res['code'] = -1;
@@ -563,6 +612,85 @@ switch ($act) {
         $res['count'] = "";
         $res['data'] = $ChatLog;
         echo  json_encode($res); 
+        break;     
+    case 'addMyGroup'://添加好友分组        
+        $memberIdx = $_SESSION['info']['id'];
+        $sql_msg = sprintf(" SELECT count(*) AS count from tb_my_group where memberIdx = $memberIdx");
+        $count = $PdoMySQL->getRow($sql_msg);
+        if ($count['count'] >= 20) {
+            $res['code'] = -1;
+            $res['msg'] = '最多创建20个分组';
+        }else{
+            $data['memberIdx'] = $memberIdx;
+            $data['mygroupName'] = '未命名';
+            $data['weight'] = ($count['count']+1);
+            $id = $PdoMySQL->add($data, $tb_my_group);
+            $res['code'] = 0;
+            $res['msg'] = "创建成功";
+            $res['data']['name'] = $data['mygroupName'];             
+            $res['data']['id'] = $PdoMySQL->getLastInsertId();             
+        }
+        echo  json_encode($res);
+        break;    
+    case 'delMyGroup'://删除分组     
+        $mygroupIdx = $_GET['mygroupIdx'];   
+        $memberIdx = $_SESSION['info']['id'];
+        $sql_msg = sprintf(" SELECT count(*) AS count from tb_my_group where memberIdx = $memberIdx AND mygroupIdx = $mygroupIdx");
+        $count = $PdoMySQL->getRow($sql_msg);
+        if ($count['count']) {//存在分组
+            $sql_msg = sprintf(" SELECT mygroupIdx from tb_my_group where memberIdx = $memberIdx");
+            $default_group = $PdoMySQL->getRow($sql_msg); //获取第一个分组为默认分组           
+            $PdoMySQL->delete($tb_my_group, "mygroupIdx=".$mygroupIdx);
+            $data_group['mygroupIdx'] = $default_group['mygroupIdx'];
+            $PdoMySQL->update($data_group,$tb_my_friend, 'mygroupIdx = "' . $mygroupIdx . '"');
+            $res['code'] = 0;
+            $res['msg'] = "删除成功";            
+            $res['data'] = $default_group['mygroupIdx'];            
+        }else{
+            $res['code'] = 0;
+            $res['msg'] = "删除成功";            
+        }
+        echo  json_encode($res);
+        break;    
+    case 'editGroupName'://编辑分组名称     
+        $mygroupIdx = $_GET['mygroupIdx'];   
+        $mygroupName = $_GET['mygroupName'];   
+        $memberIdx = $_SESSION['info']['id'];
+        $sql_msg = sprintf(" SELECT mygroupIdx from tb_my_group where memberIdx = $memberIdx AND mygroupName = '$mygroupName'");
+        $mygroup = $PdoMySQL->getRow($sql_msg);
+        if ($mygroup['mygroupIdx'] != $mygroupIdx && $mygroup['mygroupIdx']) {//存在分组名
+            $res['code'] = -1;
+            $res['msg'] = "分组名已存在，换一个名字吧";            
+            $res['data'] = '';            
+        }else{
+            $data_group['mygroupName'] = $mygroupName;
+            $PdoMySQL->update($data_group,$tb_my_group, 'mygroupIdx = "' . $mygroupIdx . '"');            
+            $res['code'] = 0;
+            $res['msg'] = "修改成功";            
+        }
+        echo  json_encode($res);
+        break;    
+    case 'editNickName'://编辑好友名称     
+        $friend_id = $_GET['friend_id'];   
+        $nickName = $_GET['nickName'];   
+        $memberIdx = $_SESSION['info']['id'];
+        $sql_msg = sprintf(" SELECT a.myfriendIdx from tb_my_friend AS a INNER JOIN tb_my_group AS b ON a.mygroupIdx = b.mygroupIdx where b.memberIdx = $memberIdx AND a.memberIdx = $friend_id");
+        $myfriendIdx = $PdoMySQL->getRow($sql_msg);
+        if ($myfriendIdx['myfriendIdx']) {//存在该好友
+            $data_friend['nickName'] = $nickName;
+            if (!$nickName || $nickName == '') {
+                $friendName = $PdoMySQL->find($tables, 'memberIdx = "' . $friend_id . '"', 'memberName');
+                $nickName = $friendName['memberName'];
+            }           
+            $data = $PdoMySQL->update($data_friend,$tb_my_friend,'myfriendIdx = '.$myfriendIdx['myfriendIdx']);
+            $res['code'] = 0;
+            $res['msg'] = "修改成功";                       
+            $res['data'] = $nickName;            
+        }else{
+            $res['code'] = -1;
+            $res['msg'] = "参数错误";            
+        }
+        echo  json_encode($res);
         break; 
 
     default :
@@ -580,7 +708,7 @@ switch ($act) {
             $lastTime = $get_user['loginTime']+$get_user['expires_in']-3600*24*5;//还有5天则更新token
         }else{
             $lastTime = 1;
-        }        
+        }
         $time = time();
         if ($time >= $lastTime) {//token失效
             $url = 'http://a1.easemob.com/1199170801115017/layim/token';
