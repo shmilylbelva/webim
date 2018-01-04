@@ -57,8 +57,8 @@ switch ($act) {
         // $url_friend = $BASEURL.'users/'.$uid.'/contacts/users';
         // $data_info = json_decode(Get($headers,$url_friend),true);
 //获取群组
-        $url_group = $BASEURL.'users/'.$uid.'/joined_chatgroups';
-        $data_group = json_decode(Get($headers,$url_group),true);
+        // $url_group = $BASEURL.'users/'.$uid.'/joined_chatgroups';
+        // $data_group = json_decode(Get($headers,$url_group),true);
 //获取默认皮肤
         $get_skin = $PdoMySQL->find($tb_skin, 'memberIdx = "' . $_SESSION['info']['id'] . '"', 'url,memberIdx,isUserUpload');
 //获取未读消息数量
@@ -87,14 +87,14 @@ switch ($act) {
             $get_my_group[$key]['id'] = $value['mygroupIdx'];                
         }
 
-        foreach ($data_group['data'] as $k => $v) {
-            $group[$k]['groupname'] = $v['groupname'];
-            $group[$k]['id'] = $v['groupid'];
-            $group[$k]['avatar'] = 'static/img/tel.jpg';
-            $group[$k]['owner'] = '911117';
-            $group[$k]['manager'][0] = '1570845';
-            $group[$k]['manager'][1] = '1570855';
-        }
+        $sql_group = sprintf("SELECT b.type as manager,b.gagTime,a.groupName as groupname,concat('../uploads/person/',a.groupIdx,'.jpg ')  as avatar, a.groupIdx AS id FROM tb_group AS a
+             LEFT JOIN tb_group_member AS b ON b.groupIdx = a.groupIdx where b.memberIdx = $memberIdx ");
+        $group = $PdoMySQL->getAll($sql_group);
+        // foreach ($group as $k => $v) {
+        //     $group[$k]['owner'] = '911117';
+        //     $group[$k]['manager'][0] = '1570845';
+        //     $group[$k]['manager'][1] = '1570855';
+        // }
         // $get_my_groups = json_encode($get_my_group);
         // $group = json_encode($group);
         $res['code'] = 0;
@@ -199,7 +199,7 @@ switch ($act) {
         $id = $_GET['id'];
         $memberIdx = $_SESSION['info']['id'];
         $sql_group = sprintf("SELECT a.memberIdx AS id,concat('../uploads/person/',a.memberIdx,'.jpg ')  as avatar, concat(ifnull(b.nickName,a.memberName),'(',a.memberIdx,')') AS username ,b.type from tb_person AS a LEFT JOIN tb_group_member AS b ON a.memberIdx = b.memberIdx
-         WHERE b.groupIdx = $id AND b.status = 1");
+         WHERE b.groupIdx = $id AND b.status = 1 order by b.type");
         $group = $PdoMySQL->getAll($sql_group);//全部群成员    
 
         $sql_friend = sprintf("SELECT b.memberIdx AS id from tb_my_group AS a INNER JOIN tb_my_friend AS b ON a.mygroupIdx = b.mygroupIdx
@@ -364,8 +364,8 @@ switch ($act) {
         echo  json_encode($res);         
         break;  
     case 'commitGroupInfo'://提交建群信息
-        $data['belong'] = $_SESSION['info']['id'] ;
-        $data['groupIdx'] = $_GET['groupIdx'];
+        $data_group['memberIdx'] = $data['belong'] = $_SESSION['info']['id'] ;
+        $data_group['groupIdx'] = $data['groupIdx'] = $_GET['groupIdx'];
         $data['groupName'] = $_GET['groupName'];
         $data['des'] = $_GET['des'];
         $data['number'] = $_GET['number'];
@@ -375,6 +375,9 @@ switch ($act) {
         $cn = $PdoMySQL->getRow($sql);       
         if (!$groupIdx['groupIdx'] && $cn['cn'] < 6) {//最多建5个群
             $success = $PdoMySQL->add($data,$tb_group);
+            $data_group['addTime'] = time();
+            $data_group['type'] = 1;//群主
+            $PdoMySQL->add($data_group,$tb_group_member);
             $res['code'] = 0;
             $res['msg'] = "群 ".$data['groupName']." 创建成功";
             $res['data'] = $groupIdx;            
@@ -385,14 +388,22 @@ switch ($act) {
         }
         echo  json_encode($res); 
         break; 
-    case 'get_one_user_data'://获取默认好友推荐
+    case 'get_one_user_data'://获取好友信息
         $memberIdx = $_GET['memberIdx'];
         $user = $PdoMySQL->find($tables, 'memberIdx = "' . $memberIdx . '"','memberIdx,memberName,signature,memberSex');       
         $res['code'] = 0;
         $res['msg'] = "";
         $res['data'] = $user;
         echo  json_encode($res); 
-        break;      
+        break;  
+    case 'get_one_group_data'://获取默群信息
+        $groupIdx = $_GET['groupIdx'];
+        $group = $PdoMySQL->find($tb_group, 'groupIdx = "' . $groupIdx . '"','groupName');       
+        $res['code'] = 0;
+        $res['msg'] = "";
+        $res['data'] = $group;
+        echo  json_encode($res); 
+        break;             
     case 'subscribed'://好友请求已通过
         $to = $_GET['memberIdx'];
         $from = $_SESSION['info']['id'];
@@ -516,42 +527,53 @@ switch ($act) {
         echo  json_encode($res);  
         break;           
     case 'modify_msg'://修改添加状态
-        $msgType = $_GET['msgType'];    
-        $friendIdx = $_GET['friendIdx'];//好友消息参数     
-        $memberIdx = $_SESSION['info']['id'];  
+        $data['msgType'] = $_GET['msgType'];  
         $msgIdx = $_GET['msgIdx'];
-        $status = $_GET['status'];        
-        $mygroupIdx = $_GET['mygroupIdx']; //好友消息参数       
-        $from = $PdoMySQL->find($tb_msg, 'msgIdx ='.$msgIdx, 'from'); 
-        if ($friendIdx != $from['from']) {
-            $res['code'] = -1;
-            $res['msg'] = "非法请求";  
-            $res['data'] = "";  
-            echo  json_encode($res);          
-            break;
-        }
-        $data['msgType'] = $msgType == ADD_USER_SYS?ADD_USER_SYS:ADD_GROUP_SYS;   
-        if ($data['msgType'] == ADD_GROUP_SYS) {
-            $data['handle'] = $memberIdx;
-        }
-
+        $status = $_GET['status'];         
         $data['status'] = $status == AGREE_BY_TO?AGREE_BY_TO:DISAGREE_BY_TO;
-        $data['time'] = time();
-        $data['readTime'] = $data['time'];
-        $success = $PdoMySQL->update($data,$tb_msg,'( `to` = "'.$memberIdx.'" OR find_in_set("'.$memberIdx.'", adminGroup)) AND `msgIdx` = "' . $msgIdx . '"');
-        if ($success) {
-            if ($friendIdx && $mygroupIdx) {
+        $data_group_member['addTime']= $data['readTime'] = $data['time'] = time();
+        $memberIdx = $_SESSION['info']['id'];          
+        if ($data['msgType'] == 2) {//添加好友
+            $friendIdx = $_GET['friendIdx'];//好友id    
+            $mygroupIdx = $_GET['mygroupIdx']; //好友分组 
+            $from = $PdoMySQL->find($tb_msg, 'msgIdx ='.$msgIdx, 'from'); 
+            if ($friendIdx != $from['from']) {
+                $res['code'] = -1;
+                $res['msg'] = "非法请求";  
+                $res['data'] = "";  
+                echo  json_encode($res);          
+                break;
+            }
+            $success = $PdoMySQL->update($data,$tb_msg,' `to` = "'.$memberIdx.'"  AND `msgIdx` = "' . $msgIdx . '"');
+            if ($success) {
                 $data_my_friend['mygroupIdx'] = $mygroupIdx;
                 $data_my_friend['memberIdx'] = $friendIdx;
                 $PdoMySQL->add($data_my_friend,$tb_my_friend);
+                $res['code'] = 0;
+            }else{
+                $res['code'] = -1;
             }
-
-            $mygroupIdx = $_GET['mygroupIdx']; //当为添加好友时 将好友放入相应的好友群组
-            $res['code'] = 0;
+            $res['msg'] = "";
         }else{
-            $res['code'] = -1;
+            $data['handle'] = $memberIdx;
+            $handle = $PdoMySQL->find($tb_msg, 'msgIdx ='.$msgIdx, 'handle,to,from');
+            if ($handle['handle']) {
+                $res['msg'] = "群消息已处理"; 
+                $res['code'] = 1;
+            }else{
+                $success = $PdoMySQL->update($data,$tb_msg,'find_in_set("'.$memberIdx.'", adminGroup) AND `msgIdx` = "' . $msgIdx . '"');
+                if ($success) {
+                    $data_group_member['groupIdx'] = $handle['to'];
+                    $data_group_member['memberIdx'] = $handle['from'];
+                    $PdoMySQL->add($data_group_member,$tb_group_member);//加入群                 
+                    $res['code'] = 0;
+                    $res['msg'] = "群消息处理成功"; 
+                }else{
+                    $res['code'] = -1;
+                    $res['msg'] = "群消息处理失败"; 
+                }
+            }
         }
-        $res['msg'] = "";
         echo  json_encode($res); 
         break;          
     case 'addChatLog'://记录聊天记录
@@ -691,8 +713,206 @@ switch ($act) {
             $res['msg'] = "参数错误";            
         }
         echo  json_encode($res);
-        break; 
+        break;        
+    case 'moveFriend'://移动好友     
+        $friend_id = $_GET['friend_id'];   
+        $data_friend['mygroupIdx'] = $_GET['groupidx'];   
+        $memberIdx = $_SESSION['info']['id'];
+        $sql_msg = sprintf(" SELECT a.myfriendIdx from tb_my_friend AS a INNER JOIN tb_my_group AS b ON a.mygroupIdx = b.mygroupIdx where b.memberIdx = $memberIdx AND a.memberIdx = $friend_id");
+        $myfriendIdx = $PdoMySQL->getRow($sql_msg);
+        if ($myfriendIdx['myfriendIdx']) {//存在该好友
 
+            $data = $PdoMySQL->update($data_friend,$tb_my_friend,'myfriendIdx = '.$myfriendIdx['myfriendIdx']);
+            $res['code'] = 0;
+            $res['msg'] = "修改成功";                       
+            $res['data'] = $data_friend['mygroupIdx'];            
+        }else{
+            $res['code'] = -1;
+            $res['msg'] = "参数错误";            
+        }
+        echo  json_encode($res);
+        break;         
+    case 'removeFriends'://删除好友     
+        $friend_id = $_GET['friend_id'];   
+        $memberIdx = $_SESSION['info']['id'];
+        $sql_msg = sprintf(" SELECT a.myfriendIdx from tb_my_friend AS a INNER JOIN tb_my_group AS b ON a.mygroupIdx = b.mygroupIdx where b.memberIdx = $memberIdx AND a.memberIdx = $friend_id");
+        $myfriendIdx = $PdoMySQL->getRow($sql_msg);
+        if ($myfriendIdx['myfriendIdx']) {//存在该好友
+            $PdoMySQL->delete($tb_my_friend, "myfriendIdx=".$myfriendIdx['myfriendIdx']);//从我的好友列表删除
+            $sql_msg = sprintf(" SELECT a.myfriendIdx from tb_my_friend AS a INNER JOIN tb_my_group AS b ON a.mygroupIdx = b.mygroupIdx where b.memberIdx = $friend_id AND a.memberIdx = $memberIdx");
+            $friendIdx = $PdoMySQL->getRow($sql_msg);  
+            $PdoMySQL->delete($tb_my_friend, "myfriendIdx=".$friendIdx['myfriendIdx']);//从好友列表删除我          
+            $PdoMySQL->delete($tb_msg, '(`from` = '.$friend_id .' AND `to` = '.$memberIdx .') OR (`from` = '.$memberIdx .' AND `to` = '.$friend_id .')' );//删除消息记录
+            $res['code'] = 0;
+            $res['msg'] = "修改成功";                       
+            $res['data'] = $nickName;            
+        }else{
+            $res['code'] = -1;
+            $res['msg'] = "参数错误";            
+        }
+        echo  json_encode($res);
+        break;      
+    case 'editGroupNickName'://编辑群名片     
+        $memberIdx = $_GET['memberIdx'];//传递过来的用户
+        $groupIdx = $_GET['groupIdx'];   
+        $data_group_name['nickName'] = $_GET['nickName'];   
+        $memberIdx_AT = $_SESSION['info']['id'];//当前登陆的用户
+        if ($memberIdx == $memberIdx_AT) {//修改自己的名片
+            $data = $PdoMySQL->update($data_group_name,$tb_group_member,'memberIdx = '.$memberIdx.' AND groupIdx='.$groupIdx);
+            $res['code'] = 0;
+            $res['msg'] = "修改成功";                       
+            $res['data'] = $data_group_name['nickName'];         
+        }else{
+            $sql = sprintf(" SELECT type from tb_group_member  where groupIdx = $groupIdx AND memberIdx = $memberIdx");
+            $memberType = $PdoMySQL->getRow($sql);
+
+            $sql = sprintf(" SELECT type from tb_group_member  where groupIdx = $groupIdx AND memberIdx = $memberIdx_AT");
+            $manager = $PdoMySQL->getRow($sql);
+            if ($manager['type'] == 1 || ($manager['type'] == 2 && $memberType['type'] == 3)) {//群主 或者群管理并且被修改的是群员
+                $data = $PdoMySQL->update($data_group_name,$tb_group_member,'memberIdx = '.$memberIdx.' AND groupIdx='.$groupIdx);
+                $res['code'] = 0;
+                $res['msg'] = "修改成功";                       
+                $res['data'] = $data_group_name['nickName'];            
+            }else{
+                $res['code'] = -1;
+                $res['msg'] = "参数错误"; 
+            }
+        }
+        echo  json_encode($res);
+        break;     
+    case 'setAdmin'://设置群管理     
+        $manager = $_GET['memberIdx'];   
+        $groupIdx = $_GET['groupidx'];   
+        $type = $_GET['type'];   
+        $memberIdx = $_SESSION['info']['id'];
+        $sql_msg = sprintf(" SELECT groupMemberIdx,type from tb_group_member where memberIdx = $memberIdx AND groupIdx = $groupIdx");
+        $belong = $PdoMySQL->getRow($sql_msg);
+        if ($belong['type'] == 1) {//群主
+            $sql_msg = sprintf(" SELECT groupMemberIdx,type from tb_group_member where memberIdx = $manager AND groupIdx = $groupIdx");
+            $member = $PdoMySQL->getRow($sql_msg); //群员
+            if ($type == 2) {//设置为管理
+                if($member['type'] == 3){
+                    $data_manager['type'] = 2;
+                    $data = $PdoMySQL->update($data_manager,$tb_group_member,'groupMemberIdx = '.$member['groupMemberIdx']);
+                    $res['code'] = 0;
+                    $res['msg'] = "设置成功";             
+                }elseif($member['type'] == 2){
+                    $res['code'] = 1;
+                    $res['msg'] = "请勿重复设置"; 
+                }
+            }else{
+                if($member['type'] == 2){
+                    $data_manager['type'] = 3;
+                    $data = $PdoMySQL->update($data_manager,$tb_group_member,'groupMemberIdx = '.$member['groupMemberIdx']);
+                    $res['code'] = 0;
+                    $res['msg'] = "设置成功";             
+                }elseif($member['type'] == 3){
+                    $res['code'] = 1;
+                    $res['msg'] = "请勿重复设置"; 
+                }
+            }
+
+            $res['data'] = '';            
+        }else{
+            $res['code'] = -1;
+            $res['msg'] = "参数错误";            
+        }
+        echo  json_encode($res);
+        break; 
+    case 'groupAllMemberGag'://全员禁言
+        $groupIdx = $_GET['groupidx'];  
+        $memberIdx_AT = $_SESSION['info']['id'];//当前登陆的用户
+        $sql = sprintf(" SELECT type from tb_group_member  where groupIdx = $groupIdx AND memberIdx = $memberIdx_AT");
+        $manager = $PdoMySQL->getRow($sql);
+        if ($manager['type'] == 1 || $manager['type'] == 2 ) {//群主 或者群管理并且被修改的是群员
+            $data_gag['gagTime'] = -1;//长久禁言
+            $data = $PdoMySQL->update($data_gag,$tb_group_member,'groupIdx = '.$groupIdx .' AND type = 3');
+            $res['code'] = 0;
+            $res['msg'] = "修改成功";                       
+            $res['data'] = '';            
+        }else{
+            $res['code'] = -1;
+            $res['msg'] = "参数错误"; 
+        }
+        echo  json_encode($res);   
+        break;       
+    case 'liftGroupAllMemberGag'://解除全员禁言
+        $groupIdx = $_GET['groupidx'];  
+        $memberIdx_AT = $_SESSION['info']['id'];//当前登陆的用户
+        $sql = sprintf(" SELECT type from tb_group_member  where groupIdx = $groupIdx AND memberIdx = $memberIdx_AT");
+        $manager = $PdoMySQL->getRow($sql);
+        if ($manager['type'] == 1 || $manager['type'] == 2 ) {//群主 或者群管理并且被修改的是群员
+            $data_gag['gagTime'] = 0;//解除长久禁言
+            $data = $PdoMySQL->update($data_gag,$tb_group_member,'groupIdx = '.$groupIdx .' AND type = 3');
+            $res['code'] = 0;
+            $res['msg'] = "修改成功";                       
+            $res['data'] = '';            
+        }else{
+            $res['code'] = -1;
+            $res['msg'] = "参数错误"; 
+        }
+        echo  json_encode($res);   
+        break;            
+    case 'groupMemberGag'://群员禁言
+        $memberIdx = $_GET['friend_id'];//传递过来的用户
+        $groupIdx = $_GET['groupidx'];   
+        $gagTime = $_GET['gagTime'];   
+        $memberIdx_AT = $_SESSION['info']['id'];//当前登陆的用户
+        $sql = sprintf(" SELECT type,groupMemberIdx from tb_group_member  where groupIdx = $groupIdx AND memberIdx = $memberIdx");
+        $memberType = $PdoMySQL->getRow($sql);
+        $sql = sprintf(" SELECT type from tb_group_member  where groupIdx = $groupIdx AND memberIdx = $memberIdx_AT");
+        $manager = $PdoMySQL->getRow($sql);
+        if ($manager['type'] == 1 || ($manager['type'] == 2 && $memberType['type'] == 3)) {//群主 或者群管理并且被修改的是群员
+            $arr = preg_split("/([0-9]+)/", $gagTime, 0, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);  
+            switch ($arr[1]) {
+                case 's'://禁言多少秒
+                    $gagTime = $arr[0];
+                    break;
+                case 'm'://禁言多少分钟
+                    $gagTime = $arr[0]*60;
+                    break;
+                case 'h'://禁言多少小时
+                    $gagTime = $arr[0]*3600;
+                    break;  
+                case 'd'://禁言多少天
+                    $gagTime = $arr[0]*3600*24;
+                    break;  
+            }
+            $data_gag['gagTime'] = $gagTime+time();
+            // $data_gag['type'] = $memberType['type']+2;
+            $data = $PdoMySQL->update($data_gag,$tb_group_member,'groupMemberIdx = '.$memberType['groupMemberIdx']);
+            $res['code'] = 0;
+            $res['msg'] = "修改成功";                       
+            $res['data']['gagTime'] = $data_gag['gagTime'];            
+            $res['data']['time'] = time().'000';            
+            $res['data']['s'] = $gagTime;            
+            $res['data']['value'] = '4';            
+        }else{
+            $res['code'] = -1;
+            $res['msg'] = "参数错误"; 
+        }
+        echo  json_encode($res);   
+        break; 
+    case 'liftGroupMemberGag'://解除群员禁言
+        $memberIdx = $_GET['friend_id'];//传递过来的用户
+        $groupIdx = $_GET['groupidx'];   
+        $memberIdx_AT = $_SESSION['info']['id'];//当前登陆的用户
+        $sql = sprintf(" SELECT type,groupMemberIdx from tb_group_member  where groupIdx = $groupIdx AND memberIdx = $memberIdx");
+        $memberType = $PdoMySQL->getRow($sql);
+        $sql = sprintf(" SELECT type from tb_group_member  where groupIdx = $groupIdx AND memberIdx = $memberIdx_AT");
+        $manager = $PdoMySQL->getRow($sql);
+        if ($manager['type'] == 1 || ($manager['type'] == 2 && $memberType['type'] == 3)) {//群主 或者群管理并且被修改的是群员
+            $data_gag['gagTime'] = 0;
+            $data = $PdoMySQL->update($data_gag,$tb_group_member,'groupMemberIdx = '.$memberType['groupMemberIdx']);
+            $res['code'] = 0;
+            $res['msg'] = "修改成功";                       
+            $res['data'] = '';            
+        }else{
+            $res['code'] = -1;
+            $res['msg'] = "参数错误"; 
+        }
+        echo  json_encode($res);   
+        break; 
     default :
         echo '{"code":"9999","status":"n","info":"关键参数传入错误，请返回请求来源网址"}';
         break;

@@ -22,6 +22,7 @@ $tb_chatlog = 'tb_chatlog';
 $tb_group = 'tb_group';
 $tb_my_friend = 'tb_my_friend';
 $tb_my_group = 'tb_my_group';
+$tb_group_member = 'tb_group_member';
 const ADD_USER_MSG = 1;//为请求添加用户
 const ADD_USER_SYS = 2;//为系统消息（添加好友
 const ADD_GROUP_MSG = 3;//为请求加群

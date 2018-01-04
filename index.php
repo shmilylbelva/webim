@@ -30,6 +30,7 @@ require_once 'class/url.php';
         13.挤下线提醒
         14.文件储存在七牛云
         15.增删改 好友/好友分组
+        16.群管理（增删管理员/修改群名片/单个群员禁言）
         体验完整功能请移步<a href="https://github.com/shmilylbelva/webim" style="color: red">这里</a>
         如果登陆一段时间后接收不到消息，可能是有别的小伙伴登陆了这个账号^_^,点击这里<a href="http://test.guoshanchina.com/login.php" style="color: red">重新登陆</a>即可(还没做退出登陆……)
     </pre>        

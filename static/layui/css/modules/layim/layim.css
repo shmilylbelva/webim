@@ -192,6 +192,7 @@ body .layui-layim-face  .layui-layer-content{padding:0; background-color:#fff; c
 .layim-chat-textarea{margin-left: 10px;}
 .layim-chat-textarea textarea{display: block; width: 100%; padding: 5px 0 0 0; height: 68px; line-height: 20px; border: none; overflow: auto; resize: none; background: none;}
 .layim-chat-textarea textarea:focus{outline: 0;}
+.layim-chat-gag{display:none;height: 20px;width: 100%;margin: 0 auto;margin-top: -158px;position: absolute;text-align: center;padding: 69px 0px;background: rgba(221, 221, 221, 0.61);color: #5a5555;}
 
 .layim-chat-bottom{position: relative; height: 46px;}
 .layim-chat-send{position: absolute; right: 15px; top: 3px; height: 32px; line-height: 32px; font-size: 0; cursor: pointer;}
