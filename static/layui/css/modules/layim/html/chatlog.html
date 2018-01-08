@@ -24,12 +24,16 @@ body .layim-chat-main{height: auto;padding-bottom: 45px;}
 
 
 <textarea title="消息模版" id="LAY_tpl" style="display:none;">
-{{# layui.each(d.data, function(index, item){
-  if(item.from == parent.layui.layim.cache().mine.id){ }}
-    <li class="layim-chat-mine"><div class="layim-chat-user"><img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg"><cite><i>{{ item.timestamp }}</i>{{ item.fromName }}</cite></div><div class="layim-chat-text">{{ layui.layim.content(item.content) }}</div></li>
+{{# layui.each(d.data, function(index, item){ }}
+  {{# if(item.from == '0'){ }}
+      <li class="layim-chat-system"><cite>{{ item.timestamp }}</cite><span>{{ layui.layim.content(item.content) }}</span></li>
   {{# } else { }}
-    <li><div class="layim-chat-user"><img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg"><cite>{{ item.fromName }}<i>{{item.timestamp }}</i></cite></div><div class="layim-chat-text">{{ layui.layim.content(item.content) }}</div></li>
-  {{# }
+    {{# if(item.from == parent.layui.layim.cache().mine.id){ }}
+      <li class="layim-chat-mine"><div class="layim-chat-user"><img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg"><cite><i>{{ item.timestamp }}</i>{{ item.fromName }}</cite></div><div class="layim-chat-text">{{ layui.layim.content(item.content) }}</div></li>
+    {{# } else { }}
+      <li><div class="layim-chat-user"><img src="http://test.guoshanchina.com/uploads/person/{{ item.from }}.jpg"><cite>{{ item.fromName }}<i>{{item.timestamp }}</i></cite></div><div class="layim-chat-text">{{ layui.layim.content(item.content) }}</div></li>
+    {{# } }} 
+  {{# }  
 }); }}
 </textarea>
 

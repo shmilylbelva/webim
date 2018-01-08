@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50553
 File Encoding         : 65001
 
-Date: 2018-01-04 16:55:15
+Date: 2018-01-08 14:13:06
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -45,7 +45,7 @@ CREATE TABLE `tb_chatlog` (
   `type` enum('chatroom','friend','group') DEFAULT 'friend',
   `status` tinyint(1) DEFAULT '1' COMMENT '1 可以正常访问 2禁止访问',
   PRIMARY KEY (`chatlogIdx`,`from`,`to`)
-) ENGINE=InnoDB AUTO_INCREMENT=473 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=512 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of tb_chatlog
@@ -470,6 +470,44 @@ INSERT INTO `tb_chatlog` VALUES ('469', '911117', '37370973978625', '1', '151505
 INSERT INTO `tb_chatlog` VALUES ('470', '911117', '37370973978625', '？？', '1515052600420', 'group', '1');
 INSERT INTO `tb_chatlog` VALUES ('471', '911117', '37370973978625', '1', '1515052708220', 'group', '1');
 INSERT INTO `tb_chatlog` VALUES ('472', '911117', '32403609419777', '123456', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('473', '911117', '37370973978625', '1', '1515115572454', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('474', '123456', '37370973978625', '啊啊', '1515116218092', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('475', '911117', '32403609419777', 'w', '1515119020305', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('476', '911117', '37370973978625', 'w', '1515119061204', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('477', '911117', '1570845', 'qq', '1515119094017', 'friend', '1');
+INSERT INTO `tb_chatlog` VALUES ('478', '911088', '32403609419777', '1', '1515127972680', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('479', '911088', '32403609419777', '1', '1515128026479', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('481', '0', '32403609419777', '123456(123456) 已退出该群', '1515132114545', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('482', '0', '32403609419777', '123456(123456) 已退出该群', '1515134744198', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('483', '911117', '37370973978625', 'q', '1515134828351', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('484', '911117', '37370973978625', 'w', '1515134966093', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('485', '0', '32403609419777', '123456(123456) 已退出该群', '1515134989604', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('486', '0', '32403609419777', '123456(123456) 已退出该群', '1515135573477', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('487', '0', '32403609419777', '1515136400', '1515135800000', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('488', '0', '32403609419777', '1515136415', '1515135815000', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('489', '0', '32403609419777', '0', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('490', '0', '32403609419777', '1515140501', '1515139901000', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('491', '0', '32403609419777', '0', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('492', '0', '32403609419777', '1515140554', '1515139954000', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('493', '0', '32403609419777', '0', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('494', '0', '32403609419777', '1515143591', '1515139991000', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('495', '0', '32403609419777', '0', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('496', '0', '32403609419777', '1515141230', '1515140630000', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('497', '0', '32403609419777', '0', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('498', '0', '32403609419777', '1515141326', '1515140726000', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('499', '0', '32403609419777', '0', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('500', '0', '32403609419777', '1515141411', '1515140811000', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('501', '0', '32403609419777', '0', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('502', '0', '32403609419777', '1515141464', '1515140864000', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('503', '0', '32403609419777', '1515141572', '1515140972000', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('504', '0', '32403609419777', '0', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('505', '0', '32403609419777', '1515144587', '1515140987000', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('506', '0', '32403609419777', '0', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('507', '0', '32403609419777', '1515141752', '1515141152000', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('508', '0', '32403609419777', '1515142000000', '1515141400000', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('509', '0', '32403609419777', '0', '', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('510', '0', '32403609419777', '1515142013000', '1515141413000', 'group', '1');
+INSERT INTO `tb_chatlog` VALUES ('511', '0', '32403609419777', '0', '', 'group', '1');
 
 -- ----------------------------
 -- Table structure for `tb_group`
@@ -512,20 +550,20 @@ CREATE TABLE `tb_group_member` (
   `gagTime` char(10) DEFAULT '0' COMMENT '禁言到某个时间',
   `nickName` varchar(128) DEFAULT NULL COMMENT '群员的群昵称',
   PRIMARY KEY (`groupMemberIdx`,`groupIdx`,`memberIdx`)
-) ENGINE=MyISAM AUTO_INCREMENT=42 DEFAULT CHARSET=utf8 COMMENT='群员表';
+) ENGINE=MyISAM AUTO_INCREMENT=52 DEFAULT CHARSET=utf8 COMMENT='群员表';
 
 -- ----------------------------
 -- Records of tb_group_member
 -- ----------------------------
 INSERT INTO `tb_group_member` VALUES ('1', '32403609419777', '911117', '1', null, '1', '0', '有事找管理');
-INSERT INTO `tb_group_member` VALUES ('2', '32403609419777', '911088', '1', null, '2', '0', null);
+INSERT INTO `tb_group_member` VALUES ('2', '32403609419777', '911088', '1', null, '3', '0', null);
 INSERT INTO `tb_group_member` VALUES ('3', '32403609419777', '1570845', '1', null, '2', '1515035540', null);
 INSERT INTO `tb_group_member` VALUES ('10', '32403609419777', '910992', '1', null, '3', '1515029465', null);
 INSERT INTO `tb_group_member` VALUES ('11', '32403609419777', '911100', '1', null, '3', '1515029807', null);
 INSERT INTO `tb_group_member` VALUES ('9', '32403609419777', '1570855', '1', '1514863868', '3', '0', null);
 INSERT INTO `tb_group_member` VALUES ('12', '32403609419777', '911085', '1', null, '3', '0', null);
-INSERT INTO `tb_group_member` VALUES ('13', '32403609419777', '911067', '1', null, '3', '0', null);
-INSERT INTO `tb_group_member` VALUES ('14', '32403609419777', '911058', '1', null, '3', '0', null);
+INSERT INTO `tb_group_member` VALUES ('13', '32403609419777', '911067', '1', null, '2', '0', null);
+INSERT INTO `tb_group_member` VALUES ('14', '32403609419777', '911058', '1', null, '3', '1515136415', '实力派');
 INSERT INTO `tb_group_member` VALUES ('15', '34331010596865', '1570855', '1', null, '3', '0', null);
 INSERT INTO `tb_group_member` VALUES ('16', '34331010596865', '911117', '1', null, '3', '0', null);
 INSERT INTO `tb_group_member` VALUES ('17', '34331010596865', '1570845', '1', null, '1', '0', null);
@@ -549,9 +587,7 @@ INSERT INTO `tb_group_member` VALUES ('34', '35297058422786', '911117', '1', nul
 INSERT INTO `tb_group_member` VALUES ('35', '35297058422786', '911088', '1', null, '3', '0', null);
 INSERT INTO `tb_group_member` VALUES ('36', '35297058422786', '911085', '1', null, '1', '0', null);
 INSERT INTO `tb_group_member` VALUES ('37', '37370973978625', '911117', '1', '1515038138', '1', '0', null);
-INSERT INTO `tb_group_member` VALUES ('38', '37370973978625', '123456', '1', '1515038484', '3', '1515052263', null);
-INSERT INTO `tb_group_member` VALUES ('40', '32403609419777', '123456', '1', '1515055183', '3', '0', null);
-INSERT INTO `tb_group_member` VALUES ('41', '32403609419777', '123456', '1', '1515055657', '3', '0', null);
+INSERT INTO `tb_group_member` VALUES ('42', '37370973978625', '123456', '1', '1515119654', '2', '1515122482', '11');
 
 -- ----------------------------
 -- Table structure for `tb_msg`
@@ -571,13 +607,12 @@ CREATE TABLE `tb_msg` (
   `handle` bigint(20) DEFAULT NULL COMMENT '处理该请求的管理员id',
   `mygroupIdx` bigint(20) DEFAULT NULL COMMENT '好友分组',
   PRIMARY KEY (`msgIdx`)
-) ENGINE=MyISAM AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of tb_msg
 -- ----------------------------
-INSERT INTO `tb_msg` VALUES ('31', '4', '123456', '37370973978625', '4', '', '1515038476', '1515038484', '1515038484', '911117', '911117', null);
-INSERT INTO `tb_msg` VALUES ('34', '4', '123456', '32403609419777', '4', '', '1515055598', '1515055657', '1515055657', '911117', '911117', null);
+INSERT INTO `tb_msg` VALUES ('35', '4', '123456', '37370973978625', '4', '', '1515119650', '1515119654', '1515119654', '911117', '911117', null);
 INSERT INTO `tb_msg` VALUES ('30', '2', '1570845', '911117', '4', '订单', '1514948300', '1514948315', '1514948315', '0', null, '39');
 
 -- ----------------------------
@@ -601,7 +636,6 @@ INSERT INTO `tb_my_friend` VALUES ('3', '1', '1570845', '');
 INSERT INTO `tb_my_friend` VALUES ('4', '4', '911117', null);
 INSERT INTO `tb_my_friend` VALUES ('11', '6', '911088', null);
 INSERT INTO `tb_my_friend` VALUES ('31', '39', '911100', null);
-INSERT INTO `tb_my_friend` VALUES ('9', '38', '1570845', null);
 INSERT INTO `tb_my_friend` VALUES ('12', '6', '911085', null);
 INSERT INTO `tb_my_friend` VALUES ('13', '6', '910992', null);
 INSERT INTO `tb_my_friend` VALUES ('14', '6', '1570855', null);
@@ -640,7 +674,7 @@ CREATE TABLE `tb_my_group` (
   `mygroupName` varchar(128) DEFAULT '' COMMENT '分组名称',
   `weight` tinyint(2) DEFAULT '1' COMMENT '好友分组的排列顺序 越小越靠前',
   PRIMARY KEY (`mygroupIdx`)
-) ENGINE=MyISAM AUTO_INCREMENT=42 DEFAULT CHARSET=utf8 COMMENT='我的好友分组';
+) ENGINE=MyISAM AUTO_INCREMENT=43 DEFAULT CHARSET=utf8 COMMENT='我的好友分组';
 
 -- ----------------------------
 -- Records of tb_my_group
@@ -711,7 +745,7 @@ CREATE TABLE `tb_skin` (
   `url` varchar(32) DEFAULT NULL,
   `isUserUpload` tinyint(1) DEFAULT '0' COMMENT '1 用户自定义皮肤 0默认',
   PRIMARY KEY (`skinIdx`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of tb_skin
@@ -721,3 +755,4 @@ INSERT INTO `tb_skin` VALUES ('5', '1570855', '2.jpg', '0');
 INSERT INTO `tb_skin` VALUES ('6', '1570845', '4.jpg', '0');
 INSERT INTO `tb_skin` VALUES ('7', '911085', '4.jpg', '0');
 INSERT INTO `tb_skin` VALUES ('8', '910992', '910992_1514954456.png', '1');
+INSERT INTO `tb_skin` VALUES ('9', '123456', '5.jpg', '0');

@@ -16,8 +16,17 @@
     13.挤下线提醒
     14.文件储存在七牛云
     15.增删改 好友/好友分组
+    16.群管理（增删管理员/修改群名片/单个群员禁言解除禁言/踢人）
+
+##需要手动修改的地方包括
+>1 static/js/webim.config.js 环信配置文件appkey，需要先到环信注册添加应用获取。
+  2 class/config.php 配置文件
+  3 如果想在本地运行demo，但是又没有layim.js文件，想试用后再去购买授权，那么请到test.guoshanchina.com登录后通过查看页面源码找到layim.js文件下载并保存到对应文件位置即可。
 ##说明 
->1 群组管理相关功能不久就能完成了
+>1）因为考虑到需要和app之间进行通信（表情，图片等），环信的表情定义为[/:u]类似的字符而layim则为face[/:u]的字符，为了同时满足两种情况，修改了layim.js的表情相关代码，请知晓
+2） 自定义右键的删除功能借鉴的是layim的删除历史会话
+3） 自定义上传皮肤功能，在layim.js添加了一个setSkinByUser的方法，并修改了皮肤寻则模版，对应的上传路径是class/doAction.php?action=uploadSkin
+4） 面板内的搜索好友功能，修改了layim.js的search方法
 ---
 原则上是不建议自行修改layim.js文件的，因为这样不利于后期的维护升级。
 
@@ -25,18 +34,20 @@
 >部分截图如下
 ![好友间聊天](http://upload-images.jianshu.io/upload_images/2825702-7b39cfff734f1e8f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+![我的资料](http://upload-images.jianshu.io/upload_images/2825702-806de922ef73f27b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ![自定义上传皮肤](http://upload-images.jianshu.io/upload_images/2825702-dd2ec176ddfe1a60.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-![获取群成员](http://upload-images.jianshu.io/upload_images/2825702-1d63105222ec4e5b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
 ![自定义右键好友](http://upload-images.jianshu.io/upload_images/2825702-3f2f04a152686b28.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![自定义右键分组](http://upload-images.jianshu.io/upload_images/2825702-64d2021b6ffb7e96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 ![已经是好友不能添加](http://upload-images.jianshu.io/upload_images/2825702-2227b43c6dca4240.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ![消息盒子](http://upload-images.jianshu.io/upload_images/2825702-1c403876ecaca756.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ![群管理](http://upload-images.jianshu.io/upload_images/2825702-56a71442f7475ac3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-![添加好友](http://upload-images.jianshu.io/upload_images/2825702-e37e634a7b90d123.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
-![删除好友](http://upload-images.jianshu.io/upload_images/2825702-453f464a0da3bb6a.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+
+![添加好友](http://upload-images.jianshu.io/upload_images/2825702-e37e634a7b90d123.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![删除好友](http://upload-images.jianshu.io/upload_images/2825702-453f464a0da3bb6a.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 体验地址：test.guoshanchina.com
 

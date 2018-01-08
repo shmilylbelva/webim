@@ -87,7 +87,7 @@ switch ($act) {
             $get_my_group[$key]['id'] = $value['mygroupIdx'];                
         }
 
-        $sql_group = sprintf("SELECT b.type as manager,b.gagTime,a.groupName as groupname,concat('../uploads/person/',a.groupIdx,'.jpg ')  as avatar, a.groupIdx AS id FROM tb_group AS a
+        $sql_group = sprintf("SELECT b.type as manager,b.gagTime as gagTime,a.groupName as groupname,concat('../uploads/person/',a.groupIdx,'.jpg ')  as avatar, a.groupIdx AS id FROM tb_group AS a
              LEFT JOIN tb_group_member AS b ON b.groupIdx = a.groupIdx where b.memberIdx = $memberIdx ");
         $group = $PdoMySQL->getAll($sql_group);
         // foreach ($group as $k => $v) {
@@ -198,7 +198,7 @@ switch ($act) {
     case 'groupMembers':
         $id = $_GET['id'];
         $memberIdx = $_SESSION['info']['id'];
-        $sql_group = sprintf("SELECT a.memberIdx AS id,concat('../uploads/person/',a.memberIdx,'.jpg ')  as avatar, concat(ifnull(b.nickName,a.memberName),'(',a.memberIdx,')') AS username ,b.type from tb_person AS a LEFT JOIN tb_group_member AS b ON a.memberIdx = b.memberIdx
+        $sql_group = sprintf("SELECT a.memberIdx AS id,concat('../uploads/person/',a.memberIdx,'.jpg ')  as avatar, concat(ifnull(b.nickName,a.memberName),'(',a.memberIdx,')') AS username ,b.type,b.gagTime as gagTime from tb_person AS a LEFT JOIN tb_group_member AS b ON a.memberIdx = b.memberIdx
          WHERE b.groupIdx = $id AND b.status = 1 order by b.type");
         $group = $PdoMySQL->getAll($sql_group);//全部群成员    
 
@@ -546,9 +546,12 @@ switch ($act) {
             }
             $success = $PdoMySQL->update($data,$tb_msg,' `to` = "'.$memberIdx.'"  AND `msgIdx` = "' . $msgIdx . '"');
             if ($success) {
-                $data_my_friend['mygroupIdx'] = $mygroupIdx;
-                $data_my_friend['memberIdx'] = $friendIdx;
-                $PdoMySQL->add($data_my_friend,$tb_my_friend);
+                $isfriend = $PdoMySQL->find($tb_my_friend, 'mygroupIdx ='.$mygroupIdx.' AND memberIdx = '.$friendIdx, 'myfriendIdx');
+                if (!$isfriend['myfriendIdx']) {
+                    $data_my_friend['mygroupIdx'] = $mygroupIdx;
+                    $data_my_friend['memberIdx'] = $friendIdx;
+                    $PdoMySQL->add($data_my_friend,$tb_my_friend);
+                }
                 $res['code'] = 0;
             }else{
                 $res['code'] = -1;
@@ -586,6 +589,9 @@ switch ($act) {
             $res['code'] = -1;
             echo  json_encode($res); 
             exit();   
+        }        
+        if ($_GET['sysLog']) {
+            $data['from'] = 0;
         }
         $success = $PdoMySQL->add($data,$tb_chatlog);
         if ($success) {
@@ -598,10 +604,14 @@ switch ($act) {
         break; 
     case 'getChatLogTotal'://获取总的条数
         $id = $_GET['?id'];//好友/群 id
+        $type = $_GET['type'];//好友/群 id
         $memberIdx = $_SESSION['info']['id'];
         $rows = 20;//每页显示数量
         $sql = "select COUNT(*) as count from tb_chatlog where ((`to` = ".$memberIdx ." AND `from` = ".$id." ) 
         OR (`to` = ".$id ." AND `from` = ".$memberIdx.") AND status = 1 )";
+        if ($type == 'group') {
+            $sql = "select COUNT(*) as count from tb_chatlog where `to` = ".$id ."  AND status = 1 ";
+        }
         $count = $PdoMySQL->getRow($sql);
         if ($count) {
             $res['code'] = 0;
@@ -623,7 +633,7 @@ switch ($act) {
         if ($type == 'friend') {
             $sql_msg = "select c.content,c.sendTime AS timestamp,c.from,p1.memberName as fromName,p2.memberName as toName from tb_chatlog as c JOIN tb_person as p1 ON c.from = p1.memberIdx LEFT JOIN tb_person as p2 ON c.to = p2.memberIdx    where ((c.to = ".$memberIdx ." AND c.from = ".$id." ) OR (c.to = ".$id ." AND c.from = ".$memberIdx.") AND c.status = 1 ) limit ".$select_from. ','.$rows;
         }elseif($type == 'group'){
-            $sql_msg = "select c.content,c.sendTime AS timestamp,c.from,p1.memberName as fromName,p2.groupName as toName from tb_chatlog as c JOIN tb_person as p1 ON c.from = p1.memberIdx LEFT JOIN tb_group as p2 ON c.to = p2.groupIdx where c.to = '".$id."' limit ".$select_from. ','.$rows;
+            $sql_msg = "select c.content,c.sendTime AS timestamp,c.from,p1.memberName as fromName,p2.groupName as toName from tb_chatlog as c LEFT JOIN tb_person as p1 ON c.from = p1.memberIdx LEFT JOIN tb_group as p2 ON c.to = p2.groupIdx where c.to = '".$id."' limit ".$select_from. ','.$rows;
         }
         $ChatLog = $PdoMySQL->getAll($sql_msg);
         if ($ChatLog) {
@@ -878,15 +888,14 @@ switch ($act) {
                     $gagTime = $arr[0]*3600*24;
                     break;  
             }
-            $data_gag['gagTime'] = $gagTime+time();
+            $data_gag['gagTime'] = ($gagTime+time()).'000';
             // $data_gag['type'] = $memberType['type']+2;
             $data = $PdoMySQL->update($data_gag,$tb_group_member,'groupMemberIdx = '.$memberType['groupMemberIdx']);
             $res['code'] = 0;
             $res['msg'] = "修改成功";                       
             $res['data']['gagTime'] = $data_gag['gagTime'];            
             $res['data']['time'] = time().'000';            
-            $res['data']['s'] = $gagTime;            
-            $res['data']['value'] = '4';            
+            $res['data']['s'] = $gagTime;          
         }else{
             $res['code'] = -1;
             $res['msg'] = "参数错误"; 
@@ -907,6 +916,37 @@ switch ($act) {
             $res['code'] = 0;
             $res['msg'] = "修改成功";                       
             $res['data'] = '';            
+        }else{
+            $res['code'] = -1;
+            $res['msg'] = "参数错误"; 
+        }
+        echo  json_encode($res);   
+        break;     
+    case 'leaveGroup'://退群
+        $memberIdx = $_GET['memberIdx'];//传递过来的用户
+        if (!$memberIdx) {
+            $list = $_GET['list'];
+            $memberIdx = $list[0];
+        }
+        $groupIdx = $_GET['groupIdx'];   
+        $memberIdx_AT = $_SESSION['info']['id'];//当前登陆的用户
+        $sql = sprintf(" SELECT type from tb_group_member  where groupIdx = $groupIdx AND memberIdx = $memberIdx");
+        $memberType = $PdoMySQL->getRow($sql);
+        if (!$memberType['type']) {//群员不存在
+            $res['code'] = -2;
+            $res['msg'] = "群员不存在";                       
+            $res['data'] = '';   
+            echo  json_encode($res);
+            return false;
+        }
+        $sql = sprintf(" SELECT type from tb_group_member  where groupIdx = $groupIdx AND memberIdx = $memberIdx_AT");
+        $manager = $PdoMySQL->getRow($sql);
+        if ($memberIdx_AT == $memberIdx || $manager['type'] == 1 || ($manager['type'] == 2 && $memberType['type'] == 3)) {//自己退群 群主 或者群管理并且被踢的是群员
+            $PdoMySQL->delete($tb_group_member, "memberIdx=".$memberIdx.' AND groupIdx = '.$groupIdx);//从群员列表删除        
+            $PdoMySQL->delete($tb_msg, '`from` = '.$memberIdx .' AND `to` = '.$groupIdx);//删除消息记录
+            $res['code'] = 0;
+            $res['msg'] = "修改成功";                       
+            $res['data'] = $memberIdx;            
         }else{
             $res['code'] = -1;
             $res['msg'] = "参数错误"; 

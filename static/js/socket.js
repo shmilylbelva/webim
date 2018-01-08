@@ -68,8 +68,13 @@
                         });
                     } else if (type === 'group') {
                         var _time = (new Date()).valueOf();//当前时间
-                        if (parseInt(res.data.gagTime+'000') > _time) {
-                            im.setGag(res.data.id);                           
+                        if (parseInt(res.data.gagTime) > _time) {
+                            im.setGag({
+                                groupidx: res.data.id,
+                                type: 'set',
+                                user: cachedata.mine.id,
+                                gagTime: ''
+                            });                           
                         }
                     }
                 });
@@ -78,18 +83,13 @@
                         im.sendMsg(data);
                     }else{
                         var _time = (new Date()).valueOf();//当前时间
-                        layui.each(cachedata.group, function(index, item){
-                            if(item.id === data.to.id){
-                                var gagTime = parseInt(item.gagTime+'000');
-                                if (gagTime < _time) {
-                                    console.log('1q');
-                                    im.sendMsg(data);
-                                }else{
-                                    layer.msg('当前为禁言状态，消息未发送成功');
-                                    return false;
-                                }
-                            }
-                        });      
+                        var gagTime = parseInt(layui.layim.thisChat().data.gagTime);
+                        if (gagTime < _time) {
+                            im.sendMsg(data);
+                        }else{
+                            im.popMsg(data,'当前为禁言状态，消息未发送成功！');
+                            return false;
+                        }      
                     }
                 });
             }
@@ -107,382 +107,71 @@
         contextMenu : function(){//定义右键操作
             var my_spread = $('.layim-list-friend >li');
             my_spread.mousedown(function(e){
-                if (3 == e.which) {
-                    var data = {
-                        width: 140, // width
-                        itemHeight: 30, // 菜单项height
-                        bgColor: "#fff", // 背景颜色
-                        color: "#333", // 字体颜色
-                        fontSize: 15, // 字体大小
-                        hoverBgColor: "#009bdd", // hover背景颜色
-                        hoverColor: "#fff", // hover背景颜色
-                        contextItem: "context-friend", // 添加class
-                        target: function(ele) { // 当前元素
-                            // console.log(ele[0].id);
-                            $(".context-friend").attr("data-id",ele[0].id);
-                            $(".context-friend").attr("data-name",ele.find("span").html());
-                            $(".context-friend").attr("data-img",ele.find("img").attr('src'));
-                        },
-                        menu:[{ // 菜单项
-                                text: "发送消息",
-                                icon: "&#xe63a;",
-                                callback: function(ele) {
-                                    var othis = ele.parent(),
-                                        friend_id = othis.data('id').replace(/^layim-friend/g, ''),
-                                        friend_name = othis.data('name'),
-                                        friend_avatar = othis.data('img');
-                                    conf.layim.chat({
-                                        name: friend_name
-                                        ,type: 'friend'
-                                        ,avatar: friend_avatar
-                                        ,id: friend_id
-                                    });
-                                }
-                            },                
-                            { // 菜单项
-                                text: "查看资料",
-                                icon: "&#xe62a;",
-                                callback: function(ele) {
-                                    var othis = ele.parent(),friend_id = othis.data('id').replace(/^layim-friend/g, '');
-                                    im.getInformation({
-                                        id: friend_id,
-                                        type:'friend'
-                                    });                        
-                                }
-                            },
-                            {
-                                text: "聊天记录",
-                                icon: "&#xe60e;",
-                                callback: function(ele) {
-                                    var othis = ele.parent(),friend_id = othis.data('id').replace(/^layim-friend/g, ''),
-                                        friend_name = othis.data('name');
-                                    im.getChatLog({
-                                        name: friend_name,
-                                        id: friend_id,
-                                        type:'friend'
-                                    });    
-                                }
-                            },
-                            {
-                                text: "修改好友备注",
-                                icon: "&#xe6b2;",
-                                events: "chat",
-                                callback: function(ele) {
-                                    var othis = ele.parent(),
-                                        friend_id = othis.data('id').replace(/^layim-friend/g, ''),
-                                        friend_name = othis.data('name');
-                                    layer.prompt({title: '修改备注姓名', formType: 0,value: friend_name}, function(nickName, index){
-                                        $.get('class/doAction.php?action=editNickName',{nickName:nickName,friend_id:friend_id},function(res){
-                                            var data = eval('(' + res + ')');
-                                            if (data.code == 0) {                                              
-                                                var friendName = $("#layim-friend"+friend_id).find('span');
-                                                friendName.html(data.data);
-                                                layer.close(index);
-                                            }
-                                            layer.msg(data.msg);
-                                        });
-                                    });     
-
-                                }
-                            }]
-                    };
-                    var currentGroupidx = e.currentTarget.firstChild.dataset.groupidx;//当前分组id
-                    if(my_spread.length >= 2){ //当至少有两个分组时
-                        var html = '<ul>';
-                        for (var i = 0; i < my_spread.length; i++) {
-                            var groupidx = my_spread.eq(i).find('h5').data('groupidx');
-                            if (currentGroupidx != groupidx) {
-                                var groupName = my_spread.eq(i).find('h5 span').html();
-                                html += '<li class="ui-move-menu-item" data-groupidx="'+groupidx+'" data-groupName="'+groupName+'"><a href="javascript:void(0);"><span>'+groupName+'</span></a></li>'
-                            };
-                        };
-                        html += '</ul>';
-                        data.menu.push({
-                            text: "移动联系人",
-                            icon: "&#xe630;",
-                            nav: "move",//子导航的样式
-                            navIcon: "&#xe602;",//子导航的图标
-                            navBody: html,//子导航html
-                            callback: function(ele) {
-                                // var friend_id = ele.parent().data('id');//要移动的好友id
-                                var friend_id = ele.parent().data('id').replace(/^layim-friend/g, '');//要移动的好友id
-                                friend_name = ele.parent().data('name');
-                                var avatar = '../uploads/person/'+friend_id+'.jpg';
-                                var default_avatar = './uploads/person/empty2.jpg';
-                                var signature = $('.layim-list-friend').find('#layim-friend'+friend_id).find('p').html();//获取签名
-                                var item = ele.find("ul li");
-                                item.hover(function() {
-                                    var _this = item.index(this);
-                                    var groupidx = item.eq(_this).data('groupidx');//将好友移动到分组的id
-                                    $.get('class/doAction.php?action=moveFriend',{friend_id:friend_id,groupidx:groupidx},function(res){
-                                        var data = eval('(' + res + ')');
-                                        if (data.code == 0) {
-                                            conf.layim.removeList({//将好友从之前分组除去
-                                                type: 'friend' 
-                                                ,id: friend_id //好友ID
-                                            });                                                          
-                                            conf.layim.addList({//将好友移动到新分组
-                                                type: 'friend'
-                                                , avatar: im['IsExist'].call(this, avatar)?avatar:default_avatar //好友头像
-                                                , username: friend_name //好友昵称
-                                                , groupid: groupidx //所在的分组id
-                                                , id: friend_id //好友ID
-                                                , sign: signature //好友签名
-                                            }); 
-                                        }
-                                        layer.msg(data.msg);
-                                    });                                                                                                                                        
-                                });
-                            }
-                        });                
-                    }
-                    data.menu.push({
-                                    text: "删除好友",
-                                    icon: "&#xe640;",
-                                    events: "removeFriends",
-                                    callback: function(ele) {
-                                        var othis = ele.parent(),friend_id = othis.data('id').replace(/^layim-friend/g, ''),username,sign;
-                                        layui.each(cachedata.friend, function(index1, item1){
-                                            layui.each(item1.list, function(index, item){
-                                                if (item.id === friend_id) {
-                                                    username = item.username;
-                                                    sign = item.sign;
-                                                }
-                                            });
-                                        });
-                                        layer.confirm('删除后对方将从你的好友列表消失，且以后不会再接收此人的会话消息。<div class="layui-layim-list"><li layim-event="chat" data-type="friend" data-index="0"><img src="./uploads/person/'+friend_id+'.jpg"><span>'+username+'</span><p>'+sign+'</p></li></div>', {
-                                            btn: ['确定','取消'], //按钮
-                                            title:['删除好友','background:#b4bdb8'],
-                                            shade: 0
-                                        }, function(){
-                                            im.removeFriends(friend_id); 
-                                        }, function(){
-                                            var index = layer.open();
-                                            layer.close(index);
-                                        });                                                    
-                                    }
-                                });
-                    $(".layim-list-friend >li > ul > li").contextMenu(data);
-
-                };
-            })         
-            $(".layim-list-friend >li:eq(0) > h5").contextMenu({
-                width: 140, // width
-                itemHeight: 30, // 菜单项height
-                bgColor: "#fff", // 背景颜色
-                color: "#333", // 字体颜色
-                fontSize: 15, // 字体大小
-                hoverBgColor: "#009bdd", // hover背景颜色
-                hoverColor: "#fff", // hover背景颜色
-                contextItem: "context-mygroup", // 添加class
-                target: function(ele) { // 当前元素
-                    $(".context-mygroup").attr("data-id",ele.data('groupidx'));
-                    $(".context-mygroup").attr("data-name",ele.find("span").html());
-                },
-                menu: [
-                    { // 菜单项
-                        text: "添加分组",
-                        icon: "&#xe654;",
-                        callback: function(ele) {
-                            im.addMyGroup();
-                        }
-                    },                
-                    { // 菜单项
-                        text: "重命名",
-                        icon: "&#xe642;",
-                        callback: function(ele) {
-                            var othis = ele.parent(),mygroupIdx = othis.data('id'),groupName = othis.data('name');
-                            layer.prompt({title: '请输入分组名，并确认', formType: 0,value: groupName}, function(mygroupName, index){
-                                if (mygroupName) {
-                                    $.get('class/doAction.php?action=editGroupName',{mygroupName:mygroupName,mygroupIdx:mygroupIdx},function(res){
-                                        var data = eval('(' + res + ')');
-                                        if (data.code == 0) {
-                                            var friend_group = $(".layim-list-friend li");
-                                            for(var j = 0; j < friend_group.length; j++){
-                                                var groupidx = friend_group.eq(j).find('h5').data('groupidx');
-                                                if(groupidx == mygroupIdx){//当前选择的分组
-                                                    friend_group.eq(j).find('h5').find('span').html(mygroupName);
-                                                }
-                                            }
-                                            im.contextMenu();            
-                                            layer.close(index);
-                                        }
-                                        layer.msg(data.msg);
-                                    });
-                                }
-
-                            });
-                        }
-
-                    }                                                     
-                ]
-            });
-            $(".layim-list-friend >li:gt(0) > h5").contextMenu({
-                width: 140, // width
-                itemHeight: 30, // 菜单项height
-                bgColor: "#fff", // 背景颜色
-                color: "#333", // 字体颜色
-                fontSize: 15, // 字体大小
-                hoverBgColor: "#009bdd", // hover背景颜色
-                hoverColor: "#fff", // hover背景颜色
-                contextItem: "context-mygroup", // 添加class
-                target: function(ele) { // 当前元素
-                    $(".context-mygroup").attr("data-id",ele.data('groupidx'));
-                    $(".context-mygroup").attr("data-name",ele.find("span").html());
-                },
-                menu: [
-                    { // 菜单项
-                        text: "添加分组",
-                        icon: "&#xe654;",
-                        callback: function(ele) {
-                            im.addMyGroup();
-                        }
-                    },                
-                    { // 菜单项
-                        text: "重命名",
-                        icon: "&#xe642;",
-                        callback: function(ele) {
-                            var othis = ele.parent(),mygroupIdx = othis.data('id'),groupName = othis.data('name');
-                            layer.prompt({title: '请输入分组名，并确认', formType: 0,value: groupName}, function(mygroupName, index){
-                                if (mygroupName) {
-                                    $.get('class/doAction.php?action=editGroupName',{mygroupName:mygroupName,mygroupIdx:mygroupIdx},function(res){
-                                        var data = eval('(' + res + ')');
-                                        if (data.code == 0) {
-                                            var friend_group = $(".layim-list-friend li");
-                                            for(var j = 0; j < friend_group.length; j++){
-                                                var groupidx = friend_group.eq(j).find('h5').data('groupidx');
-                                                if(groupidx == mygroupIdx){//当前选择的分组
-                                                    friend_group.eq(j).find('h5').find('span').html(mygroupName);
-                                                }
-                                            }
-                                            im.contextMenu();            
-                                            layer.close(index);
-                                        }
-                                        layer.msg(data.msg);
-                                    });
-                                }
-
-                            });
-                        }
-
-                    },                
-                    { // 菜单项
-                        text: "删除该组",
-                        icon: "&#x1006;",
-                        callback: function(ele) {
-                            var othis = ele.parent(),mygroupIdx = othis.data('id');
-                            layer.confirm('<div style="float: left;width: 17%;margin-top: 14px;"><i class="layui-icon" style="font-size: 48px;color:#cc4a4a">&#xe607;</i></div><div style="width: 83%;float: left;"> 选定的分组将被删除，组内联系人将会移至默认分组。</div>', {
-                                btn: ['确定','取消'], //按钮
-                                title:['删除分组','background:#b4bdb8'],
-                                shade: 0
-                            }, function(){
-                                im.delMyGroup(mygroupIdx); 
-                            }, function(){
-                                var index = layer.open();
-                                layer.close(index);
-                            });                            
-                            
-                                                    
-                        }
-                    }                                                      
-                ]
-            });
-
-            $(".layim-tab-content >li > .layim-list-group > li").contextMenu({
-                width: 140, // width
-                itemHeight: 30, // 菜单项height
-                bgColor: "#fff", // 背景颜色
-                color: "#333", // 字体颜色
-                fontSize: 15, // 字体大小
-                hoverBgColor: "#009bdd", // hover背景颜色
-                hoverColor: "#fff", // hover背景颜色
-                contextItem: "context-group", // 添加class
-                target: function(ele) { // 当前元素
-                    $(".context-group").attr("data-id",ele[0].id);
-                    $(".context-group").attr("data-name",ele.find("span").html());
-                    $(".context-group").attr("data-img",ele.find("img").attr('src'));                    
-                },
-                menu: [
-                    { // 菜单项
-                        text: "发送群消息",
-                        icon: "&#xe63a;",
-                        callback: function(ele) {
-                            var othis = ele.parent(),
-                                group_id = othis.data('id').replace(/^layim-group/g, ''),
-                                group_name = othis.data('name'),
-                                group_avatar = othis.data('img');
-                            conf.layim.chat({
-                                name: group_name
-                                ,type: 'group'
-                                ,avatar: group_avatar
-                                ,id: group_id
-                            });
-                        }
-                    },
-                    { // 菜单项
-                        text: "查看资料",
-                        icon: "&#xe62a;",
-                        callback: function(ele) {
-                            var othis = ele.parent(),group_id = othis.data('id').replace(/^layim-group/g, '');
-                            im.getInformation({
-                                id: group_id,
-                                type:'group'
-                            });  
-                        }
-                    },
-                    {
-                        text: "聊天记录",
-                        icon: "&#xe60e;",
-                        callback: function(ele) {
-                            var othis = ele.parent(),
-                                group_id = othis.data('id').replace(/^layim-group/g, ''),
-                                groupname = othis.data('name');
-                                // groupname = othis[0].dataset.name;
-                            im.getChatLog({
-                                name: groupname,
-                                id: group_id,
-                                type:'group'
-                            });   
-                        }
-                    },                    
-                    {
-                        text: "修改备注名称",
-                        icon: "&#xe6b2;",
-                        callback: function(ele) {
-
-                        }
-                    },
-                    {
-                        text: "退出该群",
-                        icon: "&#xe613;",
-                        callback: function(ele) {
-                            var othis = ele.parent(),
-                                group_id = othis.data('id').replace(/^layim-group/g, ''),  
-                                groupname = othis.data('name');
-                                avatar = othis[0].dataset.img;
-                            layer.confirm('您真的要退出该群吗？退出后你将不会再接收此群的会话消息。<div class="layui-layim-list"><li layim-event="chat" data-type="friend" data-index="0"><img src="'+avatar+'"><span>'+groupname+'</span></li></div>', {
-                                btn: ['确定','取消'], //按钮
-                                title:['提示','background:#b4bdb8'],
-                                shade: 0
-                            }, function(){
-                                im.leaveGroupBySelt(group_id);  
-                            }, function(){
-                                var index = layer.open();  
-                                layer.close(index);
-                            }); 
-                        }
-                    }
-                ]
-            });       
-            $('.groupMembers > li').mousedown(function(e){
                 var data = {
-                    width: 140, // width
-                    itemHeight: 30, // 菜单项height
-                    bgColor: "#fff", // 背景颜色
-                    color: "#333", // 字体颜色
-                    fontSize: 15, // 字体大小
-                    hoverBgColor: "#009bdd", // hover背景颜色
-                    hoverColor: "#fff", // hover背景颜色
+                    contextItem: "context-friend", // 添加class
+                    target: function(ele) { // 当前元素
+                        $(".context-friend").attr("data-id",ele[0].id).attr("data-name",ele.find("span").html());
+                        $(".context-friend").attr("data-img",ele.find("img").attr('src')).attr("data-type",'friend');
+                    },
+                    menu:[]
+                };
+                data.menu.push(im.menuChat());
+                data.menu.push(im.menuInfo());
+                data.menu.push(im.menuChatLog());
+                data.menu.push(im.menuNickName());
+                var currentGroupidx = $(this).find('h5').data('groupidx');//当前分组id
+                if(my_spread.length >= 2){ //当至少有两个分组时
+                    var html = '<ul>';
+                    for (var i = 0; i < my_spread.length; i++) {
+                        var groupidx = my_spread.eq(i).find('h5').data('groupidx');
+                        if (currentGroupidx != groupidx) {
+                            var groupName = my_spread.eq(i).find('h5 span').html();
+                            html += '<li class="ui-move-menu-item" data-groupidx="'+groupidx+'" data-groupName="'+groupName+'"><a href="javascript:void(0);"><span>'+groupName+'</span></a></li>'
+                        };
+                    };
+                    html += '</ul>';
+                    data.menu.push(im.menuMove(html));                
+                }
+                data.menu.push(im.menuRemove());
+                $(".layim-list-friend >li > ul > li").contextMenu(data);//好友右键事件
+            });
+
+            $(".layim-list-friend >li > h5").mousedown(function(e){
+                    var data = {
+                        contextItem: "context-mygroup", // 添加class
+                        target: function(ele) { // 当前元素
+                            $(".context-mygroup").attr("data-id",ele.data('groupidx')).attr("data-name",ele.find("span").html());
+                        },
+                        menu: []                        
+                    };             
+                    data.menu.push(im.menuAddMyGroup());
+                    data.menu.push(im.menuRename());
+                    if ($(this).parent().find('ul li').data('index') !== 0) {data.menu.push(im.menuDelMyGroup()); };
+                                             
+                $(this).contextMenu(data);  //好友分组右键事件                                  
+            });
+
+
+            $(".layim-list-group > li").mousedown(function(e){
+                    var data = {
+                        contextItem: "context-group", // 添加class
+                        target: function(ele) { // 当前元素
+                            console.log(ele[0].id);
+                            $(".context-group").attr("data-id",ele[0].id).attr("data-name",ele.find("span").html())
+                            .attr("data-img",ele.find("img").attr('src')).attr("data-type",'group')   
+                        },
+                        menu: []                        
+                    };             
+                    data.menu.push(im.menuChat());
+                    data.menu.push(im.menuInfo());
+                    data.menu.push(im.menuChatLog());
+                                             
+                $(this).contextMenu(data);  //面板群组右键事件                                 
+            });
+
+
+            $('.groupMembers > li').mousedown(function(e){//聊天页面群组右键事件
+                var data = {
                     contextItem: "context-group-member", // 添加class
                     isfriend: $(".context-group-member").data("isfriend"), // 添加class
                     target: function(ele) { // 当前元素
@@ -495,204 +184,44 @@
                     menu:[]
                     };    
                 var _this = $(this);
+                var groupInfo = conf.layim.thisChat().data;
+                var _time = (new Date()).valueOf();//当前时间
+                var _gagTime = parseInt(_this.attr('gagTime'));//当前禁言时间                  
                 if (cachedata.mine.id !== _this.attr('id')) {
-                    data.menu.push({ // 菜单项
-                            text: "发送消息",
-                            icon: "&#xe63a;",
-                            callback: function(ele) {
-                                var othis = ele.parent(),
-                                    friend_id = othis.data('id'),
-                                    friend_avatar = othis.data('img');
-                                    name = othis.data('name');                             
-                                conf.layim.chat({
-                                    name: name
-                                    ,type: 'friend'
-                                    ,avatar: friend_avatar
-                                    ,id: friend_id
-                                });
-                            }
-                        },
-                        { // 菜单项
-                            text: "查看资料",
-                            icon: "&#xe62a;",
-                            callback: function(ele) {
-                                var othis = ele.parent(),friend_id = othis.data('id');
-                                im.getInformation({
-                                    id: friend_id,
-                                    type:'friend'
-                                });                        
-                            }
-                        })   
+                    data.menu.push(im.menuChat()); 
+                    data.menu.push(im.menuInfo());
                     if(3 == e.which && $(this).attr('isfriend') == 0 ){ //点击右键并且不是好友
-                        data.menu.push({ // 菜单项
-                                    text: "添加好友",
-                                    icon: "&#xe654;",
-                                    callback: function(ele) {
-                                        var othis = ele;
-                                        im.addFriendGroup(othis,'friend');                                                   
-                                    }
-                                })
-                    }                                                               
+                        data.menu.push(im.menuAddFriend())
+                    }                                                   
                 }else{
-                    data.menu.push({ // 菜单项
-                            text: "查看资料",
-                            icon: "&#xe62a;",
-                            callback: function(ele) {
-                                var othis = ele.parent(),friend_id = othis.data('id');
-                                im.getInformation({
-                                    id: friend_id,
-                                    type:'friend'
-                                });                        
-                            }
-                        },
-                        { // 菜单项
-                            text: "修改群名片",
-                            icon: "&#xe60a;",
-                            callback: function(ele) {
-                                var othis = ele.parent(),groupIdx = _this.parent().data('groupidx');
-                                im.editGroupNickName(othis,groupIdx);
-                            }
-                        })  
+                    data.menu.push(im.menuEditGroupNickName());
                 }                     
-                layui.each(cachedata.group, function(index, item){
-                    if (item.id == _this.parent().data('groupidx') && item.manager == 1 && cachedata.mine.id !== _this.attr('id')) {
-                        if (_this.attr('manager') == 2) {
-                            data.menu.push({
-                                            text: "取消管理员",
-                                            icon: "&#xe612;",
-                                            callback: function(ele) {
-                                                var groupidx = _this.parent().data('groupidx');
-                                                var othis = ele.parent();
-                                                im.removeAdmin(groupidx,othis);                                      
-                                            }
-                                        })
-                        }else if (_this.attr('manager') == 3) {
-                            data.menu.push({
-                                            text: "设置为管理员",
-                                            icon: "&#xe612;",
-                                            callback: function(ele) {
-                                                var groupidx = _this.parent().data('groupidx');
-                                                var othis = ele.parent(),user = othis.data('id');
-                                                im.setAdmin(groupidx,othis);                                                 
-                                            }
-                                        })
-                        }    
-                        data.menu.push({ // 菜单项
-                                        text: "修改群名片",
-                                        icon: "&#xe60a;",
-                                        callback: function(ele) {
-                                            var othis = ele.parent(),groupIdx = _this.parent().data('groupidx');
-                                            im.editGroupNickName(othis,groupIdx);                       
-                                        }
-                                    },{
-                                        text: "踢出本群",
-                                        icon: "&#x1006;",
-                                        callback: function(ele) {
-                                                                                                  
-                                        }
-                                    },{
-                                        text: "禁言",
-                                        icon: "&#xe60f;",
-                                        nav: "gag",//子导航的样式
-                                        navIcon: "&#xe602;",//子导航的图标
-                                        navBody: '<ul><li class="ui-gag-menu-item" data-gag="10m"><a href="javascript:void(0);"><span>禁言10分钟</span></a></li><li class="ui-gag-menu-item" data-gag="1h"><a href="javascript:void(0);"><span>禁言1小时</span></a></li><li class="ui-gag-menu-item" data-gag="6h"><a href="javascript:void(0);"><span>禁言6小时</span></a></li><li class="ui-gag-menu-item" data-gag="12h"><a href="javascript:void(0);"><span>禁言12小时</span></a></li><li class="ui-gag-menu-item" data-gag="1d"><a href="javascript:void(0);"><span>禁言1天</span></a></li></ul>',//子导航html
-                                        callback: function(ele) {
-                                            var friend_id = ele.parent().data('id');//要禁言的id
-                                            friend_name = ele.parent().data('name');
-                                            var item = ele.find("ul li");
-                                            item.hover(function() {
-                                                var _index = item.index(this),gagTime = item.eq(_index).data('gag');//禁言时间
-                                                var groupidx = _this.parent().data('groupidx')
-                                                $.get('class/doAction.php?action=groupMemberGag',{gagTime:gagTime,groupidx:groupidx,friend_id:friend_id},function(resp){
-                                                    var data = eval('(' + resp + ')');
-                                                    if (data.code == 0) {
-                                                        var res = {mine: {
-                                                                        content: data.data.gagTime+'',
-                                                                        timestamp: data.data.time,
-                                                                        id: cachedata.mine.id,
-                                                                        mine: true
-                                                                    },
-                                                                    to: {
-                                                                        type: 'group',
-                                                                        id: groupidx+"",
-                                                                        cmd: {
-                                                                            id: friend_id,
-                                                                            gatTime: data.data.s,
-                                                                            cmdName:'gag',
-                                                                            cmdValue:data.data.value
-                                                                        },
-                                                                        groupname:'禁言',
-                                                                        name:'禁言'
-                                                                    }}
-                                                        im.sendMsg(res);
-                                                        
-                                                    }
-                                                    layer.msg(data.msg);
-                                                });
-                                            });                             
-                                        }
-                                    })
-                    }//群主管理
-                    if (item.id == _this.parent().data('groupidx') && item.manager == 2 && _this.attr('manager') == 3 && cachedata.mine.id !== _this.attr('id')) {
-                        data.menu.push({ // 菜单项
-                                        text: "修改群名片",
-                                        icon: "&#xe60a;",
-                                        callback: function(ele) {
-                                            var othis = ele.parent(),groupIdx = _this.parent().data('groupidx');
-                                            im.editGroupNickName(othis,groupIdx);                      
-                                        }
-                                    },{
-                                        text: "踢出本群",
-                                        icon: "&#x1006;",
-                                        callback: function(ele) {
-                                                                                                  
-                                        }
-                                    },{
-                                        text: "禁言",
-                                        icon: "&#xe60f;",
-                                        nav: "gag",//子导航的样式
-                                        navIcon: "&#xe602;",//子导航的图标
-                                        navBody: '<ul><li class="ui-gag-menu-item" data-gag="10m"><a href="javascript:void(0);"><span>禁言10分钟</span></a></li><li class="ui-gag-menu-item" data-gag="1h"><a href="javascript:void(0);"><span>禁言1小时</span></a></li><li class="ui-gag-menu-item" data-gag="6h"><a href="javascript:void(0);"><span>禁言6小时</span></a></li><li class="ui-gag-menu-item" data-gag="12h"><a href="javascript:void(0);"><span>禁言12小时</span></a></li><li class="ui-gag-menu-item" data-gag="1d"><a href="javascript:void(0);"><span>禁言1天</span></a></li></ul>',//子导航html
-                                        callback: function(ele) {
-                                            var friend_id = ele.parent().data('id');//要禁言的id
-                                            friend_name = ele.parent().data('name');
-                                            var item = ele.find("ul li");
-                                            item.hover(function() {
-                                                var _index = item.index(this),gagTime = item.eq(_index).data('gag');//禁言时间
-                                                var groupidx = _this.parent().data('groupidx')
-                                                $.get('class/doAction.php?action=groupMemberGag',{gagTime:gagTime,groupidx:groupidx,friend_id:friend_id},function(resp){
-                                                    var data = eval('(' + resp + ')');
-                                                    if (data.code == 0) {
-                                                        var res = {mine: {
-                                                                        content: data.data.gagTime+'',
-                                                                        timestamp: data.data.time,
-                                                                        id: cachedata.mine.id,
-                                                                        mine: true
-                                                                    },
-                                                                    to: {
-                                                                        type: 'group',
-                                                                        id: groupidx+"",
-                                                                        cmd: {
-                                                                            id: friend_id,
-                                                                            gatTime: data.data.s,
-                                                                            cmdName:'gag',
-                                                                            cmdValue:data.data.value
-                                                                        },
-                                                                        groupname:'禁言',
-                                                                        name:'禁言'
-                                                                    }}
-                                                        im.sendMsg(res);
-                                                        
-                                                    }
-                                                    layer.msg(data.msg);
-                                                });
-                                            });                             
-                                        }
-                                    })
+                if (groupInfo.manager == 1 && cachedata.mine.id !== _this.attr('id')) {//是群主且操作的对象不是自己
+                    if (_this.attr('manager') == 2) {
+                        data.menu.push(im.menuRemoveAdmin());
+                    }else if (_this.attr('manager') == 3) {
+                        data.menu.push(im.menuSetAdmin());
+                    }    
+                    data.menu.push(im.menuEditGroupNickName());
+                    data.menu.push(im.menuLeaveGroup());
+                    if (_gagTime < _time) {
+                        data.menu.push(im.menuGroupMemberGag());
+                    }else{
+                        data.menu.push(im.menuLiftGroupMemberGag());
+                    }    
+                }//群主管理
 
+                layui.each(cachedata.group, function(index, item){                
+                    if (item.id == _this.parent().data('groupidx') && item.manager == 2 && _this.attr('manager') == 3 && cachedata.mine.id !== _this.attr('id')) {//管理员且操作的是群员
+                        data.menu.push(im.menuEditGroupNickName());
+                        data.menu.push(im.menuLeaveGroup());
+                        if (_gagTime < _time) {
+                            data.menu.push(im.menuGroupMemberGag());
+                        }else{
+                            data.menu.push(im.menuLiftGroupMemberGag());
+                        }
                     }//管理员管理        
-                });
-
+                })
                 $(".groupMembers > li").contextMenu(data);    
             })
 
@@ -931,15 +460,6 @@
         //自定义消息，把消息格式定义为layim的消息类型
         defineMessage: function (message,msgType) {
             var msg;
-            if (message.ext.system) {//如果是系统消息                
-                conf.layim.getMessage({
-                  system: true //系统消息
-                  ,id: message.to //聊天窗口ID
-                  ,type: "group" //聊天窗口类型
-                  ,content: message.ext.username + '已加入该群'
-                }); 
-                return; 
-            }
             switch (msgType) 
             {
                 case 'Text': msg = message.data;break;
@@ -952,18 +472,36 @@
                 
                 switch (message.ext.cmd.cmdName) 
                 {
-                    case 'gag': 
-                        //如果该群聊面板为打开状态
-                        var groupidx = message.to;
-                        var gagTime = message.data;
-                        im.setGag(groupidx,gagTime);
-                        layui.each(cachedata.group, function(index, item){
-                            if (item.id === message.to) {
-                                cachedata.group[index].gagTime = info.gagTime;
-                            }
-                        });   
-                    break;//禁言
-
+                    case 'gag': //禁言
+                        im.setGag({
+                            groupidx: message.to,
+                            type: 'set',
+                            user: message.ext.cmd.id,
+                            gagTime: message.data
+                        });                          
+                    break;    
+                    case 'liftGag': //取消禁言 
+                        im.setGag({
+                            groupidx: message.to,
+                            type: 'lift',
+                            user: message.ext.cmd.id,
+                            gagTime: 0
+                        });                          
+                    break;
+                    // case 'setGag': //禁言
+                    // case 'joinGroup': //取消禁言
+                    // case 'joinGroup': //加入群
+                    // case 'leaveGroup': //退出群
+                    // case 'setAdmin': //设置管理员                      
+                    // case 'removeAdmin': //取消管理员                   
+                    // break;
+                    default:
+                        conf.layim.getMessage({
+                          system: true //系统消息
+                          ,id: message.to //聊天窗口ID
+                          ,type: "group" //聊天窗口类型
+                          ,content: msg
+                        });                     
                 };
             };
             if (message.type == 'chat') {
@@ -991,20 +529,21 @@
                 to: data.to.id,                        // 接收消息对象（用户id）
                 roomType: false,
                 success: function (id, serverMsgId) {//发送成功则记录信息到服务器
-                    if (!data.to.cmd) {
-                        $.get('class/doAction.php?action=addChatLog', {to:data.to.id,content:data.mine.content,sendTime: data.mine.timestamp,type:data.to.type}, function (res) {
+                    var sendData = {to:data.to.id,content:data.mine.content,sendTime: data.mine.timestamp,type:data.to.type};
+                    if (data.to.cmd.cmdName == 'leaveGroup' || data.to.cmd.cmdName == 'joinGroup') {
+                        sendData.sysLog = true;
+                    }
+                    if ((data.to.cmd && sendData.sysLog) || !data.to.cmd) {
+                        $.get('class/doAction.php?action=addChatLog', sendData, function (res) {
                             var data = eval('(' + res + ')');
                             if (data.code != 0) {
                                 console.log('message record fail');                       
                             }
-                        });            
-                    }      
+                        });  
+                    }
                 },
                 fail: function(e){//发送失败移除发送消息并提示发送失败
-                    var logid = cachedata.local.chatlog[data.to.type+data.to.id];
-                        logid.pop();                 
-                    var timestamp = '.timestamp'+data.mine.timestamp;
-                    $(timestamp).html('<i class="layui-icon" style="color: #F44336;font-size: 20px;float: left;margin-top: 1px;">&#x1007;</i>发送失败 刷新页面试试！');  
+                    im.popMsg(data,'发送失败 刷新页面试试！');  
                 }
             });            
             if (data.to.id == data.mine.id) {
@@ -1015,9 +554,6 @@
                 msg.body.ext.cmd = data.to.cmd;              
             }            
             msg.body.ext.username = cachedata.mine.username;
-            if (data.to.system == 'system') {
-                msg.body.ext.system = 'system';
-            }
             if (data.to.type == 'group') {
                 msg.setGroup('groupchat');
                 msg.body.chatType = 'chatRoom';
@@ -1073,28 +609,49 @@
                 }
             });
         },  
-        leaveGroupBySelt: function (roomId) {
-            var option = {
-                to: 'admin',//乱填的
-                roomId: roomId,
-                success: function () {
-                    var index = layer.open();
-                    layer.close(index);
-                    conf.layim.removeList({
-                        type: 'group' //或者group
-                        ,id: roomId //好友或者群组ID
-                    });
-                    im.removeHistory({//从我的历史列表删除
-                        type: 'group' //或者group
-                        ,id: roomId //好友或者群组ID
-                    })                    
-                    parent.location.reload();
-                },
-                error: function () {
-                    console.log('群主不能离开/Leave room faild');
+        leaveGroupBySelf: function (to,username,roomId) {
+            $.get('class/doAction.php?action=leaveGroup', {groupIdx:roomId,memberIdx:to}, function (res) {
+                var data = eval('(' + res + ')');
+                if (data.code == 0) {
+                    var option = {
+                        to: to,
+                        roomId: roomId,
+                        success: function (res) {
+                            im.sendMsg({//系统消息
+                                mine:{
+                                    content:username+' 已退出该群',
+                                    timestamp:new Date().getTime()
+                                },
+                                to:{
+                                    id:roomId,
+                                    type:'group',
+                                    cmd:{
+                                        cmdName:'leaveGroup',
+                                        cmdValue:username
+                                    }
+                                }
+                            });                    
+                            conf.layim.removeList({
+                                type: 'group' //或者group
+                                ,id: roomId //好友或者群组ID
+                            });
+                            im.removeHistory({//从我的历史列表删除
+                                type: 'group' //或者group
+                                ,id: roomId //好友或者群组ID
+                            });
+                            var index = layer.open();
+                            layer.close(index);
+                            parent.location.reload();
+                        },
+                        error: function (res) {
+                            console.log('Leave room faild');
+                        }
+                    };
+                    conn.leaveGroupBySelf(option);                      
+                }else{
+                    layer.msg(data.msg);
                 }
-            };
-            conn.leaveGroupBySelf(option);
+            });                              
         }, 
         removeHistory: function(data){//删除好友或退出群后清除历史记录           
             var history = cachedata.local.history;
@@ -1277,12 +834,16 @@
                                         }); 
                                         im.sendMsg({//系统消息
                                             mine:{
-                                                content:username
+                                                content:username+' 已加入该群',
+                                                timestamp:new Date().getTime()
                                             },
                                             to:{
                                                 id:groupIdx,
                                                 type:'group',
-                                                system:'system'
+                                                cmd:{
+                                                    cmdName:'joinGroup',
+                                                    cmdValue:username
+                                                }
                                             }
                                         });
                                     },
@@ -1441,7 +1002,7 @@
                     var resp = eval('(' + res + ')');
                     var html = '<ul class="layui-unselect layim-group-list groupMembers" data-groupidx="'+info.id+'" style="height: 510px; display: block;right:-200px;padding-top: 10px;">';
                     layui.each(resp.data.list, function(index, item){
-                        html += '<li  id="'+item.id+'" isfriend="'+item.friendship+'" manager="'+item.type+'"><img src="'+ item.avatar +'">';
+                        html += '<li  id="'+item.id+'" isfriend="'+item.friendship+'" manager="'+item.type+'" gagTime="'+item.gagTime+'"><img src="'+ item.avatar +'">';
                         item.type == 1?
                             (html += '<span style="color:#e24242">'+ item.username +'</span><i class="layui-icon" style="color:#e24242">&#xe612;</i>'):
                             (item.type == 2?
@@ -1554,7 +1115,8 @@
         },
         setAdmin: function(groupidx,othis){
             var username = othis.data('id'),friend_avatar = othis.data('img'),
-                isfriend = othis.data('isfriend'),name = othis.data('name');            
+                isfriend = othis.data('isfriend'),name = othis.data('name'),            
+                gagTime = othis.data('gagtime');            
             var options = {
                     groupId: groupidx,
                     username: username,
@@ -1563,7 +1125,7 @@
                             var admin = eval('(' + res + ')');
                             if (admin.code == 0) { 
                                 $("ul[data-groupidx="+groupidx+"] #"+username).remove();
-                                var html = '<li id="'+username+'" isfriend="'+isfriend+'" manager="2"><img src="'+friend_avatar+'"><span style="color:#de6039">'+name+'</span><i class="layui-icon" style="color:#eaa48e"></i></li>'
+                                var html = '<li id="'+username+'" isfriend="'+isfriend+'" manager="2" gagTime="'+gagTime+'"><img src="'+friend_avatar+'"><span style="color:#de6039">'+name+'</span><i class="layui-icon" style="color:#eaa48e"></i></li>'
                                 $("ul[data-groupidx="+groupidx+"]").find('li').eq(0).after(html);
                                 im.contextMenu();                                             
                             }
@@ -1577,7 +1139,8 @@
         },     
         removeAdmin: function(groupidx,othis){
             var username = othis.data('id'),friend_avatar = othis.data('img'),
-                isfriend = othis.data('isfriend'),name = othis.data('name').split('<');
+                isfriend = othis.data('isfriend'),name = othis.data('name').split('<'),
+                gagTime = othis.data('gagtime');
             var options = {
                     groupId: groupidx,
                     username: username,
@@ -1586,7 +1149,7 @@
                             var admin = eval('(' + res + ')');
                             if (admin.code == 0) { 
                                 $("ul[data-groupidx="+groupidx+"] #"+username).remove();
-                                var html = '<li id="'+username+'" isfriend="'+isfriend+'" manager="3"><img src="'+friend_avatar+'"><span>'+name[0]+'</span></li>'
+                                var html = '<li id="'+username+'" isfriend="'+isfriend+'" manager="3" gagTime="'+gagTime+'"><img src="'+friend_avatar+'"><span>'+name[0]+'</span></li>'
                                 $("ul[data-groupidx="+groupidx+"]").append(html);
                                 im.contextMenu();                                              
                             }
@@ -1611,50 +1174,429 @@
                 });
             });            
         },
-        leaveGroup: function(groupIdx,list){
-            $.get('class/doAction.php?action=leaveGroup',{nickName:nickName,memberIdx:memberIdx,groupIdx:groupIdx},function(res){
+        leaveGroup: function(groupIdx,list,username){//list为数组
+            $.get('class/doAction.php?action=leaveGroup',{list:list,groupIdx:groupIdx},function(res){
                 var data = eval('(' + res + ')');
                 if (data.code == 0) {
                     var options = {
                         roomId: groupIdx,
                         list: list,
                         success: function(resp){
-
+                            console.log(resp);
                         },
                         error: function(e){
-
+                            console.log(e);
                         }
                     };
-                    conn.leaveGroup(options);                    
-                    $("ul[data-groupidx="+groupIdx+"] #"+memberIdx).find('span').html(nickName+'('+memberIdx+')');
+                    conn.leaveGroup(options);    
+                    $("ul[data-groupidx="+groupIdx+"] #"+data.data).remove(); 
+                    im.sendMsg({//系统消息
+                        mine:{
+                            content:username+' 已被移出该群',
+                            timestamp:new Date().getTime()
+                        },
+                        to:{
+                            id:groupIdx,
+                            type:'group',
+                            cmd:{
+                                cmdName:'leaveGroup',
+                                cmdValue:username
+                            }
+                        }
+                    });              
+                    var index = layer.open();
                     layer.close(index);
                 }
                 layer.msg(data.msg);
-            });            
-
-        },
-        setGag: function(groupidx,gagTime=''){//设置禁言
-            var _this_group = $('.layim-chat-list .layim-chatlist-group'+groupidx);//选择操作的群
+            });   
+        },      
+        setGag: function(options){//设置禁言 取消禁言
+            var _this_group = $('.layim-chat-list .layim-chatlist-group'+options.groupidx);//选择操作的群
             if (_this_group) {
+
                 var index = _this_group.index();//对应面板的index
                 var cont =  _this_group.parent().parent().find('.layim-chat-box div').eq(index)
                 var info = JSON.parse(decodeURIComponent(cont.find('.layim-chat-tool').data('json')));
                 // info.manager = message.ext.cmd.cmdValue;第一种
                 //禁言 两种方案 第一种是改变用户的状态 优点：只需要判断该参数就能禁言
                 // 第二种是设置一个禁言时间点，当当前时间小于该设置的时间则为禁言，优点：自动改变用户禁言状态
-                if (gagTime) {
-                    info.gagTime = parseInt(gagTime);
+                if (options.type == 'set' && (options.user == cachedata.mine.id || options.user == 'ALL')) {//设置禁言单人或全体
+                    if (options.gagTime) {
+                        info.gagTime = parseInt(options.gagTime);
+                        cont.find('.layim-chat-tool').data('json',encodeURIComponent(JSON.stringify(info)));
+                        layui.each(cachedata.group, function(index, item){
+                            if (item.id === options.groupidx) {
+                                cachedata.group[index].gagTime = info.gagTime;
+                            }
+                        });                         
+                    };
+                    cont.find('.layim-chat-gag').css('display','block');                       
+                }else if(options.type == 'lift' && (options.user == cachedata.mine.id || options.user == 'ALL')){//取消禁言单人或全体
                     cont.find('.layim-chat-tool').data('json',encodeURIComponent(JSON.stringify(info)));
                     layui.each(cachedata.group, function(index, item){
-                        if (item.id === groupidx) {
-                            cachedata.group[index].gagTime = info.gagTime;
+                        if (item.id === options.groupidx) {
+                            cachedata.group[index].gagTime = '0';
                         }
-                    });  
-                                        
-                };
-                cont.find('.layim-chat-gag').css('display','block');                       
+                    });
+                    cont.find('.layim-chat-gag').css('display','none'); 
+                }
+                                      
             };            
-        }                                           
+        },       
+        popMsg: function(data,msg){//删除本地最新一条发送失败的消息
+            var logid = cachedata.local.chatlog[data.to.type+data.to.id];
+                logid.pop();                 
+            var timestamp = '.timestamp'+data.mine.timestamp;
+            $(timestamp).html('<i class="layui-icon" style="color: #F44336;font-size: 20px;float: left;margin-top: 1px;">&#x1007;</i>'+msg);            
+        },
+        menuChat: function(){
+            return data = {
+                            text: "发送消息",
+                            icon: "&#xe63a;",
+                            callback: function(ele) {
+                                var othis = ele.parent(),type = othis.data('type'),
+                                    name = othis.data('name'),avatar = othis.data('img'),
+                                    id = othis.data('id').replace(/[^0-9]/ig,"");
+                                conf.layim.chat({
+                                    name: name
+                                    ,type: type
+                                    ,avatar: avatar
+                                    ,id: id
+                                });
+                            }
+                        }       
+        },        
+        menuInfo: function(){
+            return data =  {
+                            text: "查看资料",
+                            icon: "&#xe62a;",
+                            callback: function(ele) {
+                                var othis = ele.parent(),type = othis.data('type'),
+                                id = othis.data('id').replace(/[^0-9]/ig,"");
+                                im.getInformation({
+                                    id: id,
+                                    type:type
+                                });                        
+                            }
+                        }         
+        },
+        menuChatLog: function(){
+            return data =  {
+                            text: "聊天记录",
+                            icon: "&#xe60e;",
+                            callback: function(ele) {
+                                var othis = ele.parent(),type = othis.data('type'),name = othis.data('name'),
+                                id = othis.data('id').replace(/[^0-9]/ig,"");
+                                im.getChatLog({
+                                    name: name,
+                                    id: id,
+                                    type:type
+                                });    
+                            }
+                        }       
+        },               
+        menuNickName: function(){
+            return data =  {
+                            text: "修改好友备注",
+                            icon: "&#xe6b2;",
+                            callback: function(ele) {
+                                var othis = ele.parent(),
+                                    friend_id = othis.data('id').replace(/[^0-9]/ig,""),
+                                    friend_name = othis.data('name');
+                                layer.prompt({title: '修改备注姓名', formType: 0,value: friend_name}, function(nickName, index){
+                                    $.get('class/doAction.php?action=editNickName',{nickName:nickName,friend_id:friend_id},function(res){
+                                        var data = eval('(' + res + ')');
+                                        if (data.code == 0) {                                              
+                                            var friendName = $("#layim-friend"+friend_id).find('span');
+                                            friendName.html(data.data);
+                                            layer.close(index);
+                                        }
+                                        layer.msg(data.msg);
+                                    });
+                                });     
+
+                            }
+                        }     
+        },        
+        menuMove: function(html){
+            return data = {
+                            text: "移动联系人",
+                            icon: "&#xe630;",
+                            nav: "move",//子导航的样式
+                            navIcon: "&#xe602;",//子导航的图标
+                            navBody: html,//子导航html
+                            callback: function(ele) {
+                                var friend_id = ele.parent().data('id').replace(/^layim-friend/g, '');//要移动的好友id
+                                friend_name = ele.parent().data('name');
+                                var avatar = '../uploads/person/'+friend_id+'.jpg';
+                                var default_avatar = './uploads/person/empty2.jpg';
+                                var signature = $('.layim-list-friend').find('#layim-friend'+friend_id).find('p').html();//获取签名
+                                var item = ele.find("ul li");
+                                item.hover(function() {
+                                    var _this = item.index(this);
+                                    var groupidx = item.eq(_this).data('groupidx');//将好友移动到分组的id
+                                    $.get('class/doAction.php?action=moveFriend',{friend_id:friend_id,groupidx:groupidx},function(res){
+                                        var data = eval('(' + res + ')');
+                                        if (data.code == 0) {
+                                            conf.layim.removeList({//将好友从之前分组除去
+                                                type: 'friend' 
+                                                ,id: friend_id //好友ID
+                                            });                                                          
+                                            conf.layim.addList({//将好友移动到新分组
+                                                type: 'friend'
+                                                , avatar: im['IsExist'].call(this, avatar)?avatar:default_avatar //好友头像
+                                                , username: friend_name //好友昵称
+                                                , groupid: groupidx //所在的分组id
+                                                , id: friend_id //好友ID
+                                                , sign: signature //好友签名
+                                            }); 
+                                        }
+                                        layer.msg(data.msg);
+                                    });                                                                                                                                        
+                                });
+                            }
+                        }       
+        },  
+        menuRemove: function(){
+            return data = {
+                        text: "删除好友",
+                        icon: "&#xe640;",
+                        events: "removeFriends",
+                        callback: function(ele) {
+                            var othis = ele.parent(),friend_id = othis.data('id').replace(/[^0-9]/ig,""),username,sign;
+                            layui.each(cachedata.friend, function(index1, item1){
+                                layui.each(item1.list, function(index, item){
+                                    if (item.id === friend_id) {
+                                        username = item.username;
+                                        sign = item.sign;
+                                    }
+                                });
+                            });
+                            layer.confirm('删除后对方将从你的好友列表消失，且以后不会再接收此人的会话消息。<div class="layui-layim-list"><li layim-event="chat" data-type="friend" data-index="0"><img src="./uploads/person/'+friend_id+'.jpg"><span>'+username+'</span><p>'+sign+'</p></li></div>', {
+                                btn: ['确定','取消'], //按钮
+                                title:['删除好友','background:#b4bdb8'],
+                                shade: 0
+                            }, function(){
+                                im.removeFriends(friend_id); 
+                            }, function(){
+                                var index = layer.open();
+                                layer.close(index);
+                            });                                                    
+                        }
+                    }         
+        },
+        menuAddMyGroup: function(){
+            return  data =  { 
+                            text: "添加分组",
+                            icon: "&#xe654;",
+                            callback: function(ele) {
+                                im.addMyGroup();
+                            }
+                        }
+
+        },        
+        menuRename: function(){
+            return  data =  {
+                        text: "重命名",
+                        icon: "&#xe642;",
+                        callback: function(ele) {
+                            var othis = ele.parent(),mygroupIdx = othis.data('id'),groupName = othis.data('name');
+                            layer.prompt({title: '请输入分组名，并确认', formType: 0,value: groupName}, function(mygroupName, index){
+                                if (mygroupName) {
+                                    $.get('class/doAction.php?action=editGroupName',{mygroupName:mygroupName,mygroupIdx:mygroupIdx},function(res){
+                                        var data = eval('(' + res + ')');
+                                        if (data.code == 0) {
+                                            var friend_group = $(".layim-list-friend li");
+                                            for(var j = 0; j < friend_group.length; j++){
+                                                var groupidx = friend_group.eq(j).find('h5').data('groupidx');
+                                                if(groupidx == mygroupIdx){//当前选择的分组
+                                                    friend_group.eq(j).find('h5').find('span').html(mygroupName);
+                                                }
+                                            }
+                                            im.contextMenu();            
+                                            layer.close(index);
+                                        }
+                                        layer.msg(data.msg);
+                                    });
+                                }
+
+                            });
+                        }
+
+                    }
+        },        
+        menuDelMyGroup: function(){
+            return  data =  { 
+                        text: "删除该组",
+                        icon: "&#x1006;",
+                        callback: function(ele) {
+                            var othis = ele.parent(),mygroupIdx = othis.data('id');
+                            layer.confirm('<div style="float: left;width: 17%;margin-top: 14px;"><i class="layui-icon" style="font-size: 48px;color:#cc4a4a">&#xe607;</i></div><div style="width: 83%;float: left;"> 选定的分组将被删除，组内联系人将会移至默认分组。</div>', {
+                                btn: ['确定','取消'], //按钮
+                                title:['删除分组','background:#b4bdb8'],
+                                shade: 0
+                            }, function(){
+                                im.delMyGroup(mygroupIdx); 
+                            }, function(){
+                                var index = layer.open();
+                                layer.close(index);
+                            });                      
+                        }
+                    }
+        },        
+        menuLeaveGroupBySelf: function(){
+            return  data =  {
+                        text: "退出该群",
+                        icon: "&#xe613;",
+                        callback: function(ele) {
+                            var othis = ele.parent(),
+                                group_id = othis.data('id').replace(/[^0-9]/ig,""),  
+                                groupname = othis.data('name');
+                                avatar = othis.data('img');
+                            layer.confirm('您真的要退出该群吗？退出后你将不会再接收此群的会话消息。<div class="layui-layim-list"><li layim-event="chat" data-type="friend" data-index="0"><img src="'+avatar+'"><span>'+groupname+'</span></li></div>', {
+                                btn: ['确定','取消'], //按钮
+                                title:['提示','background:#b4bdb8'],
+                                shade: 0
+                            }, function(){
+                                var user = cachedata.mine.id;
+                                var username = cachedata.mine.username;
+                                im.leaveGroupBySelf(user,username,group_id);  
+                            }, function(){
+                                var index = layer.open();  
+                                layer.close(index);
+                            }); 
+                        }
+                    }
+        },        
+        menuAddFriend: function(){
+            return  data =  { 
+                                text: "添加好友",
+                                icon: "&#xe654;",
+                                callback: function(ele) {
+                                    var othis = ele;
+                                    im.addFriendGroup(othis,'friend');                                                   
+                                }
+                            }
+        },        
+        menuEditGroupNickName: function(){
+            return  data =  {
+                                text: "修改群名片",
+                                icon: "&#xe60a;",
+                                callback: function(ele) {
+                                    var othis = ele.parent(),groupIdx = groupInfo.id;
+                                    im.editGroupNickName(othis,groupIdx);
+                                }
+                            }
+        },        
+        menuRemoveAdmin: function(){
+            return  data =  {
+                                text: "取消管理员",
+                                icon: "&#xe612;",
+                                callback: function(ele) {
+                                    var groupidx = groupInfo.id;
+                                    var othis = ele.parent();
+                                    im.removeAdmin(groupidx,othis);                                      
+                                }
+                            }
+        },        
+        menuSetAdmin: function(){
+            return  data =  {
+                                text: "设置为管理员",
+                                icon: "&#xe612;",
+                                callback: function(ele) {
+                                    var groupidx = groupInfo.id;
+                                    var othis = ele.parent(),user = othis.data('id');
+                                    im.setAdmin(groupidx,othis);                                                 
+                                }
+                            }
+        },        
+        menuLeaveGroup: function(){
+            return  data =  {
+                                text: "踢出本群",
+                                icon: "&#x1006;",
+                                callback: function(ele) {
+                                    var othis = ele.parent(),groupIdx = groupInfo.id;
+                                    var friend_id = ele.parent().data('id');//要禁言的id
+                                    var username = ele.parent().data('name');
+                                    var list = new Array();
+                                    list[0] = friend_id;
+                                    im.leaveGroup(groupIdx,list,username)                                                          
+                                }
+                            }
+        },        
+        menuGroupMemberGag: function(){
+            return  data =  {
+                                text: "禁言",
+                                icon: "&#xe60f;",
+                                nav: "gag",//子导航的样式
+                                navIcon: "&#xe602;",//子导航的图标
+                                navBody: '<ul><li class="ui-gag-menu-item" data-gag="10m"><a href="javascript:void(0);"><span>禁言10分钟</span></a></li><li class="ui-gag-menu-item" data-gag="1h"><a href="javascript:void(0);"><span>禁言1小时</span></a></li><li class="ui-gag-menu-item" data-gag="6h"><a href="javascript:void(0);"><span>禁言6小时</span></a></li><li class="ui-gag-menu-item" data-gag="12h"><a href="javascript:void(0);"><span>禁言12小时</span></a></li><li class="ui-gag-menu-item" data-gag="1d"><a href="javascript:void(0);"><span>禁言1天</span></a></li></ul>',//子导航html
+                                callback: function(ele) {
+                                    var friend_id = ele.parent().data('id');//要禁言的id
+                                    friend_name = ele.parent().data('name');
+                                    var item = ele.find("ul li");
+                                    item.hover(function() {
+                                        var _index = item.index(this),gagTime = item.eq(_index).data('gag');//禁言时间
+                                        var groupidx = groupInfo.id
+                                        $.get('class/doAction.php?action=groupMemberGag',{gagTime:gagTime,groupidx:groupidx,friend_id:friend_id},function(resp){
+                                            var data = eval('(' + resp + ')');
+                                            if (data.code == 0) {
+                                                var gagTime = data.data.gagTime;
+                                                var res = {mine: {
+                                                                content: gagTime+'',
+                                                                timestamp: data.data.time
+                                                            },
+                                                            to: {
+                                                                type: 'group',
+                                                                id: groupidx+"",
+                                                                cmd: {
+                                                                    id: friend_id,
+                                                                    cmdName:'gag',
+                                                                    cmdValue:data.data.value
+                                                                }
+                                                            }}
+                                                im.sendMsg(res);
+                                                $("ul[data-groupidx="+groupidx+"] #"+friend_id).attr('gagtime',gagTime);
+                                            }
+                                            layer.msg(data.msg);
+                                        });
+                                    });                             
+                                }
+                            }
+        },        
+        liftGroupMemberGag: function(){
+            return  data =  {
+                                text: "取消禁言",
+                                icon: "&#xe60f;",
+                                callback: function(ele) {
+                                    var friend_id = ele.parent().data('id');//要禁言的id
+                                    friend_name = ele.parent().data('name');
+                                    var groupidx = groupInfo.id
+                                    $.get('class/doAction.php?action=liftGroupMemberGag',{groupidx:groupidx,friend_id:friend_id},function(resp){
+                                        var data = eval('(' + resp + ')');
+                                        if (data.code == 0) {
+                                            var res = {mine: {
+                                                            content: '0',
+                                                            timestamp: data.data.time
+                                                        },
+                                                        to: {
+                                                            type: 'group',
+                                                            id: groupidx+"",
+                                                            cmd: {
+                                                                id: friend_id,
+                                                                cmdName:'liftGag',
+                                                                cmdValue:data.data.value
+                                                            }
+                                                        }}
+                                            im.sendMsg(res);
+                                            $("ul[data-groupidx="+groupidx+"] #"+friend_id).attr('gagtime',0);                                                
+                                        }
+                                        layer.msg(data.msg);
+                                    });
+                                }
+                            }
+        },
+
     };
     exports('socket', socket);
     exports('im', im);

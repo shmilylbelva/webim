@@ -1,6 +1,6 @@
 <?php
 require_once 'class/config.php';
-require_once 'class/url.php';
+require_once 'class/url.php'; 
 ?>
 <!DOCTYPE html>
 <html>
@@ -11,7 +11,6 @@ require_once 'class/url.php';
         <link rel="stylesheet" href="static/css/menu.css">
         <link href="favicon.ico" type="image/vnd.microsoft.icon" rel="shortcut icon"/>        
     </head>
-
     <body data-token="<?php echo $uinfo['id']; ?>" data-rykey="<?php echo $uinfo['easemob_token']; ?>">
     <pre style="padding-top: 50px;padding-left: 50px">
     已实现功能:
@@ -30,7 +29,7 @@ require_once 'class/url.php';
         13.挤下线提醒
         14.文件储存在七牛云
         15.增删改 好友/好友分组
-        16.群管理（增删管理员/修改群名片/单个群员禁言）
+        16.群管理（增删管理员/修改群名片/单个群员禁言解除禁言/踢人）
         体验完整功能请移步<a href="https://github.com/shmilylbelva/webim" style="color: red">这里</a>
         如果登陆一段时间后接收不到消息，可能是有别的小伙伴登陆了这个账号^_^,点击这里<a href="http://test.guoshanchina.com/login.php" style="color: red">重新登陆</a>即可(还没做退出登陆……)
     </pre>        
@@ -143,6 +142,7 @@ require_once 'class/url.php';
                     ,copyright:true
                     , initSkin: '1.jpg' //1-5 设置初始背景
                     , notice: true //是否开启桌面消息提醒，默认false
+                    , systemNotice: false //是否开启系统消息提醒，默认false
                     , msgbox: layui.cache.dir + 'css/modules/layim/html/msgbox.html' //消息盒子页面地址，若不开启，剔除该项即可
                     , find: layui.cache.dir + 'css/modules/layim/html/find.html' //发现页面地址，若不开启，剔除该项即可
                     , chatLog: layui.cache.dir + 'css/modules/layim/html/chatlog.html' //聊天记录页面地址，若不开启，剔除该项即可
