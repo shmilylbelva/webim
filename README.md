@@ -44,7 +44,7 @@
 
 ![已经是好友不能添加](http://upload-images.jianshu.io/upload_images/2825702-2227b43c6dca4240.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ![消息盒子](http://upload-images.jianshu.io/upload_images/2825702-1c403876ecaca756.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-![群管理](http://upload-images.jianshu.io/upload_images/2825702-56a71442f7475ac3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![群管理](http://upload-images.jianshu.io/upload_images/2825702-7a26d73871a0c64d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ![添加好友](http://upload-images.jianshu.io/upload_images/2825702-e37e634a7b90d123.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ![删除好友](http://upload-images.jianshu.io/upload_images/2825702-453f464a0da3bb6a.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
