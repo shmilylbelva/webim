@@ -1,5 +1,6 @@
 # WebIM
 后期将会将修改了源码部分的代码还原，方便大家升级layim。新添加的功能将全部移至socket.js，不会改动layim.js，并且会写一个文档，方便在基础上进行开发
+问题交流群【601391162】
 ##简述
 >本webim是基于 [layim]( http://layim.layui.com/) 和[环信webim3.X](https://www.easemob.com/)开发而成的，本项目仅供学习使用，使用前请先到layim[官网]( http://layim.layui.com/)获取layim的授权许可 。目前已完成的功能有：
     1.好友/群内的文字、表情、图片、文件 在线/离线消息发送和接收。 
