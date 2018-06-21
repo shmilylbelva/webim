@@ -31,7 +31,7 @@ require_once 'class/url.php';
         15.增删改 好友/好友分组
         16.群管理（增删管理员/修改群名片/单个群员禁言解除禁言/踢人）
         体验完整功能请移步<a href="https://github.com/shmilylbelva/webim" style="color: red">这里</a>
-        如果登陆一段时间后接收不到消息，可能是有别的小伙伴登陆了这个账号^_^,点击这里<a href="http://test.guoshanchina.com/login.php" style="color: red">重新登陆</a>即可(还没做退出登陆……)
+        如果登陆一段时间后接收不到消息，可能是有别的小伙伴登陆了这个账号^_^,点击这里<a href="http://test.guoshanchina.com/login.php" style="color: red">重新登陆</a>即可(还没做退出登陆00……)
     </pre>        
     </body>
         <script type='text/javascript' src='static/js/webim.config.js'></script>
