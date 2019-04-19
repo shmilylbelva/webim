@@ -1,3 +1,4 @@
+搭建客服系统看这里 [laykefu]( https://github.com/shmilylbelva/laykefu)
 # WebIM
 后期将会将修改了源码部分的代码还原，方便大家升级layim。新添加的功能将全部移至socket.js，不会改动layim.js，并且会写一个文档，方便在基础上进行开发
 问题交流群【601391162】
