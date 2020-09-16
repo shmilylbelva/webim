@@ -132,6 +132,7 @@
 3. socket.js
 内容比较长就不贴出来了，需要源码的朋友可以下载查看
 
+![QQ截图20200916152747.png](https://upload-images.jianshu.io/upload_images/2825702-76a125216baed410.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320)
 
 # WebIM移动端 功能
 本webim移动端是基于 [layim]( http://layim.layui.com/) 和[workerman](https://www.workerman.net/)开发而成的，本项目仅供学习使用，使用前请先到layim[官网]( http://layim.layui.com/)获取layim的授权许可 。
