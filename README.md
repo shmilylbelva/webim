@@ -2,6 +2,7 @@
 
 体验移动端功能看这里 [layim]( http://ee.laykefu.com/)
 
+打造属于你的layim移动版请看这里[layim-ext](https://github.com/shmilylbelva/layim-ext)
 # WebIM
 交流群【601391162】
 
