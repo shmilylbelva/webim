@@ -7,8 +7,9 @@
 交流群【601391162】
 
 ## 简述
-
-        本webim是基于 [layim]( http://layim.layui.com/) 和[环信webim3.X](https://www.easemob.com/)开发而成的，本项目仅供学习使用，使用前请先到layim[官网]( http://layim.layui.com/)获取layim的授权许可 。目前已完成的功能有：
+本webim是基于 [layim]( http://layim.layui.com/) 和[环信webim3.X](https://www.easemob.com/)开发而成的，本项目仅供学习使用，使用前请先到layim[官网]( http://layim.layui.com/)获取layim的授权许可 。
+        
+        目前已完成的功能有：
             1.好友/群内的文字、表情、图片、文件 在线/离线消息发送和接收。 
             2.查看群员列表。 
             3.面板内快速查找。 
@@ -131,8 +132,10 @@
 3. socket.js
 内容比较长就不贴出来了，需要源码的朋友可以下载查看
 
+
 # WebIM移动端 功能
-        本webim移动端是基于 [layim]( http://layim.layui.com/) 和[workerman](https://www.workerman.net/)开发而成的，本项目仅供学习使用，使用前请先到layim[官网]( http://layim.layui.com/)获取layim的授权许可 。
+本webim移动端是基于 [layim]( http://layim.layui.com/) 和[workerman](https://www.workerman.net/)开发而成的，本项目仅供学习使用，使用前请先到layim[官网]( http://layim.layui.com/)获取layim的授权许可 。
+
         目前已完成的功能有：
             1.好友/群内的文字、表情、图片、文件、视频、语音 在线/离线消息发送和接收。 
             2.查看群员列表
