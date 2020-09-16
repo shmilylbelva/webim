@@ -156,7 +156,6 @@
             16.查看历史消息
             17.默认生成名称头像
 
-
 **觉得项目对您有用，请我喝杯咖啡吧。您的支持将鼓励我继续创作！**
 
 ![QQ截图20180904161534.jpg](https://upload-images.jianshu.io/upload_images/2825702-ae4567c3bf58fad4.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/320)
